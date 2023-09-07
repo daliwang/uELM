@@ -79,7 +79,7 @@ contains
 
     !--- set and verify nclumps ---
     if (clump_pproc > 0) then
-       nclumps = clump_pproc * npes
+       nclumps = clump_pproc * npes  ! ****  GPU/CPU code ****
        if (nclumps < npes) then
           write(iulog,*) 'decompInit_lnd(): Number of gridcell clumps= ',nclumps, &
                ' is less than the number of processes = ', npes
