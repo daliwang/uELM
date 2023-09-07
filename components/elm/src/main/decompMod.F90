@@ -368,7 +368,7 @@ contains
      endl = clumps(cid)%endl
      begt = clumps(cid)%begt
      endt = clumps(cid)%endt
-	 begg = clumps(cid)%begg
+     begg = clumps(cid)%begg
      endg = clumps(cid)%endg
 
      begCohort = clumps(cid)%begCohort
