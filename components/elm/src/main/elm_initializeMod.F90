@@ -62,7 +62,10 @@ contains
     use elm_varctl                , only: fsurdat, fatmlndfrc, flndtopo, fglcmask, noland, version
     use pftvarcon                 , only: pftconrd
     use soilorder_varcon          , only: soilorder_conrd
+
     use decompInitMod             , only: decompInit_lnd, decompInit_clumps, decompInit_gtlcp
+    use decompInitMod             , only: decompInit_lnd_uELM
+
     use domainMod                 , only: domain_check, ldomain, domain_init
     use surfrdMod                 , only: surfrd_get_globmask, surfrd_get_grid, surfrd_get_topo, surfrd_get_data
     use controlMod                , only: control_init, control_print, NLFilename
@@ -170,8 +173,11 @@ contains
     ! ------------------------------------------------------------------------
     ! Determine clm gridcell decomposition and processor bounds for gridcells
     ! ------------------------------------------------------------------------
-
+    domain_decomp_type = 'uELM'
     select case (trim(domain_decomp_type))
+    case ("uELM")
+       call decompInit_lnd_uELM(ni, nj, amask)
+       deallocate(amask)    
     case ("round_robin")
        call decompInit_lnd(ni, nj, amask)
        deallocate(amask)
