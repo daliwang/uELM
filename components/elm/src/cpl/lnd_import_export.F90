@@ -31,6 +31,7 @@ contains
       type(atm2lnd_type) , intent(inout) :: atm2lnd_vars      ! clm internal input data type
       type(glc2lnd_type) , intent(inout) :: glc2lnd_vars      ! clm internal input data type
       type(lnd2atm_type) , intent(in)    :: lnd2atm_vars
+#ifdef CPL_BYPASS
       !
       integer :: g, dup_g, topo, yr, mon, day, tod
       real(r8) :: e, ea         ! vapor pressure (Pa)
@@ -206,7 +207,7 @@ contains
          end do
       end do
       call shr_sys_flush(iulog)
-
+#endif
    end subroutine duplicate_lnd_points
 
   !===============================================================================
