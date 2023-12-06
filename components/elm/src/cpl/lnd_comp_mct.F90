@@ -738,7 +738,8 @@ contains
     deallocate(idata)
 
   end subroutine lnd_domain_mct
-  
+
+#ifdef _OPENACC
   subroutine acc_initialization()
       use openacc 
       use spmdMod,    only : iam 
@@ -760,5 +761,5 @@ contains
      write(iulog,*) "iam, mygpu:",iam,mygpu, ngpus
 
   end subroutine 
-
+#endif
 end module lnd_comp_mct
