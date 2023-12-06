@@ -306,7 +306,7 @@
       <value stream="CLMCRUNCEP">domain.lnd.360x720.130305.nc</value>
       <value stream="CLMGSWP3v1">domain.lnd.360x720_gswp3.0v1.c170606.nc</value>
       <value stream="CLMGSWP3">domain.lnd.360x720_gswp3.0v1.c170606.nc</value>
-      <value stream="uELM_NADaymet">domain.lnd.Daymet4_1km.1d.nc</value>
+      <value stream="uELM_NADaymet">domain.lnd.Daymet4.1km.1d.c231120.nc</value>
       <value stream="CLMMOSARTTEST">domain.lnd.nldas2_0224x0464_c110415.nc</value>
       <value stream="CLMNLDAS2">domain.lnd.0.125nldas2_0.125nldas2.190410.nc</value>
       <value stream="CORE2_NYF.GISS">nyf.giss.T62.051007.nc</value>
@@ -480,13 +480,13 @@
       <value stream="CLMGSWP3.Solar">$DIN_LOC_ROOT_CLMFORC/atm_forcing.datm7.GSWP3.0.5d.v1.c170516/Solar3Hrly</value>
       <value stream="CLMGSWP3.Precip">$DIN_LOC_ROOT_CLMFORC/atm_forcing.datm7.GSWP3.0.5d.v1.c170516/Precip3Hrly</value>
       <value stream="CLMGSWP3.TPQW">$DIN_LOC_ROOT_CLMFORC/atm_forcing.datm7.GSWP3.0.5d.v1.c170516/TPHWL3Hrly</value>
-      <value stream="uELM_NADaymet.FSDS">$DIN_LOC_ROOT_CLMFOR/atm_forcing.datm7.uELM_NADaymet.1d.c231120/%y</value>
-      <value stream="uELM_NADaymet.FLDS">$DIN_LOC_ROOT_CLMFORC/atm_forcing.datm7.uELM_NADaymet.1d.c231120/%y</value>
-      <value stream="uELM_NADaymet.TBOT">$DIN_LOC_ROOT_CLMFORC/atm_forcing.datm7.uELM_NADaymet.1d.c231120/%y</value>
-      <value stream="uELM_NADaymet.QBOT">$DIN_LOC_ROOT_CLMFORC/atm_forcing.datm7.uELM_NADaymet.1d.c231120/%y</value>
-      <value stream="uELM_NADaymet.PRECTmms">$DIN_LOC_ROOT_CLMFORC/atm_forcing.datm7.uELM_NADaymet.1d.c231120/%y</value>
-      <value stream="uELM_NADaymet.PRSF">$DIN_LOC_ROOT_CLMFORC/atm_forcing.datm7.uELM_NADaymet.1d.c231120/%y</value>
-      <value stream="uELM_NADaymet.WIND">$DIN_LOC_ROOT_CLMFORC/atm_forcing.datm7.uELM_NADaymet.1d.c231120/%y</value>
+      <value stream="uELM_NADaymet.FSDS">$DIN_LOC_ROOT_CLMFORC/atm_forcing.datm7.uELM_NADaymet.1d.c231120</value>
+      <value stream="uELM_NADaymet.FLDS">$DIN_LOC_ROOT_CLMFORC/atm_forcing.datm7.uELM_NADaymet.1d.c231120</value>
+      <value stream="uELM_NADaymet.TBOT">$DIN_LOC_ROOT_CLMFORC/atm_forcing.datm7.uELM_NADaymet.1d.c231120</value>
+      <value stream="uELM_NADaymet.QBOT">$DIN_LOC_ROOT_CLMFORC/atm_forcing.datm7.uELM_NADaymet.1d.c231120</value>
+      <value stream="uELM_NADaymet.PRECTmms">$DIN_LOC_ROOT_CLMFORC/atm_forcing.datm7.uELM_NADaymet.1d.c231120</value>
+      <value stream="uELM_NADaymet.PSRF">$DIN_LOC_ROOT_CLMFORC/atm_forcing.datm7.uELM_NADaymet.1d.c231120</value>
+      <value stream="uELM_NADaymet.WIND">$DIN_LOC_ROOT_CLMFORC/atm_forcing.datm7.uELM_NADaymet.1d.c231120</value>
       <value stream="CLMMOSARTTEST">$DIN_LOC_ROOT/atm/datm7/NLDAS</value>
       <value stream="CLMNLDAS2.Solar">$DIN_LOC_ROOT/atm/datm7/atm_forcing.datm7.NLDAS2.0.125d.v1/Solar</value>
       <value stream="CLMNLDAS2.Precip">$DIN_LOC_ROOT/atm/datm7/atm_forcing.datm7.NLDAS2.0.125d.v1/Precip</value>
@@ -3081,7 +3081,7 @@
       <value datm_mode="CLM1PT">nn</value>
       <value stream="CLMCRUNCEP" atm_grid="hcru">copy</value>
       <value stream="CLMGSWP3" atm_grid="hcru">copy</value>
-      <value stream="uELM_NADaymet">nn</value>
+      <value stream="uELM_NADaymet">copy</value>
       <value stream="CLMNLDAS2" atm_grid="0.125nldas2">copy</value>
       <value stream="co2tseries">nn</value>
     </values>
