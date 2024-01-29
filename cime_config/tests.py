@@ -45,7 +45,8 @@ _TESTS = {
             "SMS.r05_r05.IELM.elm-topounit",
             "ERS.ELM_USRDAT.I1850ELM.elm-usrdat",
             "ERS.r05_r05.IELM.elm-V2_ELM_MOSART_features",
-            "SMS_Ln2.hcru_hcru.ICB1850CNRDCTCBC.elm-ameriflux_cplbypass"
+            "SMS_Ln2.hcru_hcru.ICB1850CNRDCTCBC.elm-ameriflux_cplbypass",
+            "SMS_Ln2.hcru_hcru.ICBELMBC.elm-sp_cplbypass"
             )
         },
 

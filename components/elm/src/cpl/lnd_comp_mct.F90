@@ -291,9 +291,7 @@ contains
     call mct_aVect_zero(l2x_l)
 
     ! Finish initializing elm
-    print *, " initialize 2 "
     call initialize2()
-    print *, "initialize 3:"
     call initialize3()
 
     ! Check that elm internal dtime aligns with elm coupling interval
@@ -469,22 +467,13 @@ contains
 
     
     ! Map to elm (only when state and/or fluxes need to be updated)
-    write(iulog, *) "Starting land import for CPL BYPASS runs"
-    call shr_sys_flush(iulog) 
-    call cpu_time(startt) 
     call t_startf ('lc_lnd_import')
     call lnd_import( bounds, x2l_l%rattr, atm2lnd_vars, glc2lnd_vars, lnd2atm_vars,cpl_bypass_input )
     call t_stopf ('lc_lnd_import')
-    call cpu_time(stopt) 
-    write(iulog, *) "TIMING :: lnd_import ",(stopt-startt)*1.E+3, "ms" 
-    call shr_sys_flush(iulog) 
    
-    call cpu_time(startt)  
-    call duplicate_lnd_points( bounds, x2l_l%rattr, atm2lnd_vars, glc2lnd_vars, lnd2atm_vars, cpl_bypass_input)
-    call cpu_time(stopt) 
-    write(iulog, *) "TIMING :: duplicate_lnd ",(stopt-startt)*1.E+3, "ms" 
-    call shr_sys_flush(iulog) 
-    
+    if(.false.) then 
+      call duplicate_lnd_points( bounds, x2l_l%rattr, atm2lnd_vars, glc2lnd_vars, lnd2atm_vars, cpl_bypass_input)
+    end if 
     ! Use infodata to set orbital values if updated mid-run
 
     call seq_infodata_GetData( infodata, orb_eccen=eccen, orb_mvelpp=mvelpp, &

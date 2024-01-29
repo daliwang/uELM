@@ -375,7 +375,7 @@ contains
     ! Below the units are therefore given in mm/s.
 
     thisng = bounds%endg - bounds%begg + 1
-    do g = bounds%begg, bounds%begg+42-1
+    do g = bounds%begg, bounds%endg !bounds%begg+42-1
        i = 1 + (g - bounds%begg)
 
        ! Determine flooding input, sign convention is positive downward and
