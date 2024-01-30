@@ -1859,7 +1859,7 @@ module elm_driver
                
                !call t_startf('cnbalchk')
                
-               call ColCBalanceCheck(bounds_clump, &
+               call ColCBalanceCheck( &
                filter(nc)%num_soilc, filter(nc)%soilc, &
                col_cs, col_cf)
                
