@@ -69,7 +69,7 @@ contains
           doalb = (nextsw_cday_mod >= -0.5_r8)
     end if
 
-  end subroutine
+  end subroutine increment_time_vars
 
 
 

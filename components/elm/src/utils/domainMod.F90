@@ -12,6 +12,8 @@ module domainMod
   use elm_varctl  , only : iulog
   use spmdMod  , only : masterproc
   use shr_sys_mod, only : shr_sys_abort 
+  #define nan 1e36
+
 !
 ! !PUBLIC TYPES:
   implicit none
@@ -100,7 +102,6 @@ contains
 !
 ! !INTERFACE:
 subroutine domain_init(domain,isgrid2d,ni,nj,nbeg,nend,elmlevel)
-        #define nan 1e36
    !
    ! !DESCRIPTION:
    ! This subroutine allocates and nans the domain type
@@ -121,8 +122,8 @@ subroutine domain_init(domain,isgrid2d,ni,nj,nbeg,nend,elmlevel)
    !
    ! !LOCAL VARIABLES:
    !EOP
-   integer ier
-   integer nb,ne
+   integer :: ier
+   integer :: nb,ne
    !
    !------------------------------------------------------------------------------
 
@@ -218,7 +219,7 @@ subroutine domain_clean(domain)
    !
    ! !LOCAL VARIABLES:
    !EOP
-   integer ier
+   integer :: ier
    !
    !------------------------------------------------------------------------------
    if (domain%set) then

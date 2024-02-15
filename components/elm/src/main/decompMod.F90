@@ -309,7 +309,7 @@ contains
       gpu_clumps(nc)%endCohort = clumps(nc)%endCohort
     end do
 
-  end subroutine
+  end subroutine init_proc_clump_info
   !-----------------------------------------------------------------------
   pure function get_beg(bounds, subgrid_level) result(beg_index)
     !
