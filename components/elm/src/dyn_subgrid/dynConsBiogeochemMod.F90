@@ -94,6 +94,7 @@ module dynConsBiogeochemMod
       !
       ! !LOCAL VARIABLES:
       integer   :: p,c,l,g,j,fp,fc               ! indices
+      integer   :: begg, endg 
       integer   :: ier                           ! error code
       real(r8)  :: dwt                           ! change in pft weight (relative to column)
       character(len=32)             :: subname='dyn_cbal'            ! subroutine name
@@ -161,20 +162,18 @@ module dynConsBiogeochemMod
          allocate(crop_product_c14flux       (num_soilp_with_inactive), stat=ier)
       endif
       
-      call cpu_time(startt) 
 
-      !$acc enter data create(dwt_leaf_seed,&
-      !$acc dwt_deadstem_seed    ,&
-      !$acc dwt_pool_seed       ,&
-      !$acc dwt_froot_to_litter(:) ,&
+      !$acc enter data create(&
+      !$acc dwt_froot_to_litter(:)    ,&
       !$acc dwt_livecroot_to_litter(:),&
       !$acc dwt_deadcroot_to_litter(:),&
       !$acc conv_flux(:)              ,&
       !$acc prod10_flux(:)            ,&
       !$acc prod100_flux(:)           ,&
-      !$acc crop_product_flux(:)     ,&
-      !$acc  patch_to_soil_filter(:)  )
-       !$acc enter data create(sum1, sum2, sum3, sum4 ,sum5)  
+      !$acc crop_product_flux(:)      ,&
+      !$acc patch_to_soil_filter(:)  )
+      !$acc enter data create(sum1, sum2, sum3, sum4, sum5, sum6) 
+
       !$acc parallel loop independent gang vector default(present) 
       do fp = 1, num_soilp_with_inactive
          ! initialize all the pft-level local flux arrays
@@ -187,7 +186,6 @@ module dynConsBiogeochemMod
          prod100_flux(fp)           = 0.0_r8
          crop_product_flux(fp)      = 0.0_r8
       enddo
-      
       
       if(use_c13) then
          do fp = 1, num_soilp_with_inactive
@@ -410,11 +408,6 @@ module dynConsBiogeochemMod
          end if  ! weight decreasing
       end do     ! patch loop
       
-      call cpu_time(stopt) 
-      write(iulog,*) "TIMING dyn_cnbal_patch::create and init ", (stopt-startt)*1.E+3,"ms"
-      
-      call cpu_time(startt) 
-
       !$acc parallel loop independent gang vector default(present) private(p,c,l,g) &
       !$acc present(conv_flux(:),dwt_froot_to_litter(:), &
       !$acc dwt_livecroot_to_litter(:),dwt_deadcroot_to_litter(:),prod10_flux(:), prod100_flux(:), &
@@ -426,7 +419,6 @@ module dynConsBiogeochemMod
          g = veg_pp%gridcell(p) 
          dwt_leaf_seed   = 0.0_r8
          dwt_deadstem_seed = 0.0_r8
-
          
          call dyn_veg_cs_Adjustments(    &
             l, c, p,        &
@@ -451,35 +443,36 @@ module dynConsBiogeochemMod
          veg_cf%dwt_prod100c_gain(p) = - prod100_flux(fp)/dt
          veg_cf%dwt_crop_productc_gain(p) = - crop_product_flux(fp)/dt
          
-         ! Note that patch-level fluxes are stored per unit GRIDCELL area - thus, we don't
-         ! need to multiply by the patch's gridcell weight when translating patch-level
-         ! fluxes into gridcell-level fluxes.
-         !$acc atomic update
-         grc_cf%dwt_seedc_to_leaf(g) =  grc_cf%dwt_seedc_to_leaf(g) + veg_cf%dwt_seedc_to_leaf(p)
-         !$acc end atomic 
-         
-         !$acc atomic update 
-         grc_cf%dwt_seedc_to_deadstem(g) = grc_cf%dwt_seedc_to_deadstem(g) +  veg_cf%dwt_seedc_to_deadstem(p)
-         !$acc end atomic 
-         
-         !$acc atomic update
-         grc_cf%dwt_conv_cflux(g) = grc_cf%dwt_conv_cflux(g) +  veg_cf%dwt_conv_cflux(p)
-         !$acc end atomic
-         
-         !$acc atomic update 
-         grc_cf%dwt_prod10c_gain(g) = grc_cf%dwt_prod10c_gain(g) + veg_cf%dwt_prod10c_gain(p)
-         !$acc end atomic
-         
-         !$acc atomic update 
-         grc_cf%dwt_prod100c_gain(g) = grc_cf%dwt_prod100c_gain(g) + veg_cf%dwt_prod100c_gain(p)
-         !$acc end atomic 
       end do
-      call cpu_time(stopt) 
-      write(iulog,*) "dyn_cnbal_patch::veg_cs_Adjustment ",(stopt-startt)*1.E+3, "ms"
 
-      call cpu_time(startt) 
+      ! Note that patch-level fluxes are stored per unit GRIDCELL area - thus, we don't
+      ! need to multiply by the patch's gridcell weight when translating patch-level
+      ! fluxes into gridcell-level fluxes.
+      ! NOTE: The grc_xf variables are zero'd at the start of each timestep in elm_driver::zero_elm_weights
+      !$acc parallel loop independent gang worker default(present) private(sum1)
+      do g = begg, endg 
+         sum1 = 0._r8; sum2 = 0._r8; sum3 = 0._r8 
+         sum4 = 0._r8; sum5 = 0._r8
+         !$acc loop vector reduction(+:sum1) default(present)
+         do p = grc_pp%pfti(g), grc_pp%pftf(g)
+            l = lun_pp%landunit(p)
+            if (lun_pp%itype(l) == istsoil .or. lun_pp%itype(l) == istcrop) then
+               sum1 = sum1 + veg_cf%dwt_conv_cflux(p)
+               sum2 = sum2 + veg_cf%dwt_prod10c_gain(p)
+               sum3 = sum3 + veg_cf%dwt_seedc_to_leaf(p)
+               sum4 = sum4 + veg_cf%dwt_prod100c_gain(p)
+               sum5 = sum5 + veg_cf%dwt_seedc_to_deadstem(p)
+            end if 
+         end do 
+         grc_cf%dwt_conv_cflux(g)        = grc_cf%dwt_conv_cflux(g)    + sum1 
+         grc_cf%dwt_prod10c_gain(g)      = grc_cf%dwt_prod10c_gain(g)  + sum2 
+         grc_cf%dwt_seedc_to_leaf(g)     = grc_cf%dwt_seedc_to_leaf(g) + sum3
+         grc_cf%dwt_prod100c_gain(g)     = grc_cf%dwt_prod100c_gain(g) + sum4
+         grc_cf%dwt_seedc_to_deadstem(g) = grc_cf%dwt_seedc_to_deadstem(g) + sum5
+      end do 
+
       ! calculate pft-to-column for fluxes into litter and CWD pools 
-      !$acc parallel loop independent gang worker collapse(2) default(present) private(sum1,sum2,sum3,sum4,sum5,c) &
+      !$acc parallel loop independent gang worker collapse(2) default(present) private(sum1,sum2,sum3,sum4,sum5) &
       !$acc present(dwt_froot_to_litter(:),dwt_livecroot_to_litter(:),dwt_deadcroot_to_litter(:)) 
       do j = 1, nlevdecomp
          do fc = 1, num_soilc_with_inactive
@@ -551,10 +544,6 @@ module dynConsBiogeochemMod
          col_cf%dwt_slash_cflux(c) = col_cf%dwt_slash_cflux(c) + sum5 
       end do 
       
-      call cpu_time(stopt) 
-      write(iulog,*) "cnbal_patch::col_cf reductions ",(stopt-startt)*1.E+3,"ms"
-      
-      call cpu_time(startt) 
       !$acc parallel loop independent gang vector default(present)
       do fp = 1, num_soilp_with_inactive
          p = filter_soilp_with_inactive(fp)
@@ -580,43 +569,40 @@ module dynConsBiogeochemMod
             veg_ns                         &
             )
          
-         veg_nf%dwt_seedn_to_leaf(p)   = dwt_leaf_seed/dt
-         veg_nf%dwt_seedn_to_npool(p) = dwt_pool_seed/dt
+         veg_nf%dwt_seedn_to_leaf(p)  = dwt_leaf_seed/dt
          veg_nf%dwt_seedn_to_deadstem(p) = dwt_deadstem_seed/dt
+         veg_nf%dwt_seedn_to_npool(p) = dwt_pool_seed/dt
          veg_nf%dwt_conv_nflux(p) = -conv_flux(fp)/dt
          veg_nf%dwt_prod10n_gain(p) = -prod10_flux(fp)/dt
          veg_nf%dwt_prod100n_gain(p)= -prod100_flux(fp)/dt
          veg_nf%dwt_crop_productn_gain(p) = -crop_product_flux(fp)/dt
-         ! N fluxes
-         
-         !$acc atomic update 
-         grc_nf%dwt_seedn_to_leaf(g) = grc_nf%dwt_seedn_to_leaf(g) + veg_nf%dwt_seedn_to_leaf(p)
-         !$acc end atomic 
-         
-         !$acc atomic update 
-         grc_nf%dwt_seedn_to_deadstem(g) = grc_nf%dwt_seedn_to_deadstem(g) + veg_nf%dwt_seedn_to_deadstem(p)
-         !$acc end atomic 
-         
-         !$acc atomic update 
-         grc_nf%dwt_seedn_to_npool(g) = grc_nf%dwt_seedn_to_npool(g) + veg_nf%dwt_seedn_to_npool(p)
-         !$acc end atomic 
-         
-         !$acc atomic update 
-         grc_nf%dwt_conv_nflux(g) =  grc_nf%dwt_conv_nflux(g) + veg_nf%dwt_conv_nflux(p)
-         !$acc end atomic 
-         
-         !$acc atomic update 
-         grc_nf%dwt_prod10n_gain(g) = grc_nf%dwt_prod10n_gain(g) + veg_nf%dwt_prod10n_gain(p)
-         !$acc end atomic
-         
-         !$acc atomic update 
-         grc_nf%dwt_prod100n_gain(g) = grc_nf%dwt_prod100n_gain(g) + veg_nf%dwt_prod100n_gain(p)
-         !$acc end atomic 
       enddo
-      call cpu_time(stopt) 
-      write(iulog,*) "dyn_cnbal_patch::veg_ns_adjustments ",(stopt-startt)*1.E+3,"ms"
+
+      ! NOTE: The grc_xf variables are zero'd at the start of each timestep in elm_driver::zero_elm_weights
+      !$acc parallel loop independent gang worker default(present) private(sum1)
+      do g = begg, endg 
+         sum1 = 0._r8; sum2 = 0._r8; sum3 = 0._r8 
+         sum4 = 0._r8; sum5 = 0._r8; sum6 = 0._r8
+         !$acc loop vector reduction(+:sum1,sum2,sum3,sum4,sum5,sum6) default(present)
+         do p = grc_pp%pfti(g), grc_pp%pftf(g)
+            l = lun_pp%landunit(p)
+            if (lun_pp%itype(l) == istsoil .or. lun_pp%itype(l) == istcrop) then
+               sum1 = sum1 + veg_nf%dwt_conv_nflux(p)
+               sum2 = sum2 + veg_nf%dwt_prod10n_gain(p)
+               sum3 = sum3 + veg_nf%dwt_seedn_to_leaf(p)
+               sum4 = sum4 + veg_nf%dwt_prod100n_gain(p)
+               sum5 = sum5 + veg_nf%dwt_seedn_to_deadstem(p)
+               sum6 = sum6 + veg_nf%dwt_seedn_to_npool(p)
+            end if 
+         end do 
+         grc_nf%dwt_conv_nflux(g)        = grc_nf%dwt_conv_nflux(g)    + sum1 
+         grc_nf%dwt_prod10n_gain(g)      = grc_nf%dwt_prod10n_gain(g)  + sum2 
+         grc_nf%dwt_prod100n_gain(g)     = grc_nf%dwt_prod100n_gain(g) + sum4
+         grc_nf%dwt_seedn_to_leaf(g)     = grc_nf%dwt_seedn_to_leaf(g) + sum3
+         grc_nf%dwt_seedn_to_npool(g)    = grc_nf%dwt_seedn_to_npool(g) + sum6
+         grc_nf%dwt_seedn_to_deadstem(g) = grc_nf%dwt_seedn_to_deadstem(g) + sum5
+      end do 
       
-      call cpu_time(startt) 
       ! calculate pft-to-column for fluxes into litter and CWD pools 
       !$acc parallel loop independent gang worker collapse(2) default(present) private(sum1,sum2,sum3,sum4,sum5,c,l) &
       !$acc present(dwt_froot_to_litter(:),dwt_livecroot_to_litter(:),dwt_deadcroot_to_litter(:)) 
@@ -698,10 +684,6 @@ module dynConsBiogeochemMod
          col_nf%dwt_slash_nflux(c) = col_nf%dwt_slash_nflux(c) + sum5 
       end do 
       
-      call cpu_time(stopt) 
-      write(iulog,*) "cnbal_patch::col_nf reductions ",(stopt-startt)*1.E+3,"ms"
-      
-      call cpu_time(startt) 
       !$acc parallel loop independent gang vector default(present) private(p,c,l)
       do fp = 1, num_soilp_with_inactive
          p = filter_soilp_with_inactive(fp)
@@ -736,36 +718,33 @@ module dynConsBiogeochemMod
          veg_pf%dwt_prod10p_gain(p)  = -prod10_flux(fp)/dt
          veg_pf%dwt_prod100p_gain(p) = -prod100_flux(fp)/dt
          veg_pf%dwt_crop_productp_gain(p) = -crop_product_flux(fp)/dt
-         
-         !$acc atomic update 
-         grc_pf%dwt_seedp_to_leaf(g) = grc_pf%dwt_seedp_to_leaf(g) + veg_pf%dwt_seedp_to_leaf(p)
-         !$acc end atomic 
-         
-         !$acc atomic update 
-         grc_pf%dwt_seedp_to_deadstem(g) = grc_pf%dwt_seedp_to_deadstem(g) + veg_pf%dwt_seedp_to_deadstem(p)
-         !$acc end atomic 
-         
-         !$acc atomic update 
-         grc_pf%dwt_seedp_to_ppool(g) = grc_pf%dwt_seedp_to_ppool(g) + veg_pf%dwt_seedp_to_ppool(p)
-         !$acc end atomic 
-         
-         !$acc atomic update 
-         grc_pf%dwt_conv_pflux(g) =  grc_pf%dwt_conv_pflux(g) + veg_pf%dwt_conv_pflux(p)
-         !$acc end atomic 
-         
-         !$acc atomic update 
-         grc_pf%dwt_prod10p_gain(g) = grc_pf%dwt_prod10p_gain(g) + veg_pf%dwt_prod10p_gain(p)
-         !$acc end atomic
-         
-         !$acc atomic update 
-         grc_pf%dwt_prod100p_gain(g) = grc_pf%dwt_prod100p_gain(g) + veg_pf%dwt_prod100p_gain(p)
-         !$acc end atomic 
       end do
 
-      call cpu_time(stopt) 
-      write(iulog,*) "dyn_cnbal_patch::veg_ps_adjustments ",(stopt-startt)*1.E+3,"ms"
-      
-      call cpu_time(startt) 
+      ! NOTE: The grc_xf variables are zero'd at the start of each timestep in elm_driver::zero_elm_weights
+      !$acc parallel loop independent gang worker default(present) private(sum1)
+      do g = begg, endg 
+         sum1 = 0._r8; sum2 = 0._r8; sum3 = 0._r8 
+         sum4 = 0._r8; sum5 = 0._r8; sum6 = 0._r8
+         !$acc loop vector reduction(+:sum1,sum2,sum3,sum4,sum5,sum6) default(present)
+         do p = grc_pp%pfti(g), grc_pp%pftf(g)
+            l = lun_pp%landunit(p)
+            if (lun_pp%itype(l) == istsoil .or. lun_pp%itype(l) == istcrop) then
+               sum1 = sum1 + veg_pf%dwt_conv_pflux(p)
+               sum2 = sum2 + veg_pf%dwt_prod10p_gain(p)
+               sum3 = sum3 + veg_pf%dwt_seedp_to_leaf(p)
+               sum4 = sum4 + veg_pf%dwt_prod100p_gain(p)
+               sum5 = sum5 + veg_pf%dwt_seedp_to_deadstem(p)
+               sum6 = sum6 + veg_pf%dwt_seedp_to_ppool(p)
+            end if 
+         end do 
+         grc_pf%dwt_conv_pflux(g)        = grc_pf%dwt_conv_pflux(g)    + sum1 
+         grc_pf%dwt_prod10p_gain(g)      = grc_pf%dwt_prod10p_gain(g)  + sum2 
+         grc_pf%dwt_prod100p_gain(g)     = grc_pf%dwt_prod100p_gain(g) + sum4
+         grc_pf%dwt_seedp_to_leaf(g)     = grc_pf%dwt_seedp_to_leaf(g) + sum3
+         grc_pf%dwt_seedp_to_ppool(g)    = grc_pf%dwt_seedp_to_ppool(g) + sum6
+         grc_pf%dwt_seedp_to_deadstem(g) = grc_pf%dwt_seedp_to_deadstem(g) + sum5
+      end do 
+
       ! calculate pft-to-column for fluxes into litter and CWD pools 
       !$acc parallel loop independent gang worker collapse(2) default(present) private(sum1,sum2,sum3,sum4,sum5,c,l) &
       !$acc present(dwt_froot_to_litter(:),dwt_livecroot_to_litter(:),dwt_deadcroot_to_litter(:) )
@@ -773,8 +752,7 @@ module dynConsBiogeochemMod
          do fc = 1, num_soilc_with_inactive
             c = filter_soilc_with_inactive(fc)
             l = col_pp%landunit(c) 
-            
-            ! c = veg_pp%column(p)
+
             sum1 = 0.0_r8; sum2 = 0.0_r8 
             sum3 = 0.0_r8; sum4 = 0.0_r8 
             sum5 = 0.0_r8 
@@ -788,25 +766,20 @@ module dynConsBiogeochemMod
                   fr_flab = veg_vp%fr_flab(veg_pp%itype(p))
                   fr_fcel = veg_vp%fr_fcel(veg_pp%itype(p))
                   fr_flig = veg_vp%fr_flig(veg_pp%itype(p))
-                  
                   ! fine root litter carbon fluxes
                   sum1 = sum1 + (dwt_froot_to_litter(fp)* fr_flab)/dt * froot
                   sum2 = sum2 + (dwt_froot_to_litter(fp)* fr_fcel)/dt * froot
                   sum3 = sum3 + (dwt_froot_to_litter(fp)* fr_flig)/dt * froot
-                  
                   ! livecroot fluxes to cwd
                   sum4 = sum4 + (dwt_livecroot_to_litter(fp))/dt * croot
-                  ! 
                   sum5 = sum5 + (dwt_deadcroot_to_litter(fp))/dt * croot
                end if 
             end do 
-            ! 
             col_pf%dwt_frootp_to_litr_met_p(c,j) = col_pf%dwt_frootp_to_litr_met_p(c,j) + sum1 
             col_pf%dwt_frootp_to_litr_cel_p(c,j) = col_pf%dwt_frootp_to_litr_cel_p(c,j) + sum2 
             col_pf%dwt_frootp_to_litr_lig_p(c,j) = col_pf%dwt_frootp_to_litr_lig_p(c,j) + sum3 
             ! 
             col_pf%dwt_livecrootp_to_cwdp(c,j) = col_pf%dwt_livecrootp_to_cwdp(c,j) + sum4 
-            !
             col_pf%dwt_deadcrootp_to_cwdp(c,j) = col_pf%dwt_deadcrootp_to_cwdp(c,j) + sum5 
          end do 
       end do 
@@ -845,13 +818,7 @@ module dynConsBiogeochemMod
          col_pf%dwt_slash_pflux(c) = col_pf%dwt_slash_pflux(c) + sum5 
       end do 
       
-      call cpu_time(stopt) 
-      write(iulog,*) "cnbal_patch::col_pf reductions ",(stopt-startt)*1.E+3,"ms"
-      
-      
-      !$acc exit data delete(dwt_leaf_seed,&
-      !$acc dwt_deadstem_seed , &
-      !$acc dwt_pool_seed     , &
+      !$acc exit data delete( &
       !$acc dwt_froot_to_litter(:) ,&
       !$acc dwt_livecroot_to_litter(:),&
       !$acc dwt_deadcroot_to_litter(:),&
@@ -860,7 +827,7 @@ module dynConsBiogeochemMod
       !$acc prod100_flux(:)           ,&
       !$acc crop_product_flux(:)      ,&
       !$acc  patch_to_soil_filter(:)  )
-      !$acc exit data delete(sum1,sum2,sum3,sum4,sum5)  
+      !$acc exit data delete(sum1,sum2,sum3,sum4,sum5,sum6)  
       ! Deallocate pft-level flux arrays
       if ( use_c13 ) then
          deallocate(dwt_leafc13_seed)
