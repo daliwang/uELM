@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
+import os, sys 
+_CIMEROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","..","cime")
+sys.path.append(os.path.join(_CIMEROOT, "scripts", "Tools"))
 from standard_script_setup import *
 from CIME.utils import run_bld_cmd_ensure_logging
 from CIME.case import Case
 from CIME.build import get_standard_makefile_args
 
 logger = logging.getLogger(__name__)
-
 def parse_command_line(args, description):
 ###############################################################################
     parser = argparse.ArgumentParser(
@@ -52,7 +54,7 @@ def buildlib(bldroot, installpath, case):
                 install=installpath, comp_interface=comp_interface, stdargs=get_standard_makefile_args(case, shared_lib=True))
 
     gmake_cmd = case.get_value("GMAKE")
-
+    print("running builib gptl gmake cmd","{} {}".format(gmake_cmd, gmake_opts) )  
     # This runs the gptl make command
     cmd = "{} {}".format(gmake_cmd, gmake_opts)
     run_bld_cmd_ensure_logging(cmd, logger)

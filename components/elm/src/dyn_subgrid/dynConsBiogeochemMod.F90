@@ -36,8 +36,7 @@ module dynConsBiogeochemMod
    use dynSubgridAdjustmentsMod , only : dyn_veg_cs_Adjustments, dyn_col_cs_Adjustments
    use dynSubgridAdjustmentsMod , only : dyn_veg_ns_Adjustments, dyn_col_ns_Adjustments
    use dynSubgridAdjustmentsMod , only : dyn_veg_ps_Adjustments, dyn_col_ps_Adjustments
-   
-   
+   use GridcellType             , only : grc_pp 
    !
    ! !PUBLIC MEMBER FUNCTIONS:
    implicit none
@@ -97,7 +96,7 @@ module dynConsBiogeochemMod
       integer   :: begg, endg 
       integer   :: ier                           ! error code
       real(r8)  :: dwt                           ! change in pft weight (relative to column)
-      character(len=32)             :: subname='dyn_cbal'            ! subroutine name
+      character(len=32)    :: subname='dyn_cbal' ! subroutine name
       
       !! ACTUAL VARIABLES that will be re-used for each species 
       real(r8)  :: dwt_leaf_seed 
@@ -136,7 +135,7 @@ module dynConsBiogeochemMod
       real(r8) :: froot, croot
       real(r8) :: fr_flab, fr_fcel, fr_flig
       real(r8) :: startt, stopt
-      real(r8) :: sum1, sum2, sum3, sum4 ,sum5
+      real(r8) :: sum1, sum2, sum3, sum4 ,sum5, sum_seed2pool
       !-----------------------------------------------------------------------
       
       if ( use_c13 ) then
@@ -172,7 +171,7 @@ module dynConsBiogeochemMod
       !$acc prod100_flux(:)           ,&
       !$acc crop_product_flux(:)      ,&
       !$acc patch_to_soil_filter(:)  )
-      !$acc enter data create(sum1, sum2, sum3, sum4, sum5, sum6) 
+      !$acc enter data create(sum1, sum2, sum3, sum4, sum5, sum_seed2pool) 
 
       !$acc parallel loop independent gang vector default(present) 
       do fp = 1, num_soilp_with_inactive
@@ -454,8 +453,9 @@ module dynConsBiogeochemMod
          sum1 = 0._r8; sum2 = 0._r8; sum3 = 0._r8 
          sum4 = 0._r8; sum5 = 0._r8
          !$acc loop vector reduction(+:sum1) default(present)
-         do p = grc_pp%pfti(g), grc_pp%pftf(g)
-            l = lun_pp%landunit(p)
+         do fp = 1, grc_pp%npfts(g)
+            p = grc_pp%pfts(fp,g)
+            l = veg_pp%landunit(p)
             if (lun_pp%itype(l) == istsoil .or. lun_pp%itype(l) == istcrop) then
                sum1 = sum1 + veg_cf%dwt_conv_cflux(p)
                sum2 = sum2 + veg_cf%dwt_prod10c_gain(p)
@@ -582,24 +582,26 @@ module dynConsBiogeochemMod
       !$acc parallel loop independent gang worker default(present) private(sum1)
       do g = begg, endg 
          sum1 = 0._r8; sum2 = 0._r8; sum3 = 0._r8 
-         sum4 = 0._r8; sum5 = 0._r8; sum6 = 0._r8
-         !$acc loop vector reduction(+:sum1,sum2,sum3,sum4,sum5,sum6) default(present)
-         do p = grc_pp%pfti(g), grc_pp%pftf(g)
-            l = lun_pp%landunit(p)
+         sum4 = 0._r8; sum5 = 0._r8; sum_seed2pool = 0._r8
+         !$acc loop vector reduction(+:sum1,sum2,sum3,sum4,sum5,sum_seed2pool) default(present)
+         do fp = 1, grc_pp%npfts(g)
+            p = grc_pp%pfts(fp,g)
+            l = veg_pp%landunit(p)
+
             if (lun_pp%itype(l) == istsoil .or. lun_pp%itype(l) == istcrop) then
                sum1 = sum1 + veg_nf%dwt_conv_nflux(p)
                sum2 = sum2 + veg_nf%dwt_prod10n_gain(p)
                sum3 = sum3 + veg_nf%dwt_seedn_to_leaf(p)
                sum4 = sum4 + veg_nf%dwt_prod100n_gain(p)
                sum5 = sum5 + veg_nf%dwt_seedn_to_deadstem(p)
-               sum6 = sum6 + veg_nf%dwt_seedn_to_npool(p)
+               sum_seed2pool = sum_seed2pool + veg_nf%dwt_seedn_to_npool(p)
             end if 
          end do 
          grc_nf%dwt_conv_nflux(g)        = grc_nf%dwt_conv_nflux(g)    + sum1 
          grc_nf%dwt_prod10n_gain(g)      = grc_nf%dwt_prod10n_gain(g)  + sum2 
          grc_nf%dwt_prod100n_gain(g)     = grc_nf%dwt_prod100n_gain(g) + sum4
          grc_nf%dwt_seedn_to_leaf(g)     = grc_nf%dwt_seedn_to_leaf(g) + sum3
-         grc_nf%dwt_seedn_to_npool(g)    = grc_nf%dwt_seedn_to_npool(g) + sum6
+         grc_nf%dwt_seedn_to_npool(g)    = grc_nf%dwt_seedn_to_npool(g) + sum_seed2pool
          grc_nf%dwt_seedn_to_deadstem(g) = grc_nf%dwt_seedn_to_deadstem(g) + sum5
       end do 
       
@@ -677,10 +679,10 @@ module dynConsBiogeochemMod
                
             endif 
          end do 
-         col_nf%dwt_prod10n_gain(c) = col_nf%dwt_prod10n_gain(c) + sum1
-         col_nf%dwt_prod100n_gain(c)= col_nf%dwt_prod100n_gain(c)+ sum2
+         col_nf%dwt_prod10n_gain(c)  = col_nf%dwt_prod10n_gain(c) + sum1
+         col_nf%dwt_prod100n_gain(c) = col_nf%dwt_prod100n_gain(c)+ sum2
          col_nf%dwt_crop_productn_gain(c) = col_nf%dwt_crop_productn_gain(c) + sum3 
-         col_nf%dwt_conv_nflux(c) = col_nf%dwt_conv_nflux(c) + sum4 
+         col_nf%dwt_conv_nflux(c)  = col_nf%dwt_conv_nflux(c) + sum4 
          col_nf%dwt_slash_nflux(c) = col_nf%dwt_slash_nflux(c) + sum5 
       end do 
       
@@ -724,24 +726,25 @@ module dynConsBiogeochemMod
       !$acc parallel loop independent gang worker default(present) private(sum1)
       do g = begg, endg 
          sum1 = 0._r8; sum2 = 0._r8; sum3 = 0._r8 
-         sum4 = 0._r8; sum5 = 0._r8; sum6 = 0._r8
-         !$acc loop vector reduction(+:sum1,sum2,sum3,sum4,sum5,sum6) default(present)
-         do p = grc_pp%pfti(g), grc_pp%pftf(g)
-            l = lun_pp%landunit(p)
+         sum4 = 0._r8; sum5 = 0._r8; sum_seed2pool = 0._r8
+         !$acc loop vector reduction(+:sum1,sum2,sum3,sum4,sum5,sum_seed2pool) default(present)
+         do fp = 1, grc_pp%npfts(g)
+            p = grc_pp%pfts(fp,g)
+            l = veg_pp%landunit(p)
             if (lun_pp%itype(l) == istsoil .or. lun_pp%itype(l) == istcrop) then
                sum1 = sum1 + veg_pf%dwt_conv_pflux(p)
                sum2 = sum2 + veg_pf%dwt_prod10p_gain(p)
                sum3 = sum3 + veg_pf%dwt_seedp_to_leaf(p)
                sum4 = sum4 + veg_pf%dwt_prod100p_gain(p)
                sum5 = sum5 + veg_pf%dwt_seedp_to_deadstem(p)
-               sum6 = sum6 + veg_pf%dwt_seedp_to_ppool(p)
+               sum_seed2pool = sum_seed2pool + veg_pf%dwt_seedp_to_ppool(p)
             end if 
          end do 
          grc_pf%dwt_conv_pflux(g)        = grc_pf%dwt_conv_pflux(g)    + sum1 
          grc_pf%dwt_prod10p_gain(g)      = grc_pf%dwt_prod10p_gain(g)  + sum2 
          grc_pf%dwt_prod100p_gain(g)     = grc_pf%dwt_prod100p_gain(g) + sum4
          grc_pf%dwt_seedp_to_leaf(g)     = grc_pf%dwt_seedp_to_leaf(g) + sum3
-         grc_pf%dwt_seedp_to_ppool(g)    = grc_pf%dwt_seedp_to_ppool(g) + sum6
+         grc_pf%dwt_seedp_to_ppool(g)    = grc_pf%dwt_seedp_to_ppool(g) + sum_seed2pool
          grc_pf%dwt_seedp_to_deadstem(g) = grc_pf%dwt_seedp_to_deadstem(g) + sum5
       end do 
 
@@ -827,7 +830,7 @@ module dynConsBiogeochemMod
       !$acc prod100_flux(:)           ,&
       !$acc crop_product_flux(:)      ,&
       !$acc  patch_to_soil_filter(:)  )
-      !$acc exit data delete(sum1,sum2,sum3,sum4,sum5,sum6)  
+      !$acc exit data delete(sum1,sum2,sum3,sum4,sum5,sum_seed2pool)  
       ! Deallocate pft-level flux arrays
       if ( use_c13 ) then
          deallocate(dwt_leafc13_seed)

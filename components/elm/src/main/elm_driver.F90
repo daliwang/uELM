@@ -332,7 +332,11 @@ module elm_driver
       integer, allocatable :: npfts(:) 
       character(len=8) :: desc
       logical :: transfer_tapes  
+      integer :: ispin = 0
       !-----------------------------------------------------------------------
+      !do while(ispin == 0) 
+      !   call sleep(5) 
+      !end do
       call get_curr_time_string(dateTimeString)
       if (masterproc) then
          write(iulog,*)'Beginning timestep   : ',trim(dateTimeString)
@@ -1448,6 +1452,7 @@ module elm_driver
             ! EcosystemDynNoLeaching1 is called before clm_interface
             ! EcosystemDynNoLeaching2 is called after clm_interface
             !===========================================================================================
+         if(use_cn) then 
             call cpu_time(eco_startt) 
 
             call cpu_time(startt)
@@ -1610,10 +1615,6 @@ module elm_driver
                call NitrogenStateUpdate_Phase1_pft(proc_filter%num_soilp,proc_filter%soilp, dtime_mod)
                call PhosphorusStateUpdate_Phase1_pft(proc_filter%num_soilp,proc_filter%soilp, dtime_mod) 
             end if
-            print *, "\nBefore SoilLittVertTransp\ndecomp_cpools_vr:" 
-            do j =1,5
-              print *, j,col_cs%decomp_cpools_vr(25,j,1)
-            end do  
             
             call cpu_time(startt)
             call SoilLittVertTransp( proc_filter%num_soilc, proc_filter%soilc, &
@@ -1621,10 +1622,6 @@ module elm_driver
             call cpu_time(stopt)
             write(iulog,*) iam, "TIMING SoilLittVertTransp: ",(stopt-startt)*1.E+3,"ms"
 
-            print *, "\nAfter SoilLittVertTransp\ndecomp_cpools_vr:" 
-            do j =1,5
-              print *, j,col_cs%decomp_cpools_vr(25,j,1)
-            end do  
             call cpu_time(startt) 
             call GapMortality( proc_filter%num_soilc, proc_filter%soilc, &
                    proc_filter%num_soilp, proc_filter%soilp,&
@@ -1632,10 +1629,6 @@ module elm_driver
             !--------------------------------------------
             ! Update2
             !--------------------------------------------
-            print *, "\nBefore StateUpdate2\ndecomp_cpools_vr:" 
-            do j =1,5
-              print *, j,col_cs%decomp_cpools_vr(25,j,1)
-            end do  
             call CarbonStateUpdate2( proc_filter%num_soilc, proc_filter%soilc, &
                      proc_filter%num_soilp, proc_filter%soilp, &
                      col_cs, veg_cs, col_cf, veg_cf)
@@ -1658,11 +1651,6 @@ module elm_driver
             call CropHarvestPools(proc_filter%num_soilc, proc_filter%soilc, dtime_mod)
             call cpu_time(stopt) 
             write(iulog,*) "TIMING StateUpdate :: ",(stopt-startt)*1.E+3,"ms" 
-            
-            print *, "\nAfter StateUpdate2\ndecomp_cpools_vr:" 
-            do j =1,5
-              print *, j,col_cs%decomp_cpools_vr(25,j,1)
-            end do  
             
             call cpu_time(startt) 
             call FireArea( proc_filter%num_soilc, proc_filter%soilc, &
@@ -1730,6 +1718,7 @@ module elm_driver
             !===========================================================================================
             ! elm_interface: 'EcosystemDynNoLeaching' is divided into 2 subroutines (1 & 2): END
             !===========================================================================================
+         end if !use_cn  
             call cpu_time(startt)
            !$acc parallel loop independent gang vector private(nc,bounds_clump)
            do nc = 1,nclumps

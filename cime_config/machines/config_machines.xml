@@ -847,7 +847,7 @@
      <BATCH_SYSTEM>none</BATCH_SYSTEM>
      <SUPPORTED_BY>sserbin at bnl dot gov</SUPPORTED_BY>
      <!-- May want to modify this. Will require users to have 4 CPUs avail-->
-     <MAX_TASKS_PER_NODE>4</MAX_TASKS_PER_NODE>
+     <MAX_TASKS_PER_NODE>1</MAX_TASKS_PER_NODE>
      <MAX_MPITASKS_PER_NODE>1</MAX_MPITASKS_PER_NODE>
      <PROJECT_REQUIRED>FALSE</PROJECT_REQUIRED>
      <!-- Do we really want to force serial here? -->
