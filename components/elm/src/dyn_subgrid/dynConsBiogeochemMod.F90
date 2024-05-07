@@ -452,7 +452,7 @@ module dynConsBiogeochemMod
       do g = begg, endg 
          sum1 = 0._r8; sum2 = 0._r8; sum3 = 0._r8 
          sum4 = 0._r8; sum5 = 0._r8
-         !$acc loop vector reduction(+:sum1) default(present)
+         !$acc loop vector reduction(+:sum1) 
          do fp = 1, grc_pp%npfts(g)
             p = grc_pp%pfts(fp,g)
             l = veg_pp%landunit(p)
@@ -583,7 +583,7 @@ module dynConsBiogeochemMod
       do g = begg, endg 
          sum1 = 0._r8; sum2 = 0._r8; sum3 = 0._r8 
          sum4 = 0._r8; sum5 = 0._r8; sum_seed2pool = 0._r8
-         !$acc loop vector reduction(+:sum1,sum2,sum3,sum4,sum5,sum_seed2pool) default(present)
+         !$acc loop vector reduction(+:sum1,sum2,sum3,sum4,sum5,sum_seed2pool) 
          do fp = 1, grc_pp%npfts(g)
             p = grc_pp%pfts(fp,g)
             l = veg_pp%landunit(p)
@@ -727,7 +727,7 @@ module dynConsBiogeochemMod
       do g = begg, endg 
          sum1 = 0._r8; sum2 = 0._r8; sum3 = 0._r8 
          sum4 = 0._r8; sum5 = 0._r8; sum_seed2pool = 0._r8
-         !$acc loop vector reduction(+:sum1,sum2,sum3,sum4,sum5,sum_seed2pool) default(present)
+         !$acc loop vector reduction(+:sum1,sum2,sum3,sum4,sum5,sum_seed2pool) 
          do fp = 1, grc_pp%npfts(g)
             p = grc_pp%pfts(fp,g)
             l = veg_pp%landunit(p)

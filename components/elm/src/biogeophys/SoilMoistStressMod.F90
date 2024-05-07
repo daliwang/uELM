@@ -33,8 +33,6 @@ module SoilMoistStressMod
   integer, parameter :: moist_stress_clm_default  = 0  !default method for calculating root moisture stress
   logical,  private :: perchroot     = .false.  ! true => btran is based only on unfrozen soil levels
   logical,  private :: perchroot_alt = .false.  ! true => btran is based on active layer (defined over two years);
-  !$acc declare create(root_moist_stress_method)
-  !$acc declare copyin(moist_stress_clm_default)
   !$acc declare create(perchroot)
   !$acc declare create(perchroot_alt)
 
@@ -98,7 +96,6 @@ end subroutine normalize_test
     implicit none
 
     root_moist_stress_method = moist_stress_clm_default
-    !$acc update device(root_moist_stress_method)
   end subroutine init_root_moist_stress
 
   !--------------------------------------------------------------------------------

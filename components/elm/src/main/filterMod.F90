@@ -148,8 +148,8 @@ module filterMod
       integer, pointer :: lakenosnowc(:)  => null() ! non-snow filter (columns)
       integer, pointer :: num_lakenosnowc => null() ! number of columns in non-snow filter
       
-      integer, pointer :: do_smb_c(:) => null() ! glacier+bareland SMB calculations-on filter (cols)
-      integer, pointer :: num_do_smb_c                   ! number of columns in glacier+bareland SMB mec filter
+      integer, pointer :: do_smb_c(:)  => null() ! glacier+bareland SMB calculations-on filter (cols)
+      integer, pointer :: num_do_smb_c => null() ! number of columns in glacier+bareland SMB mec filter
 
    end type
    public :: procfilter
@@ -380,10 +380,9 @@ contains
 
   !------------------------------------------------------------------------
   subroutine setFilters(bounds, icemask_grc)
-    !
+    !$acc routine seq 
     ! !DESCRIPTION:
     ! Set CLM filters.
-      !$acc routine seq
     use decompMod , only : BOUNDS_LEVEL_CLUMP
     !
     ! !ARGUMENTS:
@@ -423,9 +422,8 @@ contains
     ! "Standard" filters only include active points. However, this routine can be used to set
     ! alternative filters that also apply over inactive points, by setting include_inactive =
     ! .true.
-    !
+    !$acc routine seq 
     ! !USES:
-      !$acc routine seq
     use decompMod , only : BOUNDS_LEVEL_CLUMP
     use pftvarcon , only : npcropmin, nppercropmin
     use landunit_varcon, only : istsoil, istcrop, istice_mec
@@ -753,7 +751,7 @@ contains
     begc = bounds%begc; endc = bounds%endc 
     begp = bounds%begp; endp = bounds%endp
 
-    !$acc enter data copyin(include_inactive) 
+   !$acc enter data copyin(include_inactive) 
    
    flc = 0
    fnlc = 0 
@@ -945,29 +943,29 @@ contains
     end do
     this_filter%num_hydrologyc = fhydroc
     this_filter%num_hydrononsoic = fhydronosoic
-    fsmb = 0 
-   !$acc parallel loop independent gang vector default(present) &
-   !$acc   private(fidx1) copy(fsmb) present(this_filter%do_smb_c(:))
-    do c = begc, endc
-       t =col_pp%topounit(c)
-       if (top_pp%active(t)) then
-          if (col_pp%active(c) .or. include_inactive) then
-             l = col_pp%landunit(c)
-             g = col_pp%gridcell(c)
-             if ( lun_pp%itype(l) == istice_mec .or. &
-                (lun_pp%itype(l) == istsoil .and. icemask_grc(g) > 0.)) then
-                !$acc atomic capture 
-                fsmb = fsmb + 1
-                fidx1 = fsmb
-                !$acc end atomic 
-                this_filter%do_smb_c(fidx1) = c
-             end if
-          end if
-       end if
-    end do
+     fsmb = 0 
+    !$acc parallel loop independent gang vector default(present) &
+    !$acc   private(fidx1) copy(fsmb) present(this_filter%do_smb_c(:))
+     do c = begc, endc
+        t =col_pp%topounit(c)
+        if (top_pp%active(t)) then
+           if (col_pp%active(c) .or. include_inactive) then
+              l = col_pp%landunit(c)
+              g = col_pp%gridcell(c)
+              if ( lun_pp%itype(l) == istice_mec .or. &
+                 (lun_pp%itype(l) == istsoil .and. icemask_grc(g) > 0.)) then
+                 !$acc atomic capture 
+                 fsmb = fsmb + 1
+                 fidx1 = fsmb
+                 !$acc end atomic 
+                 this_filter%do_smb_c(fidx1) = c
+              end if
+           end if
+        end if
+     end do
     this_filter%num_do_smb_c = fsmb
 
-   !$acc exit data delete(include_inactive) 
+    !$acc exit data delete(include_inactive) 
   end subroutine setProcFilters
 
   subroutine updateFracNoSnoFilters(bounds, this_filter,frac_veg_nosno)
@@ -985,15 +983,18 @@ contains
    type(procfilter), intent(inout) :: this_filter 
    integer          , intent(in)   :: frac_veg_nosno(:)
    ! !Local variables 
-   integer :: p, fbp, fvp, l 
+   integer :: p, fbp, fvp, l, begp, endp  
    integer :: fidx1, fidx2 
+        
+   begp = bounds%begp
+   endp = bounds%endp
 
    fbp = 0
    fvp = 0
 
    !$acc parallel loop independent gang vector default(present) private(fidx1, fidx2) copy(fbp,fvp) &
    !$acc present(this_filter%nolu_barep(:),this_filter%nolu_vegp(:))
-   do p = bounds%begp,bounds%endp
+   do p = begp,endp
     if (veg_pp%active(p)) then
        l =veg_pp%landunit(p)
        if(.not. lun_pp%lakpoi(l) .and. .not. (lun_pp%urbpoi(l)) ) then

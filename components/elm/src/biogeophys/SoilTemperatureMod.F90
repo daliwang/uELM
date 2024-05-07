@@ -126,9 +126,6 @@ module SoilTemperatureMod
   integer            :: thermal_model = default_thermal_model
   real(r8), private, parameter :: thin_sfclayer = 1.0e-6_r8   ! Threshold for thin surface layer
   !-----------------------------------------------------------------------
-  !$acc declare copyin(default_thermal_model)
-  !$acc declare copyin(petsc_thermal_model  )
-  !$acc declare create(thermal_model)
 contains
 
   !-----------------------------------------------------------------------
@@ -145,7 +142,6 @@ contains
     else
        thermal_model = petsc_thermal_model
     endif
-    !$acc update device(thermal_model)
 
   end subroutine init_soil_temperature
 

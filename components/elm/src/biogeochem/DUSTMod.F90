@@ -981,11 +981,11 @@ contains
       do m = 1, ndst
          stk_crc(m) = vlc_grv(m) / vlc_stk(m)
       end do
-      !$acc update device(ovr_src_snk_mss(:,:))
-      !$acc update device(dmt_vwr(:)          )
-      !$acc update device(stk_crc(:)          )
-      !$acc update device(tmp1)
-      !$acc update device(dns_aer)
+      !! !$acc update device(ovr_src_snk_mss(:,:))
+      !! !$acc update device(dmt_vwr(:)          )
+      !! !$acc update device(stk_crc(:)          )
+      !! !$acc update device(tmp1)
+      !! !$acc update device(dns_aer)
     end associate
 
   end subroutine InitDustVars
