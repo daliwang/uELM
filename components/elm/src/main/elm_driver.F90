@@ -334,15 +334,12 @@ module elm_driver
       logical :: transfer_tapes  
       integer :: ispin = 0
       !-----------------------------------------------------------------------
-      !do while(ispin == 0) 
-      !   call sleep(5) 
-      !end do
       call get_curr_time_string(dateTimeString)
-      if (masterproc) then
+      !if (masterproc) then
          write(iulog,*)'Beginning timestep   : ',trim(dateTimeString)
-         write(iulog,*) 'doalb :', doalb 
-         call shr_sys_flush(iulog)
-      endif
+         write(iulog,*) 'doalb :', doalb
+        print *, trim(dateTimeString) 
+      !endif
       
       call get_proc_bounds(bounds_proc)
       nclumps = get_proc_clumps()
@@ -351,9 +348,6 @@ module elm_driver
       dtime_mod = real(get_step_size(),r8)
       call get_curr_date(year_curr,mon_curr,day_curr,secs_curr)
       call get_prev_date(year_prev,mon_prev,day_prev,secs_prev)
-      write(iulog,*) iam, "STEP :", nstep_mod 
-      print *, year_curr,mon_curr, day_curr, secs_curr 
-      print *, year_prev, mon_prev, day_prev, secs_prev 
       dayspyr_mod = get_days_per_year()
       jday_mod = get_curr_calday()
       
@@ -429,7 +423,9 @@ module elm_driver
               npfts(g) = npfts(g) + 1
           end do
 
-         deallocate(npfts(:)) 
+         deallocate(npfts(:))
+         ! Summarize grc_pp additions:
+         ! columns: 
          !$acc update device( &
          !$acc        spinup_state            &
          !$acc       ,nyears_ad_carbon_only   &
@@ -633,13 +629,8 @@ module elm_driver
       istat = cudaMemGetInfo(free2, total)
       write(iulog,*) iam,"Free after final copyin:", free2/1.E9
       #endif
-      call cpu_time(startt)
-      print *, "active only:" 
       call setProcFilters(bounds_proc, proc_filter, .false., glc2lnd_vars%icemask_grc)
-      write(iulog,*) "inactive and active:" 
       call setProcFilters(bounds_proc, proc_filter_inactive_and_active, .true., glc2lnd_vars%icemask_grc)
-      call cpu_time(stopt) 
-      write(iulog,*) iam,"TIMING SetProcFilters :: ",(stopt-startt)*1.E+3, "ms"
       !$acc enter data copyin(cpl_bypass_input%atm_input(:,:,:,1:5))
       end if
       
@@ -1040,7 +1031,7 @@ module elm_driver
          if (do_budgets) then
             call WaterBudget_SetBeginningMonthlyStates(bounds_proc )
             if (use_cn) then
-               call CNPBudget_SetBeginningMonthlyStates(bounds_proc, col_cs, grc_cs)
+               !call CNPBudget_SetBeginningMonthlyStates(bounds_proc, col_cs, grc_cs)
             endif
          endif
                
@@ -1653,7 +1644,8 @@ module elm_driver
             write(iulog,*) "TIMING StateUpdate :: ",(stopt-startt)*1.E+3,"ms" 
             
             call cpu_time(startt) 
-            call FireArea( proc_filter%num_soilc, proc_filter%soilc, &
+            call FireArea( bounds_proc, &
+                    proc_filter%num_soilc, proc_filter%soilc, &
                     proc_filter%num_soilp, proc_filter%soilp, &
                     atm2lnd_vars, energyflux_vars, soilhydrology_vars, &
                     cnstate_vars )
@@ -1872,7 +1864,7 @@ module elm_driver
             ! Determine albedos for next time step
             ! ============================================================================
             
-            if (doalb) then
+            if (.false.) then
                !if(nstep_mod >1 ) call write_vars() 
                !$acc parallel loop independent gang private(nc,bounds_clump)
                do nc = 1,nclumps

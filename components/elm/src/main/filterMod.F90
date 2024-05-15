@@ -734,7 +734,6 @@ contains
     this_filter%num_soilc  = 0   
     this_filter%num_soilp  = 0   
     this_filter%num_pcropp = 0 
-
     this_filter%num_urbanp = 0
     this_filter%num_nourbanp = 0
     this_filter%num_urbanc = 0
@@ -965,7 +964,8 @@ contains
      end do
     this_filter%num_do_smb_c = fsmb
 
-    !$acc exit data delete(include_inactive) 
+    !$acc exit data delete(include_inactive)
+    
   end subroutine setProcFilters
 
   subroutine updateFracNoSnoFilters(bounds, this_filter,frac_veg_nosno)

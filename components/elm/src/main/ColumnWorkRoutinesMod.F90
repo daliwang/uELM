@@ -55,14 +55,11 @@ contains
      integer :: fi,i,j,k,l     ! loop index
      !------------------------------------------------------------------------
 
-     print*,"col_cf_setvalyes" 
      !$acc parallel loop independent gang vector default(present) collapse(2) !async(1)
      do j = 1, nlevdecomp_full
         do fi = 1,num_column
            i = filter_column(fi)
            
-           print *, fi, i,j
-
            this%phenology_c_to_litr_met_c(i,j)     = value_column
            this%phenology_c_to_litr_cel_c(i,j)     = value_column
            this%phenology_c_to_litr_lig_c(i,j)     = value_column

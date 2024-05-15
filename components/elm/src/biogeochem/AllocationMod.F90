@@ -1606,7 +1606,6 @@ contains
         p_allometry                  => cnstate_vars%p_allometry_patch      & ! Output: [real(r8) (:)   ]  P allocation index (DIM)
         )
       
-     print *, "num_soilp:", num_soilp 
       !$acc parallel loop independent gang vector default(present)
       do fp = 1, num_soilp 
          p= filter_soilp(fp) 

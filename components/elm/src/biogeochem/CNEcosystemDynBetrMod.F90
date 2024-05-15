@@ -263,7 +263,7 @@ module CNEcosystemDynBetrMod
                isotope=c14, isocol_cs=c14_col_cs, isoveg_cs=c14_veg_cs, isocol_cf=c14_col_cf, isoveg_cf=c14_veg_cf)
        end if
 
-       call FireArea( num_soilc, filter_soilc, num_soilp, filter_soilp, &
+       call FireArea( bounds, num_soilc, filter_soilc, num_soilp, filter_soilp, &
             atm2lnd_vars, energyflux_vars, soilhydrology_vars, &
             cnstate_vars )
 

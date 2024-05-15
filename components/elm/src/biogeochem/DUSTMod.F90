@@ -315,8 +315,8 @@ contains
       ! Loop through patches
 
       ! initialize variables which get passed to the atmosphere
-      ! flx_mss_vrt_dst(bounds%begp:bounds%endp,:)=0._r8
-
+      flx_mss_vrt_dst(bounds%begp:bounds%endp,:)=0._r8
+      
       !$acc parallel loop independent gang vector default(present)
       do fp = 1,num_nolakep
          p = filter_nolakep(fp)

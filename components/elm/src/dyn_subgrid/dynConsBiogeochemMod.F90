@@ -137,7 +137,9 @@ module dynConsBiogeochemMod
       real(r8) :: startt, stopt
       real(r8) :: sum1, sum2, sum3, sum4 ,sum5, sum_seed2pool
       !-----------------------------------------------------------------------
-      
+      begg = bounds%begg
+      endg = bounds%endg
+       
       if ( use_c13 ) then
          allocate(dwt_leafc13_seed           (num_soilp_with_inactive), stat=ier)
          allocate(dwt_deadstemc13_seed       (num_soilp_with_inactive), stat=ier)
@@ -448,11 +450,12 @@ module dynConsBiogeochemMod
       ! need to multiply by the patch's gridcell weight when translating patch-level
       ! fluxes into gridcell-level fluxes.
       ! NOTE: The grc_xf variables are zero'd at the start of each timestep in elm_driver::zero_elm_weights
-      !$acc parallel loop independent gang worker default(present) private(sum1)
+      
+      !$acc parallel loop independent gang worker default(present) private(sum1,sum2,sum3,sum4,sum5)
       do g = begg, endg 
          sum1 = 0._r8; sum2 = 0._r8; sum3 = 0._r8 
          sum4 = 0._r8; sum5 = 0._r8
-         !$acc loop vector reduction(+:sum1) 
+         !$acc loop vector reduction(+:sum1,sum2,sum3,sum4,sum5) 
          do fp = 1, grc_pp%npfts(g)
             p = grc_pp%pfts(fp,g)
             l = veg_pp%landunit(p)

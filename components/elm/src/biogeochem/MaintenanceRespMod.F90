@@ -159,9 +159,6 @@ contains
          else !nosno
              leaf_mr(p) = 0._r8
          end if
-         if(p == 34) then 
-           print *, ivt(p), woody(ivt(p)), br_mr_Inst, tc, livecroot_mr(p)  
-        end if  
          if (woody(ivt(p)) == 1) then
             livestem_mr(p) = livestemn(p)*br_mr_Inst*tc
             livecroot_mr(p) = livecrootn(p)*br_mr_Inst*tc

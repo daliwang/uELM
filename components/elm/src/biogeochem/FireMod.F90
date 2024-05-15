@@ -20,7 +20,7 @@ module FireMod
   use shr_log_mod            , only : errMsg => shr_log_errMsg
   use elm_varctl             , only : iulog
   use elm_varpar             , only : nlevdecomp, ndecomp_pools
-  use elm_varcon             , only : dzsoi_decomp
+  use elm_varcon             , only : dzsoi_decomp, spval
   use pftvarcon              , only : fsr_pft, fd_pft, noveg
   use spmdMod                , only : masterproc, mpicom, comp_id
   use fileutils              , only : getavu, relavu
@@ -113,7 +113,7 @@ contains
   end subroutine FireInterp
 
   !-----------------------------------------------------------------------
-  subroutine FireArea ( &
+  subroutine FireArea (bounds, &
        num_soilc, filter_soilc, num_soilp, filter_soilp, &
        atm2lnd_vars,  energyflux_vars, soilhydrology_vars, &
        cnstate_vars )
@@ -131,6 +131,7 @@ contains
     use dynSubgridControlMod , only: dyn_subgrid_control_inst
     !
     ! !ARGUMENTS:
+    type(bounds_type)        , intent(in)    :: bounds   
     integer                  , intent(in)    :: num_soilc       ! number of soil columns in filter
     integer                  , intent(in)    :: filter_soilc(:) ! filter for soil columns
     integer                  , intent(in)    :: num_soilp       ! number of soil patches in filter
@@ -168,6 +169,7 @@ contains
     real(r8) :: spread_m ! combustability of fuel for fire spread
     real(r8) :: Lb_lf    ! length-to-breadth ratio added by Lifang
     integer  :: i_cwd    ! cwd pool
+    integer  :: begc, endc, begp, endp 
     real(r8) :: lh       ! anthro. ignitions (count/km2/hr)
     real(r8) :: fs       ! hd-dependent fires suppression (0-1)
     real(r8) :: ig       ! total ignitions (count/km2/hr)
@@ -253,14 +255,16 @@ contains
 
       transient_landcover = (dyn_subgrid_control_inst%do_transient_pfts .or. &
                   dyn_subgrid_control_inst%do_transient_crops)
-
+      begp = bounds%begp; endp = bounds%endp
+      begc = bounds%begc; endc = bounds%endc 
+      
       !pft to column average
       call p2c_1d_filter_parallel( num_soilc, filter_soilc, &
-           totvegc(:), totvegc_col(:))
+           totvegc(begp:endp), totvegc_col(begc:endc))
       call p2c_1d_filter_parallel( num_soilc, filter_soilc, &
-           leafc(:), leafc_col(:))
+           leafc(begp:endp), leafc_col(begc:endc))
       call p2c_1d_filter_parallel(num_soilc, filter_soilc, &
-           deadstemc(:), deadstemc_col(:))
+           deadstemc(begp:endp), deadstemc_col(begc:endc))
 
      ! On first time-step, just set area burned to zero and exit
      !
@@ -349,7 +353,7 @@ contains
         do p = col_pp%pfti(c), col_pp%pftf(c)
               ! For non-crop -- natural vegetation and bare-soil
               if( veg_pp%itype(p)  <  nc3crop .and. cropf_col(c)  <  1.0_r8 .and. veg_pp%wtcol(p)  >  0._r8 )then
-                 if( .not. (btran2(p) .ne. btran2(p)))then !check if btran2 is NaN
+                 if( btran2(p) .ne. spval )then !check if btran2 is NaN
                     if (btran2(p)  <=  1._r8 ) then
                       sum1 = sum1 + btran2(p)*veg_pp%wtcol(p)
                       sum2 = sum2 + veg_pp%wtcol(p)

@@ -1336,9 +1336,6 @@ contains
             !$acc loop vector reduction(+:sum1)
             do p = col_pp%pfti(c), col_pp%pftf(c) 
                if (veg_pp%active(p)) then
-                  if(c == 1 .and. j ==1 ) then 
-                     print *, p,qflx_tran_veg_patch(p),veg_pp%wtcol(p)
-                  end if 
                   sum1 = sum1 + rootr_patch(p,j) * qflx_tran_veg_patch(p) * veg_pp%wtcol(p)
                   qflx_rootsoi_frac_patch(p,j) = rootr_patch(p,j) * qflx_tran_veg_patch(p) * veg_pp%wtcol(p)
                end if

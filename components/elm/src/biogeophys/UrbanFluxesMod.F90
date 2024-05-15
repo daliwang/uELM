@@ -464,7 +464,6 @@ contains
          zldis(fl) = forc_hgt_u_patch(lun_pp%pfti(l)) - z_d_town(l)
 
          ! Initialize Monin-Obukhov length and wind speed including convective velocity
-
          call MoninObukIni(ur(fl), thv_g(fl), dthv, zldis(fl), z_0_town(l), um(fl), obu(fl))
          ! Initialize conductances
          wtus_roof(fl)              = 0._r8

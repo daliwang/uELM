@@ -4,9 +4,9 @@
  hist_empty_htapes = .true.
  hist_dov2xy = .true.
  finidat = ''
- fsurdat = '$DIN_LOC_ROOT/lnd/clm2/surfdata_map/surfdata_42_FLUXNETSITES_simyr1850_c170912.nc'
- paramfile = '$DIN_LOC_ROOT/lnd/clm2/paramdata/clm_params_amflx_cplbypass.nc'
- fsoilordercon = '$DIN_LOC_ROOT/lnd/clm2/paramdata/CNP_parameters_amflx_cplbypass.nc'
+ fsurdat = '$DIN_LOC_ROOT/lnd/clm2/surfdata_map/surfdata_lakes.nc'
+ paramfile = '$DIN_LOC_ROOT/lnd/clm2/paramdata/clm_params_lakes.nc'
+ fsoilordercon = '$DIN_LOC_ROOT/lnd/clm2/paramdata/CNP_parameters_lakes.nc'
  stream_fldfilename_ndep = '$DIN_LOC_ROOT/lnd/clm2/ndepdata/fndep_clm_rcp4.5_simyr1849-2106_1.9x2.5_c100428.nc'
  nyears_ad_carbon_only = 25
  spinup_mortality_factor = 10

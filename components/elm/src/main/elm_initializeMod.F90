@@ -682,9 +682,7 @@ contains
 
     call t_stopf('init_accflds')
     
-    print *, "initialize_scale_l2g:"   
     call initialize_scale_l2g_lookup()
-    print *, "initialize scale c2l:" 
     call initialize_scale_c2l(bounds_proc)
     ! ------------------------------------------------------------------------
     ! Initializate dynamic subgrid weights (for prescribed transient Patches,

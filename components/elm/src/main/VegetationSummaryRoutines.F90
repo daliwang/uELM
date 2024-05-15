@@ -662,11 +662,11 @@ subroutine summary_veg_flux_p2c(numfc, filterc, veg_cf, col_cf,&
      col_cf%fire_closs_p2c(c) = sum6
      col_cf%litfall(c) = sum7; col_cf%hrv_xsmrpool_to_atm(c) = sum8
      ! phosphorus flux :
-     col_pf%fire_ploss(c)    = psum1;
-     col_pf%wood_harvestp(c) = psum2;
+     col_pf%fire_ploss_p2c(c) = psum1
+     col_pf%wood_harvestp(c)  = psum2
      ! nitrogen flux :
-     col_nf%fire_nloss(c) = nsum1;
-     col_nf%wood_harvestn(c) = nsum2;
+     col_nf%fire_nloss_p2c(c) = nsum1
+     col_nf%wood_harvestn(c)  = nsum2
    end do
 
 end subroutine summary_veg_flux_p2c

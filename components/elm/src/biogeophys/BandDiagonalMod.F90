@@ -240,9 +240,6 @@ contains
 
        u(ci,jtop(ci):jbot(ci))=result(1:n,fc)
       
-       if(ci == 16) then 
-         print *, fc, u(ci, -4) 
-       endif 
        if(info /= 0) then
           print *, 'index: ', ci
          write(iulog,*)'n,kl,ku,m ',n,kl,ku,m
