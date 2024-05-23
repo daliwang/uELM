@@ -1410,25 +1410,23 @@ end subroutine FrictionVelocity_test
     !
     ! !ARGUMENTS:
     implicit none
-    real(r8), intent(in)  :: ur    ! wind speed at reference height [m/s]
-    real(r8), intent(in)  :: thv   ! virtual potential temperature (kelvin)
-    real(r8), intent(in)  :: dthv  ! diff of vir. poten. temp. between ref. height and surface
-    real(r8), intent(in)  :: zldis ! reference height "minus" zero displacement heght [m]
-    real(r8), intent(in)  :: z0m   ! roughness length, momentum [m]
+    real(r8), intent(in),value  :: ur    ! wind speed at reference height [m/s]
+    real(r8), intent(in),value  :: thv   ! virtual potential temperature (kelvin)
+    real(r8), intent(in),value  :: dthv  ! diff of vir. poten. temp. between ref. height and surface
+    real(r8), intent(in),value  :: zldis ! reference height "minus" zero displacement heght [m]
+    real(r8), intent(in),value  :: z0m   ! roughness length, momentum [m]
     real(r8), intent(out) :: um    ! wind speed including the stability effect [m/s]
     real(r8), intent(out) :: obu   ! monin-obukhov length (m)
     !
     ! !LOCAL VARIABLES:
-    real(r8) :: wc    ! convective velocity [m/s]
+    real(r8),parameter :: wc=0.5_r8    ! convective velocity [m/s]
+    real(r8),parameter :: ustar=0.06_r8 ! friction velocity [m/s]
     real(r8) :: rib   ! bulk Richardson number
     real(r8) :: zeta  ! dimensionless height used in Monin-Obukhov theory
-    real(r8) :: ustar ! friction velocity [m/s]
     !-----------------------------------------------------------------------
 
     ! Initial values of u* and convective velocity
 
-    ustar=0.06_r8
-    wc=0.5_r8
     if (dthv >= 0._r8) then
        um=max(ur,0.1_r8)
     else
@@ -1436,7 +1434,6 @@ end subroutine FrictionVelocity_test
     endif
 
     rib=grav*zldis*dthv/(thv*um*um)
-
     if (rib >= 0._r8) then      ! neutral or stable
        zeta = rib*log(zldis/z0m)/(1._r8-5._r8*min(rib,0.19_r8))
        zeta = min(2._r8,max(zeta,0.01_r8 ))

@@ -75,7 +75,7 @@ contains
     !
     ! !LOCAL VARIABLES:
     integer  :: g,t,l,c,j,fc               ! indices
-    real(r8) :: sum1, sum2, sum3 
+    real(r8) :: sumtot, sumice, sumliq 
     !-----------------------------------------------------------------------
 
     associate(                                                                  &
@@ -121,7 +121,7 @@ contains
          qflx_glcice_frz        => col_wf%qflx_glcice_frz           & ! Output: [real(r8) (:)   ]  ice growth (positive definite) (mm H2O/s)
          )
 
-      !$acc enter data create(sum1,sum2,sum3)
+      !$acc enter data create(sumtot,sumice,sumliq)
    #ifndef _OPENACC
       if (use_vichydro) then
          call ELMVICMap(bounds, num_hydrologyc, filter_hydrologyc, &
@@ -175,23 +175,23 @@ contains
          end if
       end do
 
-      !$acc parallel loop independent gang worker default(present) private(sum1,sum2,sum3)
+      !$acc parallel loop independent gang worker default(present) private(sumtot,sumliq,sumice)
       do fc = 1, num_nolakec
          c = filter_nolakec(fc)
-         sum1 = 0._r8; sum2 = 0._r8; sum3 = 0._r8;
-         !$acc loop vector reduction(+:sum1,sum2,sum3)
+         sumtot = 0._r8; sumliq = 0._r8; sumice = 0._r8;
+         !$acc loop vector reduction(+:sumtot,sumliq,sumice)
          do j = 1, nlevgrnd
             if ((ctype(c) == icol_sunwall .or. ctype(c) == icol_shadewall &
                .or. ctype(c) == icol_roof) .and. j > nlevurb ) then
             else
-              sum1 = sum1 + h2osoi_ice(c,j) + h2osoi_liq(c,j)
-              sum2 = sum2 + h2osoi_liq(c,j)
-              sum3 = sum3 + h2osoi_ice(c,j)
+              sumtot = sumtot + h2osoi_ice(c,j) + h2osoi_liq(c,j)
+              sumliq = sumliq + h2osoi_liq(c,j)
+              sumice = sumice + h2osoi_ice(c,j)
             end if
           end do
-          endwb(c) = endwb(c) + sum1
-          h2osoi_liq_depth_intg(c) = h2osoi_liq_depth_intg(c) + sum2
-          h2osoi_ice_depth_intg(c) = h2osoi_ice_depth_intg(c) + sum3
+          endwb(c) = endwb(c) + sumtot
+          h2osoi_liq_depth_intg(c) = h2osoi_liq_depth_intg(c) + sumliq
+          h2osoi_ice_depth_intg(c) = h2osoi_ice_depth_intg(c) + sumice
       end do
 
       ! ---------------------------------------------------------------------------------
@@ -298,6 +298,7 @@ contains
 
       end do
 
+      !$acc exit data delete(sumtot,sumice,sumliq)
     end associate
 
   end subroutine HydrologyDrainage

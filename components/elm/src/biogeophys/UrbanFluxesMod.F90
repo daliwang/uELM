@@ -30,7 +30,7 @@ module UrbanFluxesMod
   use VegetationDataType   , only : veg_es, veg_ef, veg_ws, veg_wf
   use clm_time_manager    , only : get_curr_date, get_step_size, get_nstep
 
-  use timeinfoMod  , only : nstep_mod, year_curr, mon_curr, day_curr, secs_curr
+  use timeinfoMod  , only : nstep_mod,  secs_curr
   use timeinfoMod  , only : dtime_mod
 
   !
@@ -46,7 +46,7 @@ module UrbanFluxesMod
 contains
 
   !-----------------------------------------------------------------------
-  subroutine UrbanFluxes (bounds, num_nourbanl, filter_nourbanl,                        &
+  subroutine UrbanFluxes (bounds,       &
        num_urbanl, filter_urbanl, num_urbanc, filter_urbanc, num_urbanp, filter_urbanp, &
        urbanparams_vars, soilstate_vars,    &
       frictionvel_vars )
@@ -69,8 +69,6 @@ contains
     !
     ! !ARGUMENTS:
     type(bounds_type)      , intent(in)    :: bounds
-    integer                , intent(in)    :: num_nourbanl       ! number of non-urban landunits in clump
-    integer                , intent(in)    :: filter_nourbanl(:) ! non-urban landunit filter
     integer                , intent(in)    :: num_urbanl         ! number of urban landunits in clump
     integer                , intent(in)    :: filter_urbanl(:)   ! urban landunit filter
     integer                , intent(in)    :: num_urbanc         ! number of urban columns in clump
@@ -80,18 +78,15 @@ contains
     type(urbanparams_type) , intent(in)    :: urbanparams_vars
     type(soilstate_type)   , intent(inout) :: soilstate_vars
     type(frictionvel_type) , intent(inout) :: frictionvel_vars
-    real(r8) :: dtime                                                ! land model time step (sec)
-    integer  :: year,month,day,secs
     !
     ! !LOCAL VARIABLES:
     integer  :: fp,fc,fl,f,p,c,l,t,g,j,pi,i     ! indices
 
-   !  integer  :: filter_copyl(num_urbanl)                ! iteration copy of filter_urbanl
-   !  integer  :: filter_copyc(num_urbanc)                ! iteration copy of filter_urbanc
     integer  :: num_copyl                                ! iteration num_urbanl
     integer  :: num_copyl_old                            ! previous iteration num_copyl
     integer  :: num_copyc                                ! iteration num_urbanc
     integer  :: num_copyc_old                            ! previous iteration num_copyc
+    integer  :: num_unconverged  
 
     real(r8) :: canyontop_wind(1:num_urbanl)              ! wind at canyon top (m/s)
     real(r8) :: canyon_u_wind(1:num_urbanl)               ! u-component of wind speed inside canyon (m/s)
@@ -116,8 +111,6 @@ contains
     real(r8) :: obu(1:num_urbanl)                         ! Monin-Obukhov length (m)
     real(r8) :: taf_numer(1:num_urbanl)                   ! numerator of taf equation (K m/s)
     real(r8) :: taf_denom(1:num_urbanl)                   ! denominator of taf equation (m/s)
-    real(r8) :: taf_numer_test(1:num_urbanl)                   ! numerator of taf equation (K m/s)
-    real(r8) :: taf_denom_test(1:num_urbanl)                   ! denominator of taf equation (m/s)
     real(r8) :: qaf_numer(1:num_urbanl)                   ! numerator of qaf equation (kg m/kg s)
     real(r8) :: qaf_denom(1:num_urbanl)                   ! denominator of qaf equation (m/s)
     real(r8) :: wtas(1:num_urbanl)                        ! sensible heat conductance for urban air to atmospheric air (m/s)
@@ -201,7 +194,7 @@ contains
     integer :: lnd_to_urban_filter(bounds%begl:bounds%endl) !
     integer :: col_to_urban_filter(bounds%begc:bounds%endc)
     logical :: converged_landunits(bounds%begl:bounds%endl)
-    integer :: begl, endl, begc,endc
+    integer :: begl, endl, begc, endc, begp, endp
     integer :: erridx1, erridx2
     real(r8) :: sum_denom, sum_numer
     !-----------------------------------------------------------------------
@@ -363,45 +356,30 @@ contains
     !$acc prev_tau(:), &
     !$acc prev_tau_diff(:), &
     !$acc lnd_to_urban_filter(:), &
-    !$acc converged_landunits(:), &
-    !$acc num_copyl, &
-    !$acc zeta, &
-    !$acc fwet_roof, &
-    !$acc fwet_road_imperv)
+    !$acc converged_landunits(:), col_to_urban_filter(:) )
 
 
-       begl =   bounds%begl
-       endl =   bounds%endl
-       begc =   bounds%begc
-       endc =   bounds%endc
-       ! Define fields that appear on the restart file for non-urban landunits
-       !$acc parallel loop independent gang vector default(present)
-       do fl = 1,num_nourbanl
-         l = filter_nourbanl(fl)
-         taf(l) = spval
-         qaf(l) = spval
-       end do
-
+       begl = bounds%begl
+       endl = bounds%endl
+       begc = bounds%begc
+       endc = bounds%endc
+       begp = bounds%begp
+       endp = bounds%endp
       ! Get time step
 
-      nstep = nstep_mod
-      dtime = dtime_mod
-      year = year_curr
-      month = mon_curr
-      day = day_curr
-      secs = secs_curr
       lnd_to_urban_filter(:) = -9999
       ! Compute canyontop wind using Masson (2000)
       erridx1 = -9999
       erridx2 = -9999
-      !$acc parallel loop independent gang vector default(present) copy(erridx1,erridx2)
+      !$acc parallel loop independent gang vector default(present) copy(erridx1,erridx2) &
+      !$acc present(lnd_to_urban_filter(:), ht_roof(:), z_d_town(:),z_0_town(:))
       do fl = 1, num_urbanl
          l = filter_urbanl(fl)
          lnd_to_urban_filter(l) = fl
          g = lun_pp%gridcell(l)
          t = lun_pp%topounit(l)
 
-         local_secp1(fl)        = secs + nint((grc_pp%londeg(g)/degpsec)/dtime)*dtime
+         local_secp1(fl)        = secs_curr + nint((grc_pp%londeg(g)/degpsec)/dtime_mod)*dtime_mod
          local_secp1(fl)        = mod(local_secp1(fl),isecspday)
 
          ! Error checks
@@ -450,7 +428,8 @@ contains
 
       ! Compute fluxes - Follows elm approach for bare soils (Oleson et al 2004)
 
-      !$acc parallel loop independent gang vector default(present)
+      !$acc parallel loop independent gang vector default(present) &
+      !$acc present(z_0_town(:),z_d_town(:),taf(:),qaf(:) )
       do fl = 1, num_urbanl
          l = filter_urbanl(fl)
          t = lun_pp%topounit(l)
@@ -465,36 +444,36 @@ contains
 
          ! Initialize Monin-Obukhov length and wind speed including convective velocity
          call MoninObukIni(ur(fl), thv_g(fl), dthv, zldis(fl), z_0_town(l), um(fl), obu(fl))
-         ! Initialize conductances
-         wtus_roof(fl)              = 0._r8
-         wtus_road_perv(fl)         = 0._r8
-         wtus_road_imperv(fl)       = 0._r8
-         wtus_sunwall(fl)           = 0._r8
-         wtus_shadewall(fl)         = 0._r8
-         wtuq_roof(fl)              = 0._r8
-         wtuq_road_perv(fl)         = 0._r8
-         wtuq_road_imperv(fl)       = 0._r8
-         wtuq_sunwall(fl)           = 0._r8
-         wtuq_shadewall(fl)         = 0._r8
-         wtus_roof_unscl(fl)        = 0._r8
-         wtus_road_perv_unscl(fl)   = 0._r8
-         wtus_road_imperv_unscl(fl) = 0._r8
-         wtus_sunwall_unscl(fl)     = 0._r8
-         wtus_shadewall_unscl(fl)   = 0._r8
-         wtuq_roof_unscl(fl)        = 0._r8
-         wtuq_road_perv_unscl(fl)   = 0._r8
-         wtuq_road_imperv_unscl(fl) = 0._r8
-         wtuq_sunwall_unscl(fl)     = 0._r8
-         wtuq_shadewall_unscl(fl)   = 0._r8
       end do
 
-
+      ! ! Initialize conductances
+      !$acc parallel loop independent gang vector default(present) 
+      do fl=1,num_urbanl
+        wtus_roof(fl)              = 0._r8
+        wtus_road_perv(fl)         = 0._r8
+        wtus_road_imperv(fl)       = 0._r8
+        wtus_sunwall(fl)           = 0._r8
+        wtus_shadewall(fl)         = 0._r8
+        wtuq_roof(fl)              = 0._r8
+        wtuq_road_perv(fl)         = 0._r8
+        wtuq_road_imperv(fl)       = 0._r8
+        wtuq_sunwall(fl)           = 0._r8
+        wtuq_shadewall(fl)         = 0._r8
+        wtus_roof_unscl(fl)        = 0._r8
+        wtus_road_perv_unscl(fl)   = 0._r8
+        wtus_road_imperv_unscl(fl) = 0._r8
+        wtus_sunwall_unscl(fl)     = 0._r8
+        wtus_shadewall_unscl(fl)   = 0._r8
+        wtuq_roof_unscl(fl)        = 0._r8
+        wtuq_road_perv_unscl(fl)   = 0._r8
+        wtuq_road_imperv_unscl(fl) = 0._r8
+        wtuq_sunwall_unscl(fl)     = 0._r8
+        wtuq_shadewall_unscl(fl)   = 0._r8
+      end do 
 
       ! Start stability iteration
       num_copyl = num_urbanl
       num_copyc = num_urbanc
-      ! filter_copyl(1:num_urbanl) = filter_urbanl(1:num_urbanl)
-      ! filter_copyc(1:num_urbanc) = filter_urbanc(1:num_urbanc)
 
       if (implicit_stress) then
          loopmax = itmax
@@ -503,23 +482,23 @@ contains
       end if
       ! converged_cols(begc:endc) = .false.
       converged_landunits(begl:endl) = .false.
-      col_to_urban_filter(:) = -9999
-
+      !$acc update device(converged_landunits(:))
       ITERATION: do iter = 1, loopmax
 
          ! Get friction velocity, relation for potential
          ! temperature and humidity profiles of surface boundary layer.
 
-         if (num_copyl > 0) then
-            call FrictionVelocity_loops(begl, endl, &
+         call FrictionVelocity_loops(begl, endl, &
                  num_urbanl, filter_urbanl, &
                  z_d_town(begl:endl), z_0_town(begl:endl), z_0_town(begl:endl), z_0_town(begl:endl), &
                  obu(1:num_urbanl), iter, ur(1:num_urbanl), um(1:num_urbanl), ustar(1:num_urbanl), &
-                 temp1(1:num_urbanl), temp2(1:num_urbanl), temp12m(1:num_urbanl), temp22m(1:num_urbanl), fm(1:num_urbanl), &
+                 temp1(1:num_urbanl), temp2(1:num_urbanl), temp12m(1:num_urbanl), &
+                 temp22m(1:num_urbanl), fm(1:num_urbanl), &
                  frictionvel_vars, converged_landunits(begl:endl),landunit_index=.true.)
-         end if
 
-         !$acc parallel loop independent gang vector default(present)
+         !$acc parallel loop independent gang vector default(present) &
+         !$acc  present(ht_roof(:),wind_hgt_canyon(:),z_0_town(:),&
+         !$acc  z_d_town(:),canyon_hwr(:),converged_landunits(:))
          do fl = 1, num_urbanl
             l = filter_urbanl(fl)
             t = lun_pp%topounit(l)
@@ -582,7 +561,7 @@ contains
 
          ! This is the first term in the equation solutions for urban canopy air temperature
          ! and specific humidity (numerator) and is a landunit quantity
-         !$acc parallel loop independent gang vector default(present)
+         !$acc parallel loop independent gang vector default(present) present(converged_landunits(:))
          do fl = 1, num_urbanl
             l = filter_urbanl(fl)
             t = lun_pp%topounit(l)
@@ -591,8 +570,6 @@ contains
 
             taf_numer(fl) = thm_g(fl)/rahu(fl)
             taf_denom(fl) = 1._r8/rahu(fl)
-            taf_numer_test(fl) = thm_g(fl)/rahu(fl)
-            taf_denom_test(fl) = 1._r8/rahu(fl)
             qaf_numer(fl) = forc_q(t)/rawu(fl)
             qaf_denom(fl) = 1._r8/rawu(fl)
 
@@ -605,12 +582,15 @@ contains
 
          ! Gather other terms for other urban columns for numerator and denominator of
          ! equations for urban canopy air temperature and specific humidity
-         do fc = 1, num_urbanc
+         !$acc parallel loop independent gang vector default(present) present(&
+         !$acc wtroad_perv(:),qaf(:),lnd_to_urban_filter(:),converged_landunits(:),&
+         !$acc canyon_hwr(:),wtlunit_roof(:))
+          do fc = 1, num_urbanc
             c = filter_urbanc(fc)
             l = col_pp%landunit(c)
+            if(converged_landunits(l)) cycle
             fl = lnd_to_urban_filter(l)
             col_to_urban_filter(c) = fc
-            if(converged_landunits(l)) cycle
 
             if (ctype(c) == icol_roof) then
 
@@ -752,57 +732,62 @@ contains
                else
                   eflx_heat_from_ac_shadewall(fl) = 0._r8
                end if
-            else
-               write(iulog,*) 'c, ctype, pi = ', c, ctype(c), pi
-               write(iulog,*) 'Column indices for: shadewall, sunwall, road_imperv, road_perv, roof: '
-               write(iulog,*) icol_shadewall, icol_sunwall, icol_road_imperv, icol_road_perv, icol_roof
-               call endrun(decomp_index=l, elmlevel=namel, msg="ERROR, ctype out of range"//errmsg(__FILE__, __LINE__))
+           ! else
+           !    write(iulog,*) 'c, ctype, pi = ', c, ctype(c), pi
+           !    write(iulog,*) 'Column indices for: shadewall, sunwall, road_imperv, road_perv, roof: '
+           !    write(iulog,*) icol_shadewall, icol_sunwall, icol_road_imperv, icol_road_perv, icol_roof
+               !call endrun(decomp_index=l, elmlevel=namel, msg="ERROR, ctype out of range"//errmsg(__FILE__, __LINE__))
             end if
-
-            taf_numer(fl) = taf_numer(fl) + t_grnd(c)*wtus(fc)
-            taf_denom(fl) = taf_denom(fl) + wtus(fc)
-            qaf_numer(fl) = qaf_numer(fl) + qg(c)*wtuq(fc)
-            qaf_denom(fl) = qaf_denom(fl) + wtuq(fc)
+           ! Made seperate reduction loop 
+           ! taf_numer(fl) = taf_numer(fl) + t_grnd(c)*wtus(fc)
+           ! taf_denom(fl) = taf_denom(fl) + wtus(fc)
+           ! qaf_numer(fl) = qaf_numer(fl) + qg(c)*wtuq(fc)
+           ! qaf_denom(fl) = qaf_denom(fl) + wtuq(fc)
 
          end do
-        ! !$acc parallel loop independent gang worker default(present) private(sum_denom,sum_numer)
-        ! do fl = 1, num_urbanl
-        !    sum_denom = 0._r8
-        !    sum_numer = 0._r8
-        !    l = filter_urbanl(fl)
-        !    if(converged_landunits(l)) cycle
-        !    !$acc loop vector reduction(+:sum_denom,sum_numer)
-        !    do c = lun_pp%coli(l), lun_pp%colf(l)
-        !       if(col_pp%active(c)) then
-        !          fc = col_to_urban_filter(c)
-        !          sum_denom = sum_denom + wtus(fc)
-        !          sum_numer = sum_numer + t_grnd(c)*wtus(fc)
-        !       end if
-        !    end do
-        !    taf_denom_test(fl) = taf_denom_test(fl) + sum_denom
-        !    taf_numer(fl) = taf_numer(fl) + sum_numer
-        ! end do
+        !$acc parallel loop independent gang worker default(present) private(sum_denom,sum_numer)&
+        !$acc present(converged_landunits(:))
+        do fl = 1, num_urbanl
+           sum_denom = 0._r8
+           sum_numer = 0._r8
+           l = filter_urbanl(fl)
+           if(converged_landunits(l)) cycle
+           !$acc loop vector reduction(+:sum_denom,sum_numer)
+           do c = lun_pp%coli(l), lun_pp%colf(l)
+              if(col_pp%active(c)) then
+                 fc = col_to_urban_filter(c)
+                 sum_denom = sum_denom + wtus(fc)
+                 sum_numer = sum_numer + t_grnd(c)*wtus(fc)
+              end if
+           end do
+           taf_denom(fl) = taf_denom(fl) + sum_denom
+           taf_numer(fl) = taf_numer(fl) + sum_numer
+        end do
 
-         ! !$acc parallel loop independent gang worker default(present) private(sum_denom,sum_numer)
-         ! do fl = 1, num_urbanl
-         !    sum_denom = 0._r8
-         !    sum_numer = 0._r8
-         !    l = filter_urbanl(fl)
-         !    !$acc loop vector reduction(+:sum_denom,sum_numer)
-         !    do c = lun_pp%coli(l), lun_pp%colf(l)
-         !       if(col_pp%active(c)) then
-         !          fc = col_to_urban_filter(c)
-         !          sum_denom = sum_denom + wtuq(fc)
-         !          sum_numer = sum_numer + qg(c)*wtuq(fc)
-         !       end if
-         !    end do
-         !    qaf_denom(fl) = qaf_denom(fl) + sum_denom
-         !    qaf_numer(fl) = qaf_numer(fl) + sum_numer
-         ! end do
+        !$acc parallel loop independent gang worker default(present) private(sum_denom,sum_numer)&
+        !$acc present(qg(:),col_pp%active(:),lun_pp%coli(:),lun_pp%colf(:),col_to_urban_filter(:))
+        do fl = 1, num_urbanl
+           sum_denom = 0._r8
+           sum_numer = 0._r8
+           l = filter_urbanl(fl)
+           !$acc loop vector reduction(+:sum_denom,sum_numer)
+           do c = lun_pp%coli(l), lun_pp%colf(l)
+              if(col_pp%active(c)) then
+                 fc = col_to_urban_filter(c)
+                 sum_denom = sum_denom + wtuq(fc)
+                 sum_numer = sum_numer + qg(c)*wtuq(fc)
+              end if
+           end do
+           qaf_denom(fl) = qaf_denom(fl) + sum_denom
+           qaf_numer(fl) = qaf_numer(fl) + sum_numer
+        end do
 
          ! Calculate new urban canopy air temperature and specific humidity
 
-         !$acc parallel loop independent gang vector default(present)
+         !$acc parallel loop independent gang vector default(present)&
+         !$acc present(wtroad_perv(:),taf(:),converged_landunits(:),eflx_heat_from_ac(:),&
+         !$acc eflx_traffic_factor(:),eflx_wasteheat(:),eflx_traffic(:),qaf(:), &
+         !$acc wtlunit_roof(:),canyon_hwr(:) )
          do fl = 1, num_urbanl
             l = filter_urbanl(fl)
             g = lun_pp%gridcell(l)
@@ -839,7 +824,10 @@ contains
 
          ! This section of code is not required if niters = 1
          ! Determine stability using new taf and qaf
-         ! TODO: Some of these constants replicate what is in FrictionVelocity and BareGround fluxes should consildate. EBK
+         ! TODO: Some of these constants replicate what is in FrictionVelocity 
+         !       and BareGround fluxes should consildate. EBK
+         !$acc parallel loop independent gang vector default(present) &
+         !$acc present(taf(:), qaf(:), converged_landunits(:) ) 
          do fl = 1, num_urbanl
             l = filter_urbanl(fl)
             t = lun_pp%topounit(l)
@@ -852,7 +840,7 @@ contains
             qstar = temp2(fl)*dqh(fl)
             thvstar = tstar*(1._r8+0.61_r8*forc_q(t)) + 0.61_r8*forc_th(t)*qstar
             zeta = zldis(fl)*vkc*grav*thvstar/(ustar(fl)**2*thv_g(fl))
-
+           
             if (zeta >= 0._r8) then                   !stable
                zeta = min(2._r8,max(zeta,0.01_r8))
                um(fl) = max(ur(fl),0.1_r8)
@@ -868,18 +856,19 @@ contains
          ! Test for convergence
          iter_final = iter
          if (iter >= itmin) then
-            num_copyl_old = num_copyl
-            num_copyl = 0
+            num_unconverged = 0
+            !$acc parallel loop independent gang vector default(present) & 
+            !$acc  present(converged_landunits(:)) copy(num_unconverged) reduction(+:num_unconverged)
             do fl = 1, num_urbanl
                l = filter_urbanl(fl)
                if (.not. (abs(tau_diff(fl)) < dtaumin)) then
-                  num_copyl = num_copyl + 1
-                  ! filter_copyl(num_copyl) = l
+                  num_unconverged = num_unconverged + 1
                else
                   converged_landunits(l) = .true.
                end if
             end do
-            if (num_copyl == 0) then
+            if (num_unconverged == 0) then
+               print *, "UrbanFluxes::Converged after ",iter,"iterations"
                exit ITERATION
             end if
          end if
@@ -890,9 +879,17 @@ contains
 
       ! the following initializations are needed to ensure that the values are 0 over non-
       ! active urban Patches
-      eflx_sh_grnd_scale(bounds%begp : bounds%endp) = 0._r8
-      qflx_evap_soi_scale(bounds%begp : bounds%endp) = 0._r8
-
+      ! eflx_sh_grnd_scale(bounds%begp : bounds%endp) = 0._r8
+      ! qflx_evap_soi_scale(bounds%begp : bounds%endp) = 0._r8
+      
+      !$acc parallel loop independent gang vector default(present)
+      do p = begp, endp 
+         eflx_sh_grnd_scale(p) = 0._r8
+         qflx_evap_soi_scale(p) = 0._r8
+      enddo
+       
+      !$acc parallel loop independent gang vector default(present) &
+      !$acc present(qaf(:), taf(:), lnd_to_urban_filter(:))
       do f = 1, num_urbanp
 
          p = filter_urbanp(f)
@@ -1020,7 +1017,7 @@ contains
 
       ! Check to see that total sensible and latent heat equal the sum of
       ! the scaled heat fluxes above
-      !$acc parallel loop independent gang vector default(present)
+      !$acc parallel loop independent gang vector default(present) present(qaf(:), taf(:))
       do fl = 1, num_urbanl
          l = filter_urbanl(fl)
          t = lun_pp%topounit(l)
@@ -1046,7 +1043,7 @@ contains
 
       if ( found ) then
          write(iulog,*)'WARNING:  Total sensible heat does not equal sum of scaled heat fluxes for urban columns ',&
-              ' nstep = ',nstep,' indexl= ',indexl,' eflx_err= ',eflx_err(indexl)
+              ' nstep = ',nstep_mod,' indexl= ',indexl,' eflx_err= ',eflx_err(indexl)
          if (abs(eflx_err(indexl)) > .01_r8) then
             l = filter_urbanl(indexl)
             write(iulog,*)'elm model is stopping - error is greater than .01 W/m**2'
@@ -1074,7 +1071,7 @@ contains
       if ( erridx1 > 0 ) then
          indexl = erridx1
          write(iulog,*)'WARNING:  Total water vapor flux does not equal sum of scaled water vapor fluxes for urban columns ',&
-              ' nstep = ',nstep,' indexl= ',indexl,' qflx_err= ',qflx_err(indexl)
+              ' nstep = ',nstep_mod,' indexl= ',indexl,' qflx_err= ',qflx_err(indexl)
          if (abs(qflx_err(indexl)) > 4.e-9_r8) then
             write(iulog,*)'elm model is stopping - error is greater than 4.e-9 kg/m**2/s'
             write(iulog,*)'qflx_scale    = ',qflx_scale(indexl)
@@ -1085,11 +1082,10 @@ contains
 
       ! Check for convergence of stress.
       if (implicit_stress) then
-         !$acc parallel loop independent gang vector default(present)
          do fl = 1, num_urbanl
             l = filter_urbanl(fl)
             if (abs(tau_diff(fl)) > dtaumin) then
-               if (nstep > 0) then ! Suppress common warnings on the first time step.
+               if (nstep_mod > 0) then ! Suppress common warnings on the first time step.
                   write(iulog,*)'WARNING: Stress did not converge for urban columns ',&
                        ' nstep = ',nstep,' indexl= ',l,' prev_tau_diff= ',prev_tau_diff(l),&
                        ' tau_diff= ',tau_diff(fl),' tau= ',tau(fl),&
@@ -1101,7 +1097,8 @@ contains
 
       ! Gather terms required to determine internal building temperature
 
-      !$acc parallel loop independent gang vector default(present)
+      !$acc parallel loop independent gang vector default(present) present(&
+      !$acc t_soisno(:,:),lnd_to_urban_filter(:) )
       do fc = 1,num_urbanc
          c = filter_urbanc(fc)
          l = col_pp%landunit(c)
@@ -1117,7 +1114,8 @@ contains
       end do
 
       ! Calculate internal building temperature
-      !$acc parallel loop independent gang vector default(present)
+      !$acc parallel loop independent gang vector default(present) present(&
+      !$acc ht_roof(:),t_building(:),canyon_hwr(:),wtlunit_roof(:))
       do fl = 1, num_urbanl
          l = filter_urbanl(fl)
 
@@ -1136,13 +1134,12 @@ contains
             if (ctype(c) == icol_road_perv) then
                rootr(p,j) = rootr_road_perv(c,j)
             else
-
                rootr(p,j) = 0._r8
             end if
          end do
       end do
 
-      !$acc parallel loop independent gang vector default(present)
+      !$acc parallel loop independent gang vector default(present) present(taf(:),qaf(:))
       do f = 1, num_urbanp
 
          p = filter_urbanp(f)
@@ -1246,11 +1243,7 @@ contains
     !$acc prev_tau(:), &
     !$acc prev_tau_diff(:), &
     !$acc lnd_to_urban_filter(:), &
-    !$acc converged_landunits(:), &
-    !$acc num_copyl, &
-    !$acc zeta, &
-    !$acc fwet_roof, &
-    !$acc fwet_road_imperv)
+    !$acc converged_landunits(:),col_to_urban_filter(:) )
 
     end associate
 

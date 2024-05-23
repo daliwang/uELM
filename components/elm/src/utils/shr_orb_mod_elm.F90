@@ -31,14 +31,6 @@ MODULE shr_orb_mod_elm
   real   (SHR_KIND_R8),parameter :: SHR_ORB_OBLIQ_MAX  = +90.0_SHR_KIND_R8 ! max value for obliq
   real   (SHR_KIND_R8),parameter :: SHR_ORB_MVELP_MIN  =   0.0_SHR_KIND_R8 ! min value for mvelp
   real   (SHR_KIND_R8),parameter :: SHR_ORB_MVELP_MAX  = 360.0_SHR_KIND_R8 ! max value for mvelp
-
-  !$acc declare copyin(pi,SHR_ORB_UNDEF_REAL,SHR_ORB_UNDEF_INT, &
-  !$acc SHR_ORB_ECCEN_MIN ,&
-  !$acc SHR_ORB_ECCEN_MAX ,&
-  !$acc SHR_ORB_OBLIQ_MIN ,&
-  !$acc SHR_ORB_OBLIQ_MAX ,&
-  !$acc SHR_ORB_MVELP_MIN ,&
-  !$acc SHR_ORB_MVELP_MAX )
   !===============================================================================
 CONTAINS
   !===============================================================================

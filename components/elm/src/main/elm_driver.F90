@@ -1210,8 +1210,8 @@ module elm_driver
             end do
             
             if(proc_filter%num_urbanl > 0) then
-               call UrbanFluxes(bounds_proc,       &
-                  proc_filter%num_nourbanl, proc_filter%nourbanl,    &
+               print *, "UrbanFluxes", proc_filter%num_urbanl
+               call UrbanFluxes(bounds_proc, & 
                   proc_filter%num_urbanl, proc_filter%urbanl,        &
                   proc_filter%num_urbanc, proc_filter%urbanc,        &
                   proc_filter%num_urbanp, proc_filter%urbanp,        &
@@ -1711,56 +1711,56 @@ module elm_driver
             ! elm_interface: 'EcosystemDynNoLeaching' is divided into 2 subroutines (1 & 2): END
             !===========================================================================================
          end if !use_cn  
-            call cpu_time(startt)
-           !$acc parallel loop independent gang vector private(nc,bounds_clump)
+         
+         !$acc parallel loop independent gang vector default(present) private(nc,bounds_clump)
+         do nc = 1,nclumps
+            call get_clump_bounds_gpu(nc, bounds_clump)
+            call AnnualUpdate(bounds_clump,            &
+            filter(nc)%num_soilc, filter(nc)%soilc, &
+            filter(nc)%num_soilp, filter(nc)%soilp, &
+            cnstate_vars)
+         end do
+          
+         if(.not. use_fates .and. .not. ( n_drydep == 0 .or. drydep_method /= DD_XLND )) then
+            print *, "n_drydep:",n_drydep,"method:",drydep_method, "DD_XLND",DD_XLND
+           ! Dry Deposition of chemical tracers (Wesely (1998) parameterizaion)
+           call t_startf('depvel')
+           !$acc parallel loop independent gang vector default(present)
            do nc = 1,nclumps
               call get_clump_bounds_gpu(nc, bounds_clump)
-              call AnnualUpdate(bounds_clump,            &
-              filter(nc)%num_soilc, filter(nc)%soilc, &
-              filter(nc)%num_soilp, filter(nc)%soilp, &
-              cnstate_vars)
-              !call t_stopf('ecosysdyn')
-              
-              ! Dry Deposition of chemical tracers (Wesely (1998) parameterizaion)
-              !call t_startf('depvel')
-              if(.not.use_fates)then
-                call depvel_compute(bounds_clump, &
+              call depvel_compute(bounds_clump, &
                      atm2lnd_vars, canopystate_vars, frictionvel_vars, &
                      photosyns_vars, drydepvel_vars)
-              end if
-              !call t_stopf('depvel')
-           end do
-            call cpu_time(stopt) 
-            write(iulog,*) iam, "TIMING AnnualUpdate: ", (stopt-startt)*1.E+3,"ms"
-            
-            if (use_lch4 .and. .not. is_active_betr_bgc) then
-               !warning: do not call ch4 before AnnualUpdate, which will fail the ch4 model
-               call t_startf('ch4')
-               call CH4 (bounds_proc,                        &
-                  proc_filter%num_soilc, proc_filter%soilc,  &
-                  proc_filter%num_lakec, proc_filter%lakec,  &
-                  proc_filter%num_soilp, proc_filter%soilp,  &
-                  lakestate_vars, canopystate_vars, &
-                  soilstate_vars, soilhydrology_vars, &
-                  energyflux_vars, ch4_vars, lnd2atm_vars)
-               call t_stopf('ch4')
-            end if
+            end do
+            call t_stopf('depvel')
+         endif ! end if depvel_compute
+         
+         if (use_lch4 .and. .not. is_active_betr_bgc) then
+            !warning: do not call ch4 before AnnualUpdate, which will fail the ch4 model
+            call t_startf('ch4')
+            call CH4 (bounds_proc,                        &
+               proc_filter%num_soilc, proc_filter%soilc,  &
+               proc_filter%num_lakec, proc_filter%lakec,  &
+               proc_filter%num_soilp, proc_filter%soilp,  &
+               lakestate_vars, canopystate_vars, &
+               soilstate_vars, soilhydrology_vars, &
+               energyflux_vars, ch4_vars, lnd2atm_vars)
+            call t_stopf('ch4')
+         end if
 
-          call t_startf('depvel')
-            call cpu_time(startt) 
-          !$acc parallel default(present)
-          !$acc loop independent gang vector private(nc,bounds_clump)
-          do nc = 1,nclumps
-             call get_clump_bounds_gpu(nc, bounds_clump)
-             ! Dry Deposition of chemical tracers (Wesely (1998) parameterizaion)
-             !if(.not.use_fates)then
-             call depvel_compute(bounds_clump, &
-             atm2lnd_vars, canopystate_vars, frictionvel_vars, &
-             photosyns_vars, drydepvel_vars)
-             !end if
-          end do
-          !$acc end parallel  
-           call t_stopf('depvel')
+         if(.not. use_fates .and. .not. ( n_drydep == 0 .or. drydep_method /= DD_XLND )) then
+            print *, "n_drydep:",n_drydep,"method:",drydep_method, "DD_XLND",DD_XLND
+           ! Dry Deposition of chemical tracers (Wesely (1998) parameterizaion)
+           call t_startf('depvel')
+           !$acc parallel loop independent gang vector default(present)
+           do nc = 1,nclumps
+              call get_clump_bounds_gpu(nc, bounds_clump)
+              call depvel_compute(bounds_clump, &
+                     atm2lnd_vars, canopystate_vars, frictionvel_vars, &
+                     photosyns_vars, drydepvel_vars)
+            end do
+            call t_stopf('depvel')
+         endif ! end if depvel_compute
            ! ============================================================================
            ! Calculate soil/snow hydrology with drainage (subsurface runoff)
            ! ============================================================================
@@ -1810,56 +1810,61 @@ module elm_driver
             ! ============================================================================
             ! Check the energy and water balance, also carbon and nitrogen balance
             ! ============================================================================
-            !$acc parallel  default(present) 
-            !$acc loop independent gang private(nc,bounds_clump)
+            
+            call t_startf('balchk')
+            !$acc parallel loop independent gang vector default(present) private(nc,bounds_clump)
             do nc = 1,nclumps
                call get_clump_bounds_gpu(nc, bounds_clump)
-               !call t_startf('balchk')
                call ColWaterBalanceCheck(bounds_clump, &
                filter(nc)%num_do_smb_c, filter(nc)%do_smb_c, &
                atm2lnd_vars, glc2lnd_vars, solarabs_vars,  &
                energyflux_vars, canopystate_vars)
-               !call t_stopf('balchk')
+             end do 
+            call t_stopf('balchk')
                
-               !call t_startf('gridbalchk')
+            call t_startf('gridbalchk')
+            !$acc parallel loop independent gang vector default(present) private(nc,bounds_clump)
+            do nc = 1,nclumps
+               call get_clump_bounds_gpu(nc, bounds_clump)
                call GridBalanceCheck(bounds_clump                  , &
-               filter(nc)%num_do_smb_c, filter(nc)%do_smb_c   , &
-               atm2lnd_vars, glc2lnd_vars, solarabs_vars,       &
-               energyflux_vars, canopystate_vars              , &
-               soilhydrology_vars)
-               !call t_stopf('gridbalchk')
+               atm2lnd_vars, glc2lnd_vars,       &
+               energyflux_vars, soilhydrology_vars)
+            enddo
+            call t_stopf('gridbalchk')
                
-               ! if (do_budgets) then
-               !    call WaterBudget_SetEndingMonthlyStates(bounds_clump)
-               !    if (use_cn) then
-               !       call CNPBudget_SetEndingMonthlyStates(bounds_clump, col_cs, grc_cs)
-               !    endif
-               ! endif
+            if (do_budgets) then
+              !!!! !$acc parallel loop independent gang vector default(present) private(nc,bounds_clump)
+              do nc = 1,nclumps
+                 call get_clump_bounds_gpu(nc, bounds_clump)
+                 call WaterBudget_SetEndingMonthlyStates(bounds_clump)
+                 if (use_cn) then
+                   call CNPBudget_SetEndingMonthlyStates(bounds_clump, col_cs, grc_cs)
+                 endif
+              enddo  
+            endif
+            call t_startf('cnbalchk')
+            if (use_cn .or. use_fates) then
+              !$acc parallel loop independent gang vector default(present) private(nc,bounds_clump)
+              do nc = 1,nclumps
+                 call get_clump_bounds_gpu(nc, bounds_clump)
                
-               !if (use_cn .or. use_fates) then
+                 call ColCBalanceCheck( &
+                 filter(nc)%num_soilc, filter(nc)%soilc, &
+                 col_cs, col_cf)
+                 
+                 call ColNBalanceCheck(bounds_clump, &
+                 filter(nc)%num_soilc, filter(nc)%soilc, &
+                 col_ns, col_nf)
+                 
+                 call ColPBalanceCheck(bounds_clump, &
+                 filter(nc)%num_soilc, filter(nc)%soilc, &
+                 col_ps, col_pf)
+                 
+                 call GridCBalanceCheck(bounds_clump, col_cs, col_cf, grc_cs, grc_cf)
                
-               !call t_startf('cnbalchk')
-               
-               call ColCBalanceCheck( &
-               filter(nc)%num_soilc, filter(nc)%soilc, &
-               col_cs, col_cf)
-               
-               call ColNBalanceCheck(bounds_clump, &
-               filter(nc)%num_soilc, filter(nc)%soilc, &
-               col_ns, col_nf)
-               
-               call ColPBalanceCheck(bounds_clump, &
-               filter(nc)%num_soilc, filter(nc)%soilc, &
-               col_ps, col_pf)
-               
-               call GridCBalanceCheck(bounds_clump, col_cs, col_cf, grc_cs, grc_cf)
-               
-               !call t_stopf('cnbalchk')
-               !end if
-            end do
-            !$acc end parallel
-            call cpu_time(stopt)
-            write(iulog,*) iam,"TIMING VegStruct/BalanceCheck :: ",(stopt-startt)*1.E+3,"ms" 
+               end do
+               call t_stopf('cnbalchk')
+            end if
             ! ============================================================================
             ! Determine albedos for next time step
             ! ============================================================================

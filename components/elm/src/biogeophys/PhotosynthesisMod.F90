@@ -490,7 +490,9 @@ contains
       ! Loop through each canopy layer to calculate nitrogen profile using
       ! cumulative lai at the midpoint of the layer
       
-      !$acc parallel loop independent gang vector default(present)
+      !$acc parallel loop independent gang vector default(present) present(&
+      !$acc btran(:),leafn(:),kp_z(:,:),lmr_z(:,:), par_z(:,:),nrad(:),vcmaxcint(:),&
+      !$acc vcmax_z(:,:),t10(:),leafp(:),tpu_z(:,:),tlai_z(:,:),alphapsn(:),c3flag(:))
       do f = 1, fn
          if(converged(f)) cycle
          p = filterp(f)
@@ -525,7 +527,7 @@ contains
                sum_nscaler = 0.0_r8
                laican      = 0.0_r8
                total_lai   = 0.0_r8
-
+              !$acc loop seq 
                do iv = 1, nrad(p)
                   if (iv == 1) then
                      laican = 0.5_r8 * tlai_z(p,iv)
@@ -736,7 +738,9 @@ contains
       ! Leaf-level photosynthesis and stomatal conductance
       !==============================================================================!
       
-      !$acc parallel loop independent gang vector  default(present)
+      !$acc parallel loop independent gang vector  default(present) present(&
+      !$acc c3flag(:),nrad(:),bbb(:),rh_leaf(:),ap(:,:),ac(:,:),ag(:,:),psn_z(:,:),&
+      !$acc rs_z(:,:),an(:,:),aj(:,:),ci_z(p,:))
       do f = 1, fn
          if(converged(f)) cycle
          p = filterp(f)
@@ -864,7 +868,9 @@ contains
       ! Sum canopy layer fluxes and then derive effective leaf-level fluxes (per
       ! unit leaf area), which are used in other parts of the model. Here, laican
       ! sums to either laisun or laisha.
-      !$acc parallel loop gang worker independent default(present)
+      !$acc parallel loop gang worker independent default(present) present(&
+      !$acc lai_z(:,:),nrad(:),rs_z(:,:),rs(:),psn_z(:,:),psn_wp(:),psn_wc(:),&
+      !$acc psn_wj(:),lmr(:),lmr_z(:,:),psn(:)) 
       do f = 1, fn
          if(converged(f)) cycle
          p = filterp(f)

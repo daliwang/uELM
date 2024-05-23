@@ -611,7 +611,7 @@ contains
          end do
       end do
 
-      !$acc parallel loop independent gang vector default(present) 
+      !$acc parallel loop independent gang vector default(present) present(fn1(:,:),fn(:,:)) 
       do fc = 1,num_nolakec
          c = filter_nolakec(fc)
          l = col_pp%landunit(c)
@@ -794,12 +794,12 @@ contains
 
       ! Enforce expected array sizes
       !$acc enter data create(rvector(:,:), bmatrix(:,:,:) )
-      !$acc parallel loop independent default(present) collapse(2) 
-         do j=-nlevsno, nlevgrnd 
-            do c = begc, endc 
-               rvector(c,j) = spval 
-            end do 
-         end do
+      !$acc parallel loop independent collapse(2) gang vector default(present)  
+      do j=-nlevsno, nlevgrnd 
+        do c = begc, endc 
+           rvector(c,j) = spval 
+        end do 
+      end do
    
       !$acc parallel loop independent default(present) collapse(3)  
       do j = -nlevsno,nlevgrnd
@@ -1750,6 +1750,7 @@ end subroutine Phasechange_beta
     real(r8) :: eflx_gnet_soil                      !
     real(r8) :: eflx_gnet_h2osfc                    !
     real(r8) :: sum1,sum2,sum3                      !
+    integer  :: begc, endc 
     !-----------------------------------------------------------------------
 
     ! Enforce expected array sizes
@@ -1797,19 +1798,17 @@ end subroutine Phasechange_beta
          sabg_soil               => solarabs_vars%sabg_soil_patch           , & ! Input:  [real(r8) (:)   ]  solar radiation absorbed by soil (W/m**2)
          sabg_snow               => solarabs_vars%sabg_snow_patch           , & ! Input:  [real(r8) (:)   ]  solar radiation absorbed by snow (W/m**2)
          sabg_chk                => solarabs_vars%sabg_chk_patch            , & ! Output: [real(r8) (:)   ]  sum of soil/snow using current fsno, for balance check
-         sabg_lyr                => solarabs_vars%sabg_lyr_patch            , & ! Output: [real(r8) (:,:) ]  absorbed solar radiation (pft,lyr) [W/m2]
-
-         begc                    => bounds%begc                             , & ! Input:  [integer        ] beginning column index
-         endc                    => bounds%endc                               & ! Input:  [integer        ] ending column index
+         sabg_lyr                => solarabs_vars%sabg_lyr_patch             & ! Output: [real(r8) (:,:) ]  absorbed solar radiation (pft,lyr) [W/m2]
          )
 
       ! Net ground heat flux into the surface and its temperature derivative
       ! Added a pfts loop here to get the average of hs and dhsdT over
       ! all PFTs on the column. Precalculate the terms that do not depend on PFT.
-
+   
        !$acc enter data create(lwrad_emit_snow(:), lwrad_emit_soil(:), &
       !$acc      lwrad_emit_h2osfc(:), lwrad_emit(:), dlwrad_emit(:) )
-      
+      begc = bounds%begc
+      endc = bounds%endc    
       !$acc parallel loop independent gang vector default(present) 
       do fc = 1, num_nolakec
          c = filter_nolakec(fc)
@@ -1987,6 +1986,8 @@ end subroutine Phasechange_beta
           sabg_lyr_col(c,lyr_top) = sum3
         end if 
       end do 
+     !$acc exit data delete(lwrad_emit_snow(:), lwrad_emit_soil(:), &
+     !$acc      lwrad_emit_h2osfc(:), lwrad_emit(:), dlwrad_emit(:) )
     end associate
 
   end subroutine ComputeGroundHeatFluxAndDeriv
