@@ -4,6 +4,10 @@
 
 VPATH := $(GPTL_DIR)
 
+
+INCLDIR := -I/sw/summit/spack-envs/summit-plus/opt/nvhpc-23.9/spectrum-mpi-10.4.0.6-20230210-xojmzhn7q4ns5l24obxs7v63c5yhejnl/include/
+
+
 ifndef MOD_SUFFIX
    MOD_SUFFIX := mod
 endif

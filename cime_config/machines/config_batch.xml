@@ -550,6 +550,21 @@
      </queues>
    </batch_system>
 
+   <batch_system MACH="summitplus" type="lsf" >
+     <directives>
+       <directive>-P {{ project }}</directive>
+     </directives>
+     <directives compiler="!.*gpu">
+       <directive>-alloc_flags smt$SHELL{echo "(`./xmlquery --value MAX_TASKS_PER_NODE`+41)/42"|bc}</directive>
+     </directives>
+     <directives compiler=".*gpu">
+       <directive>-alloc_flags "gpumps smt$SHELL{echo "(`./xmlquery --value MAX_TASKS_PER_NODE`+41)/42"|bc}"</directive>
+     </directives>
+     <queues>
+       <queue walltimemax="02:00" strict="true" default="true">batch</queue>
+     </queues>
+   </batch_system>
+
    <batch_system MACH="snl-white" type="lsf" >
      <queues>
        <queue walltimemax="02:00" default="true">rhel7G</queue>
