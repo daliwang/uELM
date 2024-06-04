@@ -15,6 +15,7 @@ module lnd_import_export
   !
   implicit none
   integer, parameter :: num_unique_sites = 42 !42 is ameriflux in NA
+  logical, parameter :: duplicate_run = .true.
   !===============================================================================
 
 contains
@@ -58,12 +59,18 @@ contains
            b2=1.886013408e-02_r8, b3=4.176223716e-04_r8, &
            b4=5.824720280e-06_r8, b5=4.838803174e-08_r8, &
            b6=1.838826904e-10_r8)
+      
       !
       ! function declarations
       !
       tdc(t) = min( 50._r8, max(-50._r8,(t-SHR_CONST_TKFRZ)) )
       esatw(t) = 100._r8*(a0+t*(a1+t*(a2+t*(a3+t*(a4+t*(a5+t*a6))))))
       esati(t) = 100._r8*(b0+t*(b1+t*(b2+t*(b3+t*(b4+t*(b5+t*b6))))))
+      ! End declarations
+      if(.not. duplicate_run) then 
+        write(iulog,*) "Not duplicating points:"
+        return
+      endif 
       write(iulog,*) "Duplicating atm Data "
       call shr_sys_flush(iulog)
       
@@ -309,6 +316,7 @@ contains
     character(len=CL)  :: stream_fldFileName_popdens ! poplulation density stream filename
     character(len=CL)  :: stream_fldFileName_ndep    ! nitrogen deposition stream filename
     logical :: use_sitedata, has_zonefile, use_daymet, use_livneh
+    integer :: endg
     data caldaym / 1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366 /
 
     ! Constants to compute vapor pressure
@@ -373,8 +381,12 @@ contains
     ! in units of mm/sec, one must divide by 1000 kg/m^3 and multiply
     ! by 1000 mm/m resulting in an overall factor of unity.
     ! Below the units are therefore given in mm/s.
-
     thisng = bounds%endg - bounds%begg + 1
+    if(thisng > num_unique_sites .and. duplicate_run) then 
+      endg = num_unique_sites
+    else
+      endg = bounds%endg
+    end if 
     do g = bounds%begg, bounds%endg !bounds%begg+42-1
        i = 1 + (g - bounds%begg)
 

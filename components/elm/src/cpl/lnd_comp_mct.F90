@@ -471,9 +471,7 @@ contains
     call lnd_import( bounds, x2l_l%rattr, atm2lnd_vars, glc2lnd_vars, lnd2atm_vars,cpl_bypass_input )
     call t_stopf ('lc_lnd_import')
    
-    if(.false.) then 
-      call duplicate_lnd_points( bounds, x2l_l%rattr, atm2lnd_vars, glc2lnd_vars, lnd2atm_vars, cpl_bypass_input)
-    end if 
+    call duplicate_lnd_points( bounds, x2l_l%rattr, atm2lnd_vars, glc2lnd_vars, lnd2atm_vars, cpl_bypass_input)
     ! Use infodata to set orbital values if updated mid-run
 
     call seq_infodata_GetData( infodata, orb_eccen=eccen, orb_mvelpp=mvelpp, &
