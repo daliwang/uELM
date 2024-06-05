@@ -725,9 +725,12 @@ flags should be captured within MPAS CMake files.
   <CPPDEFS>
     <append> -DSYSDARWIN </append>
   </CPPDEFS>
+  <!-- The following may cause duplicate symbol issue, especially with Mac OSX high sierra
   <LDFLAGS>
     <append COMP_CLASS="cpl"> -all_load </append>
   </LDFLAGS>
+  -->
+  
 </compiler>
 
 <compiler OS="Darwin" COMPILER="intel">
@@ -1606,7 +1609,7 @@ flags should be captured within MPAS CMake files.
   </LDFLAGS>
   <NETCDF_PATH> $ENV{NETCDF_PATH}</NETCDF_PATH>
   <SLIBS>
-    <append>-L$NETCDF_PATH/lib -lnetcdff -lnetcdf</append>
+    <append>-L${NETCDF_PATH}/lib -lnetcdff -lnetcdf</append>
   </SLIBS>
 </compiler>
 

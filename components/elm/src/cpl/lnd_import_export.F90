@@ -59,7 +59,6 @@ contains
            b2=1.886013408e-02_r8, b3=4.176223716e-04_r8, &
            b4=5.824720280e-06_r8, b5=4.838803174e-08_r8, &
            b6=1.838826904e-10_r8)
-      
       !
       ! function declarations
       !
@@ -361,8 +360,6 @@ contains
     stream_fldFileName_lightng = ' '
     stream_fldFileName_popdens = ' '
 
-    write(iulog, *) "Modified LND_IMPORT TO DUPLICATE -- REVERT IF DOING PRODUCTION RUNS"
-    call shr_sys_flush(iulog)
 
     co2_type_idx = 0
     if (co2_type == 'prognostic') then

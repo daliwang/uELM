@@ -1425,15 +1425,15 @@ module VegetationDataType
          subgrid_type='pft', numlev=1,init_value=SHR_CONST_TKFRZ+20._r8)
 
     call init_accum_field(name='TREFAV', units='K', &
-         desc='average over an hour of 2-m temperature', accum_type='timeavg', accum_period=nint(3600._r8/dtime), &
+         desc='average over an hour of 2-m temperature', accum_type='timeavg', accum_period=max(1,nint(3600._r8/dtime)), &
          subgrid_type='pft', numlev=1, init_value=0._r8)
 
     call init_accum_field(name='TREFAV_U', units='K', &
-         desc='average over an hour of urban 2-m temperature', accum_type='timeavg', accum_period=nint(3600._r8/dtime), &
+         desc='average over an hour of urban 2-m temperature', accum_type='timeavg', accum_period=max(1,nint(3600._r8/dtime)), &
          subgrid_type='pft', numlev=1, init_value=0._r8)
 
     call init_accum_field(name='TREFAV_R', units='K', &
-         desc='average over an hour of rural 2-m temperature', accum_type='timeavg', accum_period=nint(3600._r8/dtime), &
+         desc='average over an hour of rural 2-m temperature', accum_type='timeavg', accum_period=max(1,nint(3600._r8/dtime)), &
          subgrid_type='pft', numlev=1, init_value=0._r8)
 
     this%t_veg24(bounds%begp:bounds%endp) = spval

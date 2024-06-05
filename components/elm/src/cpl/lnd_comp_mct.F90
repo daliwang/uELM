@@ -754,4 +754,27 @@ contains
 
   end subroutine 
 
+#ifdef _OPENACC
+  subroutine acc_initialization()
+      use openacc 
+      use spmdMod,    only : iam 
+      use abortutils, only : endrun 
+      use elm_varctl, only : iulog 
+     
+      implicit none 
+      integer :: mygpu, ngpus 
+
+      call acc_init(acc_device_nvidia)
+      ngpus = acc_get_num_devices(acc_device_nvidia)
+      if (ngpus==0) then
+        write(iulog,*) "Error: No GPUs detected with OpenACC enabled"
+        call endrun() 
+     endif 
+     call acc_set_device_num(mod(iam,ngpus),acc_device_nvidia)
+
+     mygpu = acc_get_device_num(acc_device_nvidia)
+     write(iulog,*) "iam, mygpu:",iam,mygpu, ngpus
+
+  end subroutine 
+#endif
 end module lnd_comp_mct

@@ -632,6 +632,21 @@
     <lname>20TR_DATM%GSWP3v1_ELM%CNPRDCTCBC_SICE_SOCN_MOSART_SGLC_SWAV</lname>
    </compset>
 
+   <compset>
+     <alias>I1850uELMCNRDCTCBC</alias>
+     <lname>1850_DATM%DAYMET_ELM%CNRDCTCBC_SICE_SOCN_MOSART_SGLC_SWAV</lname>
+   </compset>
+
+   <compset>
+    <alias>I1850uELMCNPRDCTCBC</alias>
+    <lname>1850_DATM%DAYMET_ELM%CNPRDCTCBC_SICE_SOCN_MOSART_SGLC_SWAV</lname>
+   </compset>
+
+   <compset>
+    <alias>I20TRuELMCNPRDCTCBC</alias>
+    <lname>20TR_DATM%DAYMET_ELM%CNPRDCTCBC_SICE_SOCN_MOSART_SGLC_SWAV</lname>
+   </compset>
+
   <!---I compset system tests -->
 
   <compset>
