@@ -30,8 +30,8 @@
 	branch = CESM_v2.1.4
 [submodule "cime"]
 	path = cime
-	url = https://github.com/ESMCI/cime.git
-	branch = master
+	url = https://github.com/jayeshkrishna/cime.git
+	branch = jayeshkrishna/elm_datmmode_uELM
 [submodule "externals/YAKL"]
 	path = externals/YAKL
 	url = https://github.com/mrnorman/YAKL.git
