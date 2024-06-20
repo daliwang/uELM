@@ -70,6 +70,10 @@ contains
     use perf_mod         , only : t_startf, t_stopf
     use mct_mod
     use ESMF
+#if _CUDA
+    use cudafor 
+#endif 
+
     !
     ! !ARGUMENTS:
     type(ESMF_Clock),           intent(inout) :: EClock           ! Input synchronization clock
@@ -118,8 +122,12 @@ contains
     character(len=32), parameter :: sub = 'lnd_init_mct'
     character(len=*),  parameter :: format = "('("//trim(sub)//") :',A)"
     !-----------------------------------------------------------------------
+#if _CUDA
+    integer(kind=cuda_count_kind) :: heapsize,free1,free2,total
+    integer  :: istat, val
+#endif
 
-    ! Set cdata data
+   ! Set cdata data
 
     call seq_cdata_setptrs(cdata_l, ID=LNDID, mpicom=mpicom_lnd, &
          gsMap=GSMap_lnd, dom=dom_l, infodata=infodata)
@@ -164,6 +172,15 @@ contains
     call shr_file_getLogLevel(shrloglev)
     call shr_file_setLogUnit (iulog)
     
+#ifdef _OPENACC
+    if(masterproc) write(iulog,*), "Initializing OpenACC Devices"
+    call acc_initialization()
+#endif
+
+#if _CUDA
+    istat = cudaMemGetInfo(free1, total)
+    print *, "Amount of GPU memory available",free1
+#endif 
     ! Identify SMP nodes and process/SMP mapping for this instance
     ! (Assume that processor names are SMP node names on SMP clusters.)
     write(c_inst_index,'(i8)') inst_index
@@ -246,7 +263,7 @@ contains
     use_lnd_rof_two_way = lnd_rof_two_way
     
     ! Read namelist, grid and surface data
-
+    print *, "calling initialize 1:"
     call initialize1( )
 
     ! If no land then exit out of initialization
@@ -282,7 +299,6 @@ contains
     call mct_aVect_zero(l2x_l)
 
     ! Finish initializing elm
-
     call initialize2()
     call initialize3()
 
@@ -412,6 +428,7 @@ contains
     type(bounds_type)               :: bounds               ! bounds
     character(len=32)               :: rdate                ! date char string for restart file names
     character(len=32), parameter    :: sub = "lnd_run_mct"
+    real :: startt, stopt 
     !---------------------------------------------------------------------------
 
     ! Determine processor bounds
@@ -458,11 +475,18 @@ contains
 
     
     ! Map to elm (only when state and/or fluxes need to be updated)
-
+    call cpu_time(startt) 
     call t_startf ('lc_lnd_import')
     call lnd_import( bounds, x2l_l%rattr, atm2lnd_vars, glc2lnd_vars, lnd2atm_vars)
     call t_stopf ('lc_lnd_import')
-
+    call cpu_time(stopt) 
+    write(iulog, *) "TIMING :: lnd_import ",(stopt-startt)*1.E+3, "ms" 
+   
+    ! call cpu_time(startt)  
+    ! call duplicate_lnd_points( bounds, x2l_l%rattr, atm2lnd_vars, glc2lnd_vars, lnd2atm_vars)
+    ! call cpu_time(stopt) 
+    ! write(iulog, *) "TIMING :: duplicate_lnd_points ",(stopt-startt)*1.E+3, "ms" 
+    
     ! Use infodata to set orbital values if updated mid-run
 
     call seq_infodata_GetData( infodata, orb_eccen=eccen, orb_mvelpp=mvelpp, &
@@ -722,5 +746,27 @@ contains
     deallocate(idata)
 
   end subroutine lnd_domain_mct
+  
+  subroutine acc_initialization()
+      use openacc 
+      use spmdMod,    only : iam 
+      use abortutils, only : endrun 
+      use elm_varctl, only : iulog 
+     
+      implicit none 
+      integer :: mygpu, ngpus 
+
+      call acc_init(acc_device_nvidia)
+      ngpus = acc_get_num_devices(acc_device_nvidia)
+      if (ngpus==0) then
+        write(iulog,*) "Error: No GPUs detected with OpenACC enabled"
+        call endrun() 
+     endif 
+     call acc_set_device_num(mod(iam,ngpus),acc_device_nvidia)
+
+     mygpu = acc_get_device_num(acc_device_nvidia)
+     write(iulog,*) "iam, mygpu:",iam,mygpu, ngpus
+
+  end subroutine 
 
 end module lnd_comp_mct
