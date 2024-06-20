@@ -18,7 +18,7 @@ module controlMod
   use abortutils              , only: endrun
   use spmdMod                 , only: masterproc
   use decompMod               , only: clump_pproc
-  use elm_varpar              , only: maxpatch_pft, maxpatch_glcmec, more_vertlayers
+  use elm_varpar              , only: maxpatch_pft, maxpatch_glcmec, more_vertlayers,nlevdecomp_full, nsoilorder
   use histFileMod             , only: max_tapes, max_namlen
   use histFileMod             , only: hist_empty_htapes, hist_dov2xy, hist_avgflag_pertape, hist_type1d_pertape
   use histFileMod             , only: hist_nhtfrq, hist_ndens, hist_mfilt, hist_fincl1, hist_fincl2, hist_fincl3
@@ -52,7 +52,10 @@ module controlMod
   use elm_varctl              , only: startdate_add_temperature, startdate_add_co2
   use elm_varctl              , only: add_temperature, add_co2
   use elm_varctl              , only: const_climate_hist
-  
+  use elm_varctl              , only: use_top_solar_rad
+  use elm_varctl              , only: snow_shape, snicar_atm_type, use_dust_snow_internal_mixing
+
+  !
   ! !PUBLIC TYPES:
   implicit none
   save
@@ -116,7 +119,7 @@ contains
     use fileutils                 , only : getavu, relavu
     use shr_string_mod            , only : shr_string_getParentDir
     use elm_interface_pflotranMod , only : elm_pf_readnl
-    use ALMBeTRNLMod              , only : betr_readNL
+    use ELMBeTRNLMod              , only : betr_readNL
     
     implicit none
     
@@ -222,7 +225,8 @@ contains
     namelist /elm_inparm/  &
          clump_pproc, wrtdia, &
          create_crop_landunit, nsegspc, co2_ppmv, override_nsrest, &
-         albice, more_vertlayers, subgridflag, irrigate, tw_irr, extra_gw_irr, firrig_data, all_active
+         albice, more_vertlayers, subgridflag, irrigate, tw_irr, extra_gw_irr, firrig_data, all_active, &
+         mpi_sync_nstep_freq
     ! Urban options
 
     namelist /elm_inparm/  &
@@ -254,7 +258,8 @@ contains
           use_fates_fixed_biogeog,                      &
           use_fates_nocomp,                             &
           use_fates_sp,                                 &
-          fates_parteh_mode
+          fates_parteh_mode,                            &
+          use_fates_tree_damage
 
     namelist /elm_inparm / use_betr
 
@@ -284,7 +289,7 @@ contains
 
     namelist /elm_inparm/ use_var_soil_thick, use_lake_wat_storage
 
-    namelist /elm_inparm / &
+    namelist /elm_inparm/ &
          use_vsfm, vsfm_satfunc_type, vsfm_use_dynamic_linesearch, &
          vsfm_lateral_model_type, vsfm_include_seepage_bc
 
@@ -305,6 +310,15 @@ contains
 
     namelist /elm_inparm/ &
          use_erosion, ero_ccycle
+
+    namelist /elm_inparm/ &
+         use_top_solar_rad
+
+    namelist /elm_mosart/ &
+         lnd_rof_coupling_nstep
+		 
+    namelist /elm_inparm/ &
+         snow_shape, snicar_atm_type, use_dust_snow_internal_mixing 
 
     ! ----------------------------------------------------------------------
     ! Default values
@@ -350,6 +364,20 @@ contains
        end if
 
        call relavu( unitn )
+
+       unitn = getavu()
+       write(iulog,*) 'Read in elm_mosart namelist from: ', trim(NLFilename)
+       open( unitn, file=trim(NLFilename), status='old' )
+       call shr_nl_find_group_name(unitn, 'elm_mosart', status=ierr)
+       if (ierr == 0) then
+          read(unitn, elm_mosart, iostat=ierr)
+          if (ierr /= 0) then
+             call endrun(msg='ERROR reading elm_mosart namelist'//errMsg(__FILE__, __LINE__))
+          end if
+       end if
+
+       call relavu( unitn )
+
 
        ! ----------------------------------------------------------------------
        ! Consistency checks on input namelist.
@@ -501,6 +529,13 @@ contains
                    errMsg(__FILE__, __LINE__))
        end if
 
+       if (use_lnd_rof_two_way) then
+          if (lnd_rof_coupling_nstep < 1) then
+          call endrun(msg=' ERROR: lnd_rof_coupling_nstep cannot be smaller than 1.'//&
+                   errMsg(__FILE__, __LINE__))     
+          endif
+       endif
+
     endif   ! end of if-masterproc if-block
 
     ! ----------------------------------------------------------------------
@@ -524,7 +559,7 @@ contains
     end if
 
     if (use_betr) then
-       call betr_readNL( NLFilename, use_c13, use_c14)
+       call betr_readNL( NLFilename, use_c13, use_c14, nsoilorder)
     endif
 
     ! ----------------------------------------------------------------------
@@ -743,7 +778,7 @@ contains
     call mpi_bcast (fates_inventory_ctrl_filename, len(fates_inventory_ctrl_filename), &
           MPI_CHARACTER, 0, mpicom, ier)
     call mpi_bcast (fates_parteh_mode, 1, MPI_INTEGER, 0, mpicom, ier)
-
+    call mpi_bcast (use_fates_tree_damage, 1, MPI_LOGICAL, 0, mpicom, ier)
 
     call mpi_bcast (use_betr, 1, MPI_LOGICAL, 0, mpicom, ier)
 
@@ -802,7 +837,8 @@ contains
     call mpi_bcast (albice, 2, MPI_REAL8,0, mpicom, ier)
     call mpi_bcast (more_vertlayers,1, MPI_LOGICAL, 0, mpicom, ier)
     call mpi_bcast (const_climate_hist, 1, MPI_LOGICAL, 0, mpicom, ier)
-
+    call mpi_bcast (use_top_solar_rad, 1, MPI_LOGICAL, 0, mpicom, ier)  ! TOP solar radiation parameterization
+    
     ! glacier_mec variables
     call mpi_bcast (create_glacier_mec_landunit, 1, MPI_LOGICAL, 0, mpicom, ier)
     call mpi_bcast (maxpatch_glcmec, 1, MPI_INTEGER, 0, mpicom, ier)
@@ -894,6 +930,17 @@ contains
     call mpi_bcast (budget_ltann , 1, MPI_INTEGER, 0, mpicom, ier)
     call mpi_bcast (budget_ltend , 1, MPI_INTEGER, 0, mpicom, ier)
 
+    ! land river two way coupling
+    call mpi_bcast (use_lnd_rof_two_way   , 1, MPI_LOGICAL, 0, mpicom, ier)
+    call mpi_bcast (lnd_rof_coupling_nstep, 1, MPI_INTEGER, 0, mpicom, ier)
+
+    !SNICAR-AD
+    call mpi_bcast (snow_shape, len(snow_shape), MPI_CHARACTER, 0, mpicom, ier)
+    call mpi_bcast (snicar_atm_type, len(snicar_atm_type), MPI_CHARACTER, 0, mpicom, ier)
+    call mpi_bcast (use_dust_snow_internal_mixing, 1, MPI_LOGICAL, 0, mpicom, ier)
+	
+    call mpi_bcast (mpi_sync_nstep_freq, 1, MPI_INTEGER, 0, mpicom, ier)
+
   end subroutine control_spmd
 
   !------------------------------------------------------------------------
@@ -938,6 +985,9 @@ contains
     write(iulog,*) '    two-way irrigation = ', tw_irr
     write(iulog,*) '    use_snicar_frc = ', use_snicar_frc
     write(iulog,*) '    use_snicar_ad = ', use_snicar_ad
+    write(iulog,*) '    snow_shape = ', snow_shape
+    write(iulog,*) '    snicar_atm_type = ', snicar_atm_type
+    write(iulog,*) '    use_dust_snow_internal_mixing = ', use_dust_snow_internal_mixing
     write(iulog,*) '    use_vancouver = ', use_vancouver
     write(iulog,*) '    use_mexicocity = ', use_mexicocity
     write(iulog,*) '    use_noio = ', use_noio
@@ -967,6 +1017,13 @@ contains
     else
        write(iulog,*) '   atm topographic data = ',trim(fatmtopo)
     end if
+    
+    if (use_top_solar_rad) then
+        write(iulog,*) '  use TOP solar radiation parameterization instead of PP'
+    else
+        write(iulog,*) '   use_top_solar_rad is False, so do not run TOP solar radiation parameterization'
+    end if
+    
     if (use_cn) then
        if (suplnitro /= suplnNon)then
           write(iulog,*) '   Supplemental Nitrogen mode is set to run over Patches: ', &
@@ -1079,6 +1136,9 @@ contains
     write(iulog,*) '   implicit_stress   = ', implicit_stress
     write(iulog,*) '   atm_gustiness   = ', atm_gustiness
     write(iulog,*) '   more vertical layers = ', more_vertlayers
+    
+    write(iulog,*) '   Sub-grid topographic effects on solar radiation   = ', use_top_solar_rad  ! TOP solar radiation parameterization
+     
     if (nsrest == nsrContinue) then
        write(iulog,*) 'restart warning:'
        write(iulog,*) '   Namelist not checked for agreement with initial run.'
@@ -1114,6 +1174,7 @@ contains
        write(iulog, *) '    use_fates_logging = ', use_fates_logging
        write(iulog, *) '    fates_paramfile = ', fates_paramfile
        write(iulog, *) '    use_fates_planthydro = ', use_fates_planthydro
+       write(iulog, *) '    use_fates_tree_damage = ', use_fates_tree_damage
        write(iulog, *) '    use_fates_cohort_age_tracking = ',use_fates_cohort_age_tracking
        write(iulog, *) '    fates_parteh_mode = ', fates_parteh_mode
        write(iulog, *) '    use_fates_ed_st3 = ',use_fates_ed_st3
@@ -1133,6 +1194,11 @@ contains
        write(iulog, *) '  vsfm_use_dynamic_linesearch                            : ', vsfm_use_dynamic_linesearch
        write(iulog,*) '  vsfm_lateral_model_type                                 : ', vsfm_lateral_model_type
     endif
+
+    ! land river two way coupling
+    write(iulog,*) '    use_lnd_rof_two_way    = ', use_lnd_rof_two_way
+    write(iulog,*) '    lnd_rof_coupling_nstep = ', lnd_rof_coupling_nstep
+    write(iulog,*) '    mpi_sync_nstep_freq    = ', mpi_sync_nstep_freq
 
   end subroutine control_print
 

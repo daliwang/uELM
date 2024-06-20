@@ -41,12 +41,13 @@
 
   <entry id="MPASO_ISMF">
         <type>char</type>
-        <valid_values>none,internal,coupled</valid_values>
+        <valid_values>none,data,internal,coupled</valid_values>
         <default_value>none</default_value>
         <values>
            <value compset="MPASO_">none</value>
-           <value compset="_MPASO%.*ISMF.*_SGLC">internal</value>
-           <value compset="_MPASO%.*ISMF.*_MALI">coupled</value>
+           <value compset="_MPASO%.*DISMF">data</value>
+           <value compset="_MPASO%.*PISMF.*_SGLC">internal</value>
+           <value compset="_MPASO%.*PISMF.*_MALI">coupled</value>
         </values>
         <group>case_comp</group>
         <file>env_case.xml</file>
@@ -121,6 +122,20 @@
         <file>env_case.xml</file>
         <desc>Option to couple ocean bgc with sea ice bgc</desc>
  </entry>
+
+  <entry id="MPASO_WAVE">
+        <type>char</type>
+        <valid_values>false,true</valid_values>
+        <default_value>false</default_value>
+        <values>
+           <value compset="MPASO.*_SWAV">false</value>
+           <value compset="_MPASO.*_WW3">true</value>
+
+        </values>
+        <group>case_comp</group>
+        <file>env_case.xml</file>
+        <desc>Option to describe the MPASO wave coupling</desc>
+  </entry>
 
   <description>
     <desc compset="_MPASO">mpas ocean default:</desc>

@@ -12,7 +12,7 @@ module EcosystemDynMod
   use perf_mod            , only : t_startf, t_stopf
   use spmdMod             , only : masterproc
   use elm_varctl          , only : use_century_decomp
-  use elm_varctl          , only : use_erosion
+  use elm_varctl          , only : ero_ccycle 
   use CNStateType         , only : cnstate_type
   use CanopyStateType     , only : canopystate_type
   use SoilStateType       , only : soilstate_type
@@ -296,6 +296,7 @@ contains
     use CropType              , only: crop_type
     use elm_varpar            , only: crop_prog
     use AllocationMod         , only: Allocation1_PlantNPDemand ! Phase-1 of CNAllocation
+    use AllocationMod         , only: EvaluateSupplStatus
     use NitrogenDynamicsMod   , only: NitrogenLeaching
     use PhosphorusDynamicsMod       , only: PhosphorusLeaching
     use NitrogenDynamicsMod         , only: NitrogenFixation_balance
@@ -368,7 +369,7 @@ contains
     event = 'CNFixation'
     if ( (.not. nu_com_nfix) .or. use_fates) then
       call t_start_lnd(event)
-       call NitrogenFixation( num_soilc, filter_soilc, dayspyr)
+       call NitrogenFixation( bounds, num_soilc, filter_soilc, dayspyr)
        call t_stop_lnd(event)
     else
        ! nu_com_nfix is true
@@ -444,6 +445,13 @@ contains
           num_soilc, filter_soilc, num_soilp, filter_soilp, &
           soilstate_vars, canopystate_vars, cnstate_vars)
 
+    !-------------------------------------------------------------------------------------------------
+    ! This subroutine evaluates the current state of N and P supplementation
+    ! and cross-refs with active modules, to decide on which processes should
+    ! be activated.
+    !-------------------------------------------------------------------------------------------------
+    call EvaluateSupplStatus()
+    
     !-------------------------------------------------------------------------------------------------
     ! Allocation1 is always called (w/ or w/o use_elm_interface)
     ! pflotran: call 'Allocation1' to obtain potential N demand for support initial GPP
@@ -716,7 +724,7 @@ contains
        event = 'CNGapMortality'
        call t_start_lnd(event)
        call GapMortality( num_soilc, filter_soilc, num_soilp, filter_soilp,&
-                              cnstate_vars )
+                              cnstate_vars, crop_vars)
        call t_stop_lnd(event)
 
        !--------------------------------------------
@@ -805,9 +813,16 @@ contains
 
        call t_stop_lnd(event)
 
+   else
+       call alm_fates%wrap_WoodProducts(bounds, num_soilc, filter_soilc)
+
+       call WoodProducts(num_soilc, filter_soilc )
+
+       call CropHarvestPools(num_soilc, filter_soilc, dt)
+      
    end if
 
-   if ( use_erosion ) then
+   if ( ero_ccycle ) then
        event = 'ErosionFluxes'
        call t_start_lnd(event)
        call ErosionFluxes(bounds, num_soilc, filter_soilc, soilstate_vars, sedflux_vars )
