@@ -1597,8 +1597,6 @@ contains
          ch4_dfsat_flux(c) = sum1 
       end do
 
-      call cpu_time(stopt) 
-      print *, "TIMING Init : ",(stopt-startt)*1.E+3,"ms"
       !!!! Begin biochemistry
       
       ! First for soil
