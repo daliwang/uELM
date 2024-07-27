@@ -255,7 +255,9 @@ contains
                         hostname_in=hostname, username_in=username)
 
     ! Read namelist, grid and surface data
-    print *, "calling initialize 1:"
+    if (masterproc) then
+      print *, "calling initialize 1:"
+    end if
     call initialize1( )
 
     ! If no land then exit out of initialization
@@ -472,7 +474,10 @@ contains
     call lnd_import( bounds, x2l_l%rattr, atm2lnd_vars, glc2lnd_vars, lnd2atm_vars)
     call t_stopf ('lc_lnd_import')
     call cpu_time(stopt) 
-    write(iulog, *) "TIMING :: lnd_import ",(stopt-startt)*1.E+3, "ms" 
+
+    if (masterproc) then
+      write(iulog, *) "TIMING :: lnd_import ",(stopt-startt)*1.E+3, "ms"
+    end if
    
     ! call cpu_time(startt)  
     ! call duplicate_lnd_points( bounds, x2l_l%rattr, atm2lnd_vars, glc2lnd_vars, lnd2atm_vars)
