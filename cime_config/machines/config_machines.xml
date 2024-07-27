@@ -3505,6 +3505,7 @@
       <!--env name="NETCDF_FORTRAN_PATH">/ccs/proj/cli180/lei/software/netcdf-fortran/build/installdir/</env-->
       <env name="ESSL_PATH">$ENV{OLCF_ESSL_ROOT}</env>
       <env name="PGI_ACC_POOL_ALLOC">0</env>
+      <env name="UCX_IB_REG_METHODS">odp</env>
     </environment_variables>
     <environment_variables mpilib="!mpi-serial">
       <env name="HDF5_PATH">$ENV{OLCF_HDF5_ROOT}</env>
