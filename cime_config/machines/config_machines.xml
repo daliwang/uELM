@@ -3490,14 +3490,19 @@
       <modules>
         <command name="load">parallel-netcdf/1.12.2</command>
         <command name="load">hdf5/1.14.3</command>
+        <command name="load">netcdf-c/4.9.2</command>
+        <command name="load">netcdf-cxx4/4.3.1</command>
+        <command name="load">netcdf-fortran/4.6.1</command>
       </modules>
     </module_system>
     <RUNDIR>$CIME_OUTPUT_ROOT/$CASE/run</RUNDIR>
     <EXEROOT>$CIME_OUTPUT_ROOT/$CASE/bld</EXEROOT>
     <TEST_TPUT_TOLERANCE>0.1</TEST_TPUT_TOLERANCE>
     <environment_variables>
-      <env name="NETCDF_C_PATH">/ccs/proj/cli180/lei/software/netcdf-c/build/installdir/</env>
-      <env name="NETCDF_FORTRAN_PATH">/ccs/proj/cli180/lei/software/netcdf-fortran/build/installdir/</env>
+      <env name="NETCDF_C_PATH">$ENV{OLCF_NETCDF_C_ROOT}</env>
+      <env name="NETCDF_FORTRAN_PATH">$ENV{OLCF_NETCDF_FORTRAN_ROOT}</env>
+      <!--env name="NETCDF_C_PATH">/ccs/proj/cli180/lei/software/netcdf-c/build/installdir/</env-->
+      <!--env name="NETCDF_FORTRAN_PATH">/ccs/proj/cli180/lei/software/netcdf-fortran/build/installdir/</env-->
       <env name="ESSL_PATH">$ENV{OLCF_ESSL_ROOT}</env>
       <env name="PGI_ACC_POOL_ALLOC">0</env>
     </environment_variables>
