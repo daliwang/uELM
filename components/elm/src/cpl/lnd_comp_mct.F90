@@ -255,7 +255,12 @@ contains
                         hostname_in=hostname, username_in=username)
 
     ! Read namelist, grid and surface data
-    print *, "calling initialize 1:"
+    
+    if (masterproc) then
+      print *, "calling initialize 1:"
+    end if
+    
+    !print *, "calling initialize 1:"
     call initialize1( )
 
     ! If no land then exit out of initialization

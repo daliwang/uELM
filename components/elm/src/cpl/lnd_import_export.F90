@@ -354,7 +354,7 @@ contains
     stream_fldFileName_lightng = ' '
     stream_fldFileName_popdens = ' '
 
-    write(iulog, *) "Modified LND_IMPORT TO DUPLICATE -- REVERT IF DOING PRODUCTION RUNS"
+    !write(iulog, *) "Modified LND_IMPORT TO DUPLICATE -- REVERT IF DOING PRODUCTION RUNS"
     call shr_sys_flush(iulog)
 
     co2_type_idx = 0
