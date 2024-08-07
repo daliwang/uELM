@@ -113,7 +113,7 @@ module atm2lndType
      real(r8), pointer :: volrmch_grc                   (:)   => null() ! rof volr main channel (m3)
      real(r8), pointer :: supply_grc                    (:)   => null() ! rof volr supply (mm/s)
      real(r8), pointer :: deficit_grc                   (:)   => null() ! rof volr deficit (mm/s)
-	 
+
      ! anomaly forcing
      real(r8), pointer :: af_precip_grc                 (:)   => null() ! anomaly forcing 
      real(r8), pointer :: af_uwind_grc                  (:)   => null() ! anomaly forcing 
@@ -182,7 +182,7 @@ contains
     integer*2 :: ival_short = 0
     integer  :: begg, endg
     integer  :: begc, endc
-    integer  :: begp, endp
+    integer*8  :: begp, endp
     !------------------------------------------------------------------------
 
     begg = bounds%begg; endg= bounds%endg
@@ -309,7 +309,7 @@ contains
     !
     ! !LOCAL VARIABLES:
     integer  :: begg, endg
-    integer  :: begp, endp
+    integer*8  :: begp, endp
     !---------------------------------------------------------------------
 
     begg = bounds%begg; endg= bounds%endg
@@ -329,7 +329,7 @@ contains
     call hist_addfld1d (fname='VOLRMCH',  units='m3',  &
          avgflag='A', long_name='river channel main channel water storage', &
          ptr_lnd=this%volrmch_grc)
-		 
+ 
     this%supply_grc(begg:endg) = spval
     call hist_addfld1d (fname='SUPPLY',  units='mm/s',  &
          avgflag='A', long_name='runoff supply for land use', &
@@ -556,7 +556,7 @@ contains
     type(bounds_type), intent(in) :: bounds  
     !
     ! !LOCAL VARIABLES:
-    integer  :: begp, endp
+    integer*8  :: begp, endp
     integer  :: nstep
     integer  :: ier
     real(r8), pointer :: rbufslp(:)  ! temporary
@@ -622,11 +622,12 @@ contains
     type(bounds_type)      , intent(in) :: bounds  
     !
     ! !LOCAL VARIABLES:
-    integer :: g,c,p                     ! indices
+    integer :: g,c                     ! indices
+    integer*8 :: p                     ! indices
     integer :: dtime                     ! timestep size [seconds]
     integer :: nstep                     ! timestep number
     integer :: ier                       ! error status
-    integer :: begp, endp
+    integer*8 :: begp, endp
     real(r8), pointer :: rbufslp(:)      ! temporary single level - pft level
     !---------------------------------------------------------------------
 

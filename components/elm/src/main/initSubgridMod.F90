@@ -67,8 +67,10 @@ contains
     type(bounds_type), intent(in) :: bounds  ! bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: t,l,c,p               ! loop counters
-    integer :: curg,curt,curl,curc,curp ! tracks g,l,c,p indexes in arrays
+    integer :: t,l,c               ! loop counters
+    integer*8 :: p                 ! loop counter for pi
+    integer :: curg,curt,curl,curc ! tracks g,l,c,p indexes in arrays
+    integer*8 :: curp    
     integer :: ltype               ! landunit type
     !------------------------------------------------------------------------------
 
@@ -203,7 +205,8 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: g,t,l,c,p, tt     ! loop counters
+    integer :: g,t,l,c, tt     ! loop counters
+    integer*8 :: p             ! loop counter for pft
     integer :: l_prev        ! l value of previous point
     integer :: ltype         ! landunit type
     logical :: error         ! error flag
@@ -518,7 +521,7 @@ contains
     use elm_varpar      , only : natpft_lb
     !
     ! !ARGUMENTS:
-    integer  , intent(inout) :: pi    ! input value is index of last patch added; output value is index of this newly-added patch
+    integer*8  , intent(inout) :: pi    ! input value is index of last patch added; output value is index of this newly-added patch
     integer  , intent(in)    :: ci    ! column index on which this patch should be placed (assumes this column has already been created)
     integer  , intent(in)    :: ptype ! patch type
     real(r8) , intent(in)    :: wtcol ! weight of the patch relative to the column

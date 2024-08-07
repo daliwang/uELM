@@ -103,20 +103,20 @@ contains
     !
     ! !LOCAL VARIABLES:
     integer :: nf           ! field index
-    integer :: beg1d,end1d  ! beggining and end subgrid indices
-    integer :: num1d        ! total number subgrid indices
-    integer :: begp, endp   ! per-proc beginning and ending pft indices
+    integer*8 :: beg1d,end1d  ! beggining and end subgrid indices
+    integer*8 :: num1d        ! total number subgrid indices
+    integer*8 :: begp, endp   ! per-proc beginning and ending pft indices
     integer :: begc, endc   ! per-proc beginning and ending column indices
     integer :: begl, endl   ! per-proc beginning and ending landunit indices
     integer :: begt, endt   ! per-proc beginning and ending topographic unit indices
     integer :: begg, endg   ! per-proc gridcell ending gridcell indices
-    integer :: begCohort, endCohort   ! per-proc beg end cohort indices
+    integer*8 :: begCohort, endCohort   ! per-proc beg end cohort indices
     integer :: numg         ! total number of gridcells across all processors
     integer :: numt         ! total number of topographic units all processors
     integer :: numl         ! total number of landunits across all processors
     integer :: numc         ! total number of columns across all processors
-    integer :: nump         ! total number of pfts across all processors
-    integer :: numCohort    ! total number of cohorts across all processors
+    integer*8 :: nump         ! total number of pfts across all processors
+    integer*8 :: numCohort    ! total number of cohorts across all processors
     !------------------------------------------------------------------------
 
     ! Determine necessary indices

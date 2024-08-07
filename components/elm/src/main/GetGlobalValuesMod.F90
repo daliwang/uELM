@@ -38,7 +38,7 @@ contains
     type(bounds_type)             :: bounds_proc   ! processor bounds
     type(mct_gsMap),pointer       :: gsmap         ! global seg map
     integer, pointer,dimension(:) :: gsmap_ordered ! gsmap ordered points
-    integer                       :: beg_index     ! beginning proc index for elmlevel
+    integer*8                     :: beg_index     ! beginning proc index for elmlevel
     !----------------------------------------------------------------
 
     call get_proc_bounds(bounds_proc)
@@ -91,8 +91,8 @@ contains
     type(bounds_type)             :: bounds_proc   ! processor bounds
     type(mct_gsMap),pointer       :: gsmap         ! global seg map
     integer, pointer,dimension(:) :: gsmap_ordered ! gsmap ordered points
-    integer                       :: beg_index     ! beginning proc index for elmlevel
-    integer                       :: i
+    integer*8                     :: beg_index     ! beginning proc index for elmlevel
+    integer*8                       :: i
     !----------------------------------------------------------------
 
     call get_proc_bounds(bounds_proc)
@@ -140,11 +140,11 @@ contains
     use VegetationType    , only : veg_pp                
     !
     ! Arguments:
-    integer          , intent(in) :: decomp_index
+    integer*8          , intent(in) :: decomp_index
     character(len=*) , intent(in) :: elmlevel
     !
     ! Local Variables:
-    integer :: igrc, itun, ilun, icol, ipft 
+    integer*8 :: igrc, itun, ilun, icol, ipft 
     !-----------------------------------------------------------------------
 
     if (trim(elmlevel) == nameg) then
@@ -164,7 +164,7 @@ contains
        write(iulog,*)'gridcell longitude    = ',grc_pp%londeg(igrc)
        write(iulog,*)'gridcell latitude     = ',grc_pp%latdeg(igrc)
       ! write(iulog,*)'topounit type         = ',top_pp%itype(decomp_index)
-	  
+  
     else if (trim(elmlevel) == namel) then
 
        ilun = decomp_index
@@ -207,7 +207,7 @@ contains
        write(iulog,*)'column   type         = ',col_pp%itype(icol)
        write(iulog,*)'landunit type         = ',lun_pp%itype(ilun)
 
-    else		       
+    else       
        call shr_sys_abort('elmlevel '//trim(elmlevel)//'not supported '//errmsg(__FILE__, __LINE__))
 
     end if

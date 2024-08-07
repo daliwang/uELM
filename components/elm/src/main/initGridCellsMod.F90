@@ -61,7 +61,8 @@ contains
     use shr_const_mod     , only : SHR_CONST_PI
     !
     ! !LOCAL VARIABLES:
-    integer :: nc,ti,li,ci,pi,gdc,topounit, topo_ind      ! indices
+    integer :: nc,ti,li,ci,gdc,topounit, topo_ind      ! indices
+    integer*8 :: pi
     integer :: nclumps                           ! number of clumps on this processor
     type(bounds_type) :: bounds_proc
     type(bounds_type) :: bounds_clump
@@ -304,7 +305,7 @@ contains
     integer , intent(in)    :: ti                ! topounit index
     integer , intent(inout) :: li                ! landunit index
     integer , intent(inout) :: ci                ! column index
-    integer , intent(inout) :: pi                ! patch index
+    integer*8 , intent(inout) :: pi                ! patch index
     integer , intent(inout) :: topo_ind                ! topounit index within each grid
     logical , intent(in)    :: setdata           ! set info or just compute
     !
@@ -358,7 +359,7 @@ contains
     integer , intent(in)    :: ti                ! topounit index
     integer , intent(inout) :: li                ! landunit index
     integer , intent(inout) :: ci                ! column index
-    integer , intent(inout) :: pi                ! patch index
+    integer*8 , intent(inout) :: pi                ! patch index
     integer , intent(inout) :: topo_ind                ! topounit index within each grid
     logical , intent(in)    :: setdata           ! set info or just compute
     integer , intent(in), optional :: glcmask    ! = 1 where glc requires sfc mass balance
@@ -466,7 +467,7 @@ contains
     integer , intent(inout) :: topo_ind                ! topounit index within each grid
     integer , intent(inout) :: li                ! landunit index
     integer , intent(inout) :: ci                ! column index
-    integer , intent(inout) :: pi                ! patch index
+    integer*8 , intent(inout) :: pi                ! patch index
     logical , intent(in)    :: setdata           ! set info or just compute
     !
     ! !LOCAL VARIABLES:
@@ -536,7 +537,7 @@ contains
     integer , intent(inout) :: topo_ind                ! topounit index within each grid
     integer , intent(inout) :: li                ! landunit index
     integer , intent(inout) :: ci                ! column index
-    integer , intent(inout) :: pi                ! patch index
+    integer*8 , intent(inout) :: pi                ! patch index
     logical , intent(in)    :: setdata           ! set info or just compute
     !
     ! !LOCAL VARIABLES:
