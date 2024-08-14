@@ -296,7 +296,7 @@ contains
     real(r8) :: compet_leach_p                                            ! (unitless) relative competitiveness of leaching for P
 
     !
-    integer :: c,p,l,j                                               !indices
+    integer*8 :: c,p,l,j                                               !indices
     integer :: fp                                                    !lake filter pft index
     integer :: fc                                                    !lake filter column index
     real(r8):: mr                                                    !maintenance respiration (gC/m2/s)
@@ -958,7 +958,7 @@ contains
   real(r8) :: leaf_totc
   real(r8) :: leaf_totn
   real(r8) :: leaf_totp
-  integer :: p, c, fc, j
+  integeri* :: p, c, fc, j
 
   real(r8), parameter :: cn_stoich_var=0.2_r8    ! variability of CN ratio
   real(r8), parameter :: cp_stoich_var=0.4_r8    ! variability of CP ratio
@@ -1135,7 +1135,7 @@ contains
     !
     ! !LOCAL VARIABLES:
     !
-    integer :: c,p,j         !!l,pi,                                   !indices
+    integer*8 :: c,p,j         !!l,pi,                                   !indices
     integer :: fp                                                    !lake filter pft index
     integer :: fc                                                    !lake filter column index
     real(r8):: mr                                                    !maintenance respiration (gC/m2/s)

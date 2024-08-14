@@ -97,7 +97,7 @@ contains
     !
     ! !ARGUMENTS:
     class(vegetation_physical_properties)   :: this
-    integer, intent(in) :: begp,endp
+    integer*8, intent(in) :: begp,endp
     !
     ! LOCAL VARAIBLES:
     !------------------------------------------------------------------------

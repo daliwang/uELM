@@ -1061,7 +1061,7 @@ module VegetationDataType
     integer, intent(in) :: begp,endp
     !
     ! !LOCAL VARIABLES:
-    integer           :: p,c,l,j                        ! indices
+    integer*8           :: p,c,l,j                        ! indices
     !------------------------------------------------------------------------
 
     !-----------------------------------------------------------------------
@@ -1566,7 +1566,7 @@ module VegetationDataType
     type(bounds_type)      , intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: m,g,l,c,p                 ! indices
+    integer*8 :: m,g,l,c,p                 ! indices
     integer :: ier                       ! error status
     integer :: dtime                     ! timestep size [seconds]
     integer :: nstep                     ! timestep number
@@ -1575,7 +1575,7 @@ module VegetationDataType
     integer :: day                       ! day of month (1, ..., 31) for nstep
     integer :: secs                      ! seconds into current date for nstep
     logical :: end_cd                    ! temporary for is_end_curr_day() value
-    integer :: begp, endp
+    integer*8 :: begp, endp
     real(r8), pointer :: rbufslp(:)      ! temporary single level - pft level
     !---------------------------------------------------------------------
 
@@ -1769,10 +1769,10 @@ module VegetationDataType
     !
     ! !ARGUMENTS:
     class(vegetation_water_state) :: this
-    integer, intent(in) :: begp,endp
+    integer*8, intent(in) :: begp,endp
     !
     ! !LOCAL VARIABLES:
-    integer             :: p
+    integer*8             :: p
     !------------------------------------------------------------------------
 
     !-----------------------------------------------------------------------
@@ -1894,13 +1894,13 @@ module VegetationDataType
     !
     ! !ARGUMENTS:
     class(vegetation_carbon_state) :: this
-    integer          , intent(in) :: begp,endp
+    integer*8          , intent(in) :: begp,endp
     character(len=3) , intent(in) :: carbon_type ! one of ['c12', c13','c14']
     real(r8)         , intent(in) :: ratio
     !
     ! !LOCAL VARIABLES:
-    integer           :: p,c,l,i,j,k
-    integer :: fp                       ! filter index
+    integer*8           :: p,c,l,i,j,k
+    integer*8 :: fp                       ! filter index
     integer :: num_special_veg          ! number of good values in special_veg filter
     integer :: special_veg(endp-begp+1) ! special landunit filter - veg
     real(r8):: value_veg                ! used to reset state variables on special landunits
@@ -2617,7 +2617,7 @@ module VegetationDataType
     ! !LOCAL VARIABLES:
     logical            :: readvar    ! determine if variable is on initial file
     character(len=128) :: varname    ! temporary
-    integer            :: i,l,c,p      ! indices
+    integer*8            :: i,l,c,p      ! indices
     real(r8)           :: c3_del13c  ! typical del13C for C3 photosynthesis (permil, relative to PDB)
     real(r8)           :: c4_del13c  ! typical del13C for C4 photosynthesis (permil, relative to PDB)
     real(r8)           :: c3_r1      ! isotope ratio (13c/12c) for C3 photosynthesis
@@ -3519,8 +3519,8 @@ module VegetationDataType
 
     !
     ! !LOCAL VARIABLES:
-    integer  :: c,p             ! indices
-    integer  :: fp              ! filter indices
+    integer*8  :: c,p             ! indices
+    integer*8  :: fp              ! filter indices
     real(r8) :: maxdepth        ! depth to integrate soil variables
     !-----------------------------------------------------------------------
     associate(&
@@ -3637,7 +3637,7 @@ module VegetationDataType
     type(bounds_type), intent(in)  :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer  :: p          ! indices
+    integer*8  :: p          ! indices
     !-----------------------------------------------------------------------
 
     do p = bounds%begp,bounds%endp
@@ -3667,7 +3667,7 @@ module VegetationDataType
     type(vegetation_carbon_state)    :: veg_cs ! used with C:N ratios on cold start
     !
     ! !LOCAL VARIABLES:
-    integer :: fp,l,c,p                                 ! indices
+    integer*8 :: fp,l,c,p                                 ! indices
     integer :: num_special_veg                          ! number of good values in special_patch filter
     integer :: special_veg (endp-begp+1)  ! special landunit filter - patches
     !------------------------------------------------------------------------
@@ -3997,7 +3997,7 @@ module VegetationDataType
     character(len=*)           , intent(in)    :: flag   !'read' or 'write' or 'define'
     !
     ! !LOCAL VARIABLES:
-    integer            :: i
+    integer*8            :: i
     logical            :: readvar
     integer            :: idata
     logical            :: exit_spinup = .false.
@@ -4195,8 +4195,8 @@ module VegetationDataType
 
     !
     ! !LOCAL VARIABLES:
-    integer  :: c,p             ! indices
-    integer  :: fp              ! filter indices
+    integer*8  :: c,p             ! indices
+    integer*8  :: fp              ! filter indices
     !-----------------------------------------------------------------------
     associate( &
      plant_n_buffer_patch  => this%plant_n_buffer  , &
@@ -4293,7 +4293,7 @@ module VegetationDataType
     real(r8), intent(in) :: value_veg
     !
     ! !LOCAL VARIABLES:
-    integer :: fi,i     ! loop index
+    integer*8 :: fi,i     ! loop index
     !------------------------------------------------------------------------
 
     do fi = 1,num_veg
@@ -4349,7 +4349,7 @@ module VegetationDataType
     type(bounds_type), intent(in)  :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer  :: p          ! indices
+    integer*8  :: p          ! indices
     !-----------------------------------------------------------------------
 
     do p = bounds%begp,bounds%endp
@@ -4377,11 +4377,11 @@ module VegetationDataType
     !
     ! !ARGUMENTS:
     class(vegetation_phosphorus_state)        :: this
-    integer, intent(in)                       :: begp,endp
+    integer*8, intent(in)                       :: begp,endp
     type(vegetation_carbon_state), intent(in) :: veg_cs
     !
     ! !LOCAL VARIABLES:
-    integer :: fp,l,p                      ! indices
+    integer*8 :: fp,l,p                      ! indices
     integer :: num_special_patch           ! number of good values in special_patch filter
     integer :: special_patch (endp-begp+1) ! special landunit filter - patches
     !------------------------------------------------------------------------
@@ -4664,7 +4664,7 @@ module VegetationDataType
     character(len=*)           , intent(in)    :: flag   !'read' or 'write' or 'define'
     !
     ! !LOCAL VARIABLES:
-    integer            :: i,j,k,l,c,a,b,d
+    integer*8            :: i,j,k,l,c,a,b,d
     logical            :: readvar
     integer            :: idata
     logical            :: exit_spinup = .false.
@@ -4861,8 +4861,8 @@ module VegetationDataType
     real(r8), intent(in)                :: value_patch
     !
     ! !LOCAL VARIABLES:
-    integer :: fi,i     ! loop index
-    integer :: j,k      ! indices
+    integer*8 :: fi,i     ! loop index
+    integer*8 :: j,k      ! indices
     !------------------------------------------------------------------------
     do fi = 1,num_patch
        i = filter_patch(fi)
@@ -4917,7 +4917,7 @@ module VegetationDataType
     type(bounds_type), intent(in)      :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer  :: p          ! indices
+    integer*8  :: p          ! indices
     !-----------------------------------------------------------------------
 
     do p = bounds%begp,bounds%endp
@@ -4942,8 +4942,8 @@ module VegetationDataType
     type(column_phosphorus_state), intent(inout) :: col_ps
     !
     ! !LOCAL VARIABLES:
-    integer  :: p        ! indices
-    integer  :: fp       ! lake filter indices
+    integer*8  :: p        ! indices
+    integer*8  :: fp       ! lake filter indices
     !-----------------------------------------------------------------------
     associate( &
      totvegp_patch  => this%totvegp   , &
@@ -5379,7 +5379,7 @@ module VegetationDataType
     integer, intent(in) :: begp,endp
     !
     ! !LOCAL VARIABLES:
-    integer           :: p,l                        ! indices
+    integer*8           :: p,l                        ! indices
     !------------------------------------------------------------------------
 
     !-----------------------------------------------------------------------
@@ -5638,11 +5638,11 @@ module VegetationDataType
     !
     ! !ARGUMENTS:
     class(vegetation_carbon_flux) :: this
-    integer, intent(in)           :: begp,endp
+    integer*8, intent(in)           :: begp,endp
     character(len=3) , intent(in) :: carbon_type ! one of ['c12', c13','c14']
     !
     ! !LOCAL VARIABLES:
-    integer :: p,c,l,j                     ! indices
+    integer*8 :: p,c,l,j                     ! indices
     integer :: num_special_patch           ! number of good values in special_patch filter
     integer :: special_patch(endp-begp+1)  ! special landunit filter - patches
     !------------------------------------------------------------------------
@@ -7954,7 +7954,7 @@ module VegetationDataType
     character(len=*)  , intent(in)    :: flag   !'read' or 'write'
     !
     ! !LOCAL VARIABLES:
-    integer :: j,c ! indices
+    integer*8 :: j,c ! indices
     logical :: readvar      ! determine if variable is on initial file
     !------------------------------------------------------------------------
 
@@ -8099,8 +8099,8 @@ module VegetationDataType
     type(column_carbon_flux), intent(inout):: col_cf_input    ! receives p2c output
     !
     ! !LOCAL VARIABLES:
-    integer  :: p,j,k,l       ! indices
-    integer  :: fp            ! lake filter indices
+    integer*8  :: p,j,k,l       ! indices
+    integer*8  :: fp            ! lake filter indices
     !-----------------------------------------------------------------------
     associate( &
       gpp_patch => this%gpp , &
@@ -8520,7 +8520,7 @@ module VegetationDataType
     integer, intent(in) :: filter_soilp(:)
     !
     ! !LOCAL VARIABLES
-    integer :: fp, p
+    integer*8 :: fp, p
     !------------------------------------------------------------
 
     do fp = 1,num_soilp
@@ -8581,7 +8581,7 @@ module VegetationDataType
     real(r8), intent(in) :: value_patch
     !
     ! !LOCAL VARIABLES:
-    integer :: fi,i     ! loop index
+    integer*8 :: fi,i     ! loop index
     !------------------------------------------------------------------------
 
     if(.not.use_fates) then
@@ -8814,11 +8814,11 @@ module VegetationDataType
     !
     ! !ARGUMENTS:
     class(vegetation_nitrogen_flux) :: this
-    integer, intent(in) :: begp,endp
+    integer*8, intent(in) :: begp,endp
     !
     ! !LOCAL VARIABLES:
-    integer :: p,c,l
-    integer :: fp                                        ! filter indices
+    integer*8 :: p,c,l
+    integer*8 :: fp                                        ! filter indices
     integer :: num_special_patch                         ! number of good values in special_patch filter
     integer :: special_patch(endp-begp+1)  ! special landunit filter - patches
     !------------------------------------------------------------------------
@@ -9787,8 +9787,8 @@ module VegetationDataType
 
     !
     ! !LOCAL VARIABLES:
-    integer  :: c,p             ! indices
-    integer  :: fp              ! filter indices
+    integer*8  :: c,p             ! indices
+    integer*8  :: fp              ! filter indices
     !-----------------------------------------------------------------------
     associate(&
       fire_nloss_patch => this%fire_nloss ,&
@@ -9943,11 +9943,11 @@ module VegetationDataType
     !
     ! !ARGUMENTS:
     class(vegetation_phosphorus_flux) :: this
-    integer, intent(in) :: begp,endp
+    integer*8, intent(in) :: begp,endp
     !
     ! !LOCAL VARIABLES:
-    integer :: p,l                         ! indices
-    integer :: fp                          ! filter indices
+    integer*8 :: p,l                         ! indices
+    integer*8 :: fp                          ! filter indices
     integer :: num_special_patch           ! number of good values in special_patch filter
     integer :: special_patch(endp-begp+1)  ! special landunit filter - patches
     !------------------------------------------------------------------------
@@ -10741,7 +10741,7 @@ module VegetationDataType
     real(r8), intent(in) :: value_patch
     !
     ! !LOCAL VARIABLES:
-    integer :: fi,i     ! loop index
+    integer*8 :: fi,i     ! loop index
     !------------------------------------------------------------------------
     do fi = 1,num_patch
        i=filter_patch(fi)
@@ -10908,7 +10908,7 @@ module VegetationDataType
     type(column_phosphorus_flux), intent(inout) :: col_pf
     !
     ! !LOCAL VARIABLES:
-    integer  :: p, fp   ! indices
+    integer*8  :: p, fp   ! indices
     !-----------------------------------------------------------------------
     associate( &
       fire_ploss_patch => this%fire_ploss      ,&

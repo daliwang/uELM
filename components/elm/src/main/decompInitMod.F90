@@ -369,15 +369,15 @@ contains
     integer :: itunits            ! temporary
     integer :: ilunits            ! temporary
     integer :: icols              ! temporary
-    integer :: ipfts              ! temporary
-    integer :: icohorts           ! temporary
+    integer*8 :: ipfts              ! temporary
+    integer*8 :: icohorts           ! temporary
     integer :: ier                ! error code
     integer :: glev, tlev, llev, clev, plev, hlev  ! order of subgrid levels in the allvec arrays
     integer :: nlev               ! number of subgrid levels
     integer, allocatable :: allvecg(:,:)  ! temporary vector "global"
     integer, allocatable :: allvecl(:,:)  ! temporary vector "local"
     integer, allocatable :: proc_nXXX(:) ! number of XXX assigned to a process
-    integer, allocatable :: proc_begX(:) ! beginning XXX index assigned to a process
+    integer*8, allocatable :: proc_begX(:) ! beginning XXX index assigned to a process
     integer :: ntest
     character(len=32), parameter :: subname = 'decompInit_clumps'
     !------------------------------------------------------------------------------
@@ -677,42 +677,44 @@ contains
     !integer , pointer, optional   :: num_tunits_per_grd(:)  ! Number of topounits per grid
     !
     ! !LOCAL VARIABLES:
-    integer :: gi,ti,li,ci,pi,coi ! indices
+    integer :: gi,ti,li,ci        ! indices
+    integer*8 :: pi,coi                     ! indices for pft and cohert
     integer :: i,g,k,l,n,np       ! indices
     integer :: cid,pid            ! indices
     integer :: begg,endg          ! beg,end gridcells
     integer :: begt,endt          ! beg,end topographic units
     integer :: begl,endl          ! beg,end landunits
     integer :: begc,endc          ! beg,end columns
-    integer :: begp,endp          ! beg,end pfts
-    integer :: begCohort,endCohort    ! beg,end pfts
+    integer*8 :: begp,endp          ! beg,end pfts
+    integer*8 :: begCohort,endCohort    ! beg,end pfts
     integer :: numg               ! total number of gridcells across all processors
     integer :: numt               ! total number of topounits across all processors
     integer :: numl               ! total number of landunits across all processors
     integer :: numc               ! total number of columns across all processors
-    integer :: nump               ! total number of pfts across all processors
-    integer :: numCohort          ! ED cohorts
+    integer*8 :: nump               ! total number of pfts across all processors
+    integer*8 :: numCohort          ! ED cohorts
     integer :: icells             ! temporary
     integer :: itunits         ! temporary
     integer :: ilunits            ! temporary
     integer :: icols              ! temporary
-    integer :: ipfts              ! temporary
-    integer :: icohorts           ! temporary
+    integer*8 :: ipfts              ! temporary
+    integer*8 :: icohorts           ! temporary
     integer :: ier                ! error code
     integer :: npmin,npmax,npint  ! do loop values for printing
     integer :: clmin,clmax        ! do loop values for printing
-    integer :: locsize,globsize   ! used for gsMap init
+    integer*8 :: locsize            ! used for gsMap init (local)
+    integer*8 :: globsize         ! used for gsMap init
     integer :: ng                 ! number of gridcells in gsMap_lnd_gdc2glo
     integer :: val1, val2         ! temporaries
-    integer, pointer :: gindex(:) ! global index for gsMap init
+    integer*8, pointer :: gindex(:) ! global index for gsMap init
     integer, pointer :: arrayglob(:) ! temporaroy
     integer, pointer :: gstart(:),  gcount(:)
     integer, pointer :: tstart(:),  tcount(:)
     integer, pointer :: lstart(:),  lcount(:)
     integer, pointer :: cstart(:),  ccount(:)
-    integer, pointer :: pstart(:),  pcount(:)
-    integer, pointer :: coStart(:), coCount(:)
-    integer, pointer :: ioff(:)
+    integer*8, pointer :: pstart(:),  pcount(:)
+    integer*8, pointer :: coStart(:), coCount(:)
+    integer*8, pointer :: ioff(:)
     integer, parameter :: dbug=1      ! 0 = min, 1=normal, 2=much, 3=max
     character(len=32), parameter :: subname = 'decompInit_gtlcp'
     !------------------------------------------------------------------------------
@@ -803,7 +805,7 @@ contains
           arrayglob(n) = arrayglob(n-1) + val1
           val1 = val2
        enddo
-    endif
+    endif       
     call scatter_data_from_master(gstart, arrayglob, grlnd)
 
     ! tstart for gridcell (n) is the total number of the topounits 
@@ -852,7 +854,7 @@ contains
     call scatter_data_from_master(cstart, arrayglob, grlnd)
 
     arrayglob(:) = 0
-    call gather_data_to_master(pcount, arrayglob, grlnd)
+    call gather_data_to_master(INT(pcount,4), arrayglob, grlnd)
     if (masterproc) then
        val1 = arrayglob(1)
        arrayglob(1) = 1
@@ -862,11 +864,11 @@ contains
           val1 = val2
        enddo
     endif
-    call scatter_data_from_master(pstart, arrayglob, grlnd)
+    call scatter_data_from_master(INT(pstart,4), arrayglob, grlnd)
 
     if ( use_fates ) then
        arrayglob(:) = 0
-       call gather_data_to_master(coCount, arrayglob, grlnd)
+       call gather_data_to_master(INT(coCount,4), arrayglob, grlnd)
        if (masterproc) then
           val1 = arrayglob(1)
           arrayglob(1) = 1
@@ -876,11 +878,14 @@ contains
              val1 = val2
           enddo
        endif
-       call scatter_data_from_master(coStart, arrayglob, grlnd)
+       call scatter_data_from_master(INT(coStart,4), arrayglob, grlnd)
     endif
 
     deallocate(arrayglob)
 
+    !!!!!! DW temporarily convert the localsize and globsize (integer*8 into integer*4)
+    !!!!!! DW to avoid the changes to mct_mod
+ 
     ! Gridcell gsMap (compressed, no ocean points)
 
     allocate(gindex(begg:endg))
@@ -904,7 +909,7 @@ contains
     endif
     locsize = endg-begg+1
     globsize = numg
-    call mct_gsMap_init(gsMap_gce_gdc2glo, gindex, mpicom, comp_id, locsize, globsize)
+    call mct_gsMap_init(gsMap_gce_gdc2glo, INT(gindex,4), mpicom, comp_id, INT(locsize,4), INT(globsize,4))
     deallocate(gindex)
 
     ! Topounit gsmap
@@ -919,7 +924,7 @@ contains
     enddo
     locsize = endt-begt+1
     globsize = numt
-    call mct_gsMap_init(gsMap_top_gdc2glo, gindex, mpicom, comp_id, locsize, globsize)
+    call mct_gsMap_init(gsMap_top_gdc2glo, INT(gindex,4), mpicom, comp_id, INT(locsize,4), INT(globsize,4))
     deallocate(gindex)
 
     ! Landunit gsmap
@@ -934,7 +939,7 @@ contains
     enddo
     locsize = endl-begl+1
     globsize = numl
-    call mct_gsMap_init(gsMap_lun_gdc2glo, gindex, mpicom, comp_id, locsize, globsize)
+    call mct_gsMap_init(gsMap_lun_gdc2glo, INT(gindex,4), mpicom, comp_id, INT(locsize,4), INT(globsize,4))
     deallocate(gindex)
 
     ! Column gsmap
@@ -949,7 +954,7 @@ contains
     enddo
     locsize = endc-begc+1
     globsize = numc
-    call mct_gsMap_init(gsMap_col_gdc2glo, gindex, mpicom, comp_id, locsize, globsize)
+    call mct_gsMap_init(gsMap_col_gdc2glo, INT(gindex,4), mpicom, comp_id, INT(locsize,4), INT(globsize,4))
     deallocate(gindex)
 
     ! PATCH gsmap
@@ -962,9 +967,10 @@ contains
        ioff(gi) = ioff(gi) + 1 
        ! check that this is less than [pstart(gi) + pcount(gi)]
     enddo
+
     locsize = endp-begp+1
     globsize = nump
-    call mct_gsMap_init(gsMap_patch_gdc2glo, gindex, mpicom, comp_id, locsize, globsize)
+    call mct_gsMap_init(gsMap_patch_gdc2glo, INT(gindex,4), mpicom, comp_id, INT(locsize,4), INT(globsize,4))
     deallocate(gindex)
 
     if ( use_fates ) then
@@ -979,7 +985,7 @@ contains
        enddo
        locsize = endCohort-begCohort+1
        globsize = numCohort
-       call mct_gsMap_init(gsMap_cohort_gdc2glo, gindex, mpicom, comp_id, locsize, globsize)
+       call mct_gsMap_init(gsMap_cohort_gdc2glo, INT(gindex,4), mpicom, comp_id, INT(locsize,4), INT(globsize,4))
        deallocate(gindex)
     endif
 
@@ -1759,8 +1765,8 @@ contains
     integer                      :: itunits             ! temporary
     integer                      :: ilunits                ! temporary
     integer                      :: icols                  ! temporary
-    integer                      :: ipfts                  ! temporary
-    integer                      :: icohorts               ! temporary
+    integer*8                      :: ipfts                  ! temporary
+    integer*8                      :: icohorts               ! temporary
     integer                      :: ighost                 ! temporary
     integer                      :: ighost_beg, ighost_end ! temporary
     real(r8), pointer            :: data_send(:)

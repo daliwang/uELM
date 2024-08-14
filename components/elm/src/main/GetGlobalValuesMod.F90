@@ -31,7 +31,7 @@ contains
     use mct_mod
     !
     ! Arguments 
-    integer          , intent(in) :: decomp_index
+    integer*8          , intent(in) :: decomp_index
     character(len=*) , intent(in) :: elmlevel
     !
     ! Local Variables:
@@ -81,11 +81,11 @@ contains
     use mct_mod
     !
     ! Arguments 
-    integer                 , intent(in) :: bounds1
-    integer                 , intent(in) :: bounds2
-    integer, dimension(bounds1:bounds2), intent(in) :: decomp_index
+    integer*8                 , intent(in) :: bounds1
+    integer*8                 , intent(in) :: bounds2
+    integer*8, dimension(bounds1:bounds2), intent(in) :: decomp_index
     character(len=*)        , intent(in) :: elmlevel
-    integer, dimension(bounds1:bounds2)  :: GetGlobalIndexArray
+    integer*8, dimension(bounds1:bounds2)  :: GetGlobalIndexArray
     !
     ! Local Variables:
     type(bounds_type)             :: bounds_proc   ! processor bounds

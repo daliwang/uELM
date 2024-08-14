@@ -91,7 +91,7 @@ contains
     ! LOCAL VARIABLES:
     integer  :: begg, endg
     integer  :: begc, endc
-    integer  :: begp, endp
+    integer*8  :: begp, endp
     !------------------------------------------------------------------------
     begg = bounds%begg; endg= bounds%endg
     begc = bounds%begc; endc= bounds%endc

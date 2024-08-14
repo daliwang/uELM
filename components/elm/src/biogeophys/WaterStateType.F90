@@ -184,7 +184,7 @@ contains
     type(bounds_type), intent(in) :: bounds  
     !
     ! !LOCAL VARIABLES:
-    integer :: begp, endp
+    integer*8 :: begp, endp
     integer :: begc, endc
     integer :: begl, endl
     integer :: begg, endg
@@ -316,7 +316,7 @@ contains
     type(bounds_type), intent(in) :: bounds  
     !
     ! !LOCAL VARIABLES:
-    integer           :: begp, endp
+    integer*8           :: begp, endp
     integer           :: begc, endc
     integer           :: begg, endg
     character(10)     :: active

@@ -148,7 +148,7 @@ contains
     implicit none
     type(bounds_type), intent(in) :: bounds_proc
 
-    integer               :: begp, endp
+    integer*8               :: begp, endp
     integer               :: begc, endc
     integer               :: begl, endl
     integer               :: begg, endg
@@ -277,8 +277,9 @@ contains
     implicit none
     type(bounds_type), intent(in) :: bounds_proc
     ! LOCAL VARIABLES
-    integer               :: c,i,g,j,k,l,p! indices
-    integer               :: begp, endp
+    integer               :: c,i,g,j,k,l  ! indices
+    integer*8             :: p            ! indice for pft 
+    integer*8             :: begp, endp
     integer               :: begc, endc
     integer               :: begl, endl
     integer               :: closelatidx,closelonidx

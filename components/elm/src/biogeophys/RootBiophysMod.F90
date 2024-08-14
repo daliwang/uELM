@@ -101,7 +101,8 @@ contains
     real(r8) :: rootfr(bounds%begp:bounds%endp , 1:ubj ) !
     !
     ! !LOCAL VARIABLES:
-    integer :: p, lev, c, nlevbed
+    integer :: lev, c, nlevbed
+    integer*8 :: p      ! indice for pft
     real    :: totrootfr
     !------------------------------------------------------------------------
 

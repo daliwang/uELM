@@ -91,7 +91,7 @@ contains
     type(vegetation_carbon_state)  , intent(inout) :: veg_cs
     !
     ! !LOCAL VARIABLES:
-    integer  :: begp, endp
+    integer*8  :: begp, endp
     logical  :: old_weight_was_zero
     logical  :: patch_grew
 

@@ -67,8 +67,7 @@ contains
     type(bounds_type), intent(in) :: bounds  ! bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: t,l,c               ! loop counters
-    integer*8 :: p                 ! loop counter for pi
+    integer*8 :: t,l,c,p               ! loop counters
     integer :: curg,curt,curl,curc ! tracks g,l,c,p indexes in arrays
     integer*8 :: curp    
     integer :: ltype               ! landunit type
@@ -205,8 +204,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: g,t,l,c, tt     ! loop counters
-    integer*8 :: p             ! loop counter for pft
+    integer*8 :: g,t,l,c,p,tt     ! loop counters
     integer :: l_prev        ! l value of previous point
     integer :: ltype         ! landunit type
     logical :: error         ! error flag

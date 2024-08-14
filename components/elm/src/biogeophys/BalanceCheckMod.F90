@@ -185,7 +185,8 @@ contains
      type(canopystate_type), intent(inout) :: canopystate_vars
      !
      ! !LOCAL VARIABLES:
-     integer  :: p,c,l,t,g,fc                           ! indices
+     integer  :: c,l,t,g,fc                           ! indices
+     integer*8  :: p                                      !indice for pft
      real(r8) :: dtime                                  ! land model time step (sec)
      integer  :: nstep                                  ! time step number
      logical  :: found                                  ! flag in search loop

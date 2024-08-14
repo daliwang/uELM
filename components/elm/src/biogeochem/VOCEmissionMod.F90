@@ -117,7 +117,7 @@ contains
     real(r8)           :: factors(numpft)
     real(r8)           :: molec_wght
     integer            :: begg, endg
-    integer            :: begp, endp
+    integer*8            :: begp, endp
     type(shr_megan_megcomp_t), pointer :: meg_cmp
     !-----------------------------------------------------------------------
 
@@ -184,7 +184,7 @@ contains
     !
     ! !LOCAL VARIABLES
     integer :: imeg, ii
-    integer :: begp, endp
+    integer*8 :: begp, endp
     type(shr_megan_megcomp_t), pointer :: meg_cmp
     !---------------------------------------------------------------------
 
@@ -314,7 +314,7 @@ contains
     !
     ! !LOCAL VARIABLES:
     logical            :: readvar 
-    integer            :: begg, endg
+    integer*8            :: begg, endg
     type(file_desc_t)  :: ncid       ! netcdf id
     character(len=256) :: locfn      ! local filename
     real(r8) ,pointer  :: temp_ef(:,:) ! read in - temporary EFs 

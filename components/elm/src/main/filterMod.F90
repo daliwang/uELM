@@ -284,7 +284,8 @@ contains
     !
     ! LOCAL VARAIBLES:
     integer :: nc          ! clump index
-    integer :: c,l,p       ! column, landunit, pft indices
+    integer :: c,l         ! column, landunit indices
+    integer*8 :: p         ! pft indice
     integer :: fl          ! lake filter index
     integer :: fnl,fnlu    ! non-lake filter index
     integer :: fs          ! soil filter index

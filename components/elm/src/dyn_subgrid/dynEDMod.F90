@@ -25,7 +25,8 @@ contains
     type(bounds_type), intent(in) :: bounds  ! bounds
     
     ! !LOCAL VARIABLES:
-    integer  ::  p,c           ! indices
+    integer  ::  c
+    integer*8  ::  p           ! indices
     !------------------------------------------------------------------------
     
     do p = bounds%begp,bounds%endp

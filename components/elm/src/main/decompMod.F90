@@ -63,8 +63,8 @@ module decompMod
   integer,public :: numt        ! total number of topographic units on all procs
   integer,public :: numl        ! total number of landunits on all procs
   integer,public :: numc        ! total number of columns on all procs
-  integer,public :: nump        ! total number of pfts on all procs
-  integer,public :: numCohort   ! total number of ED cohorts on all procs
+  integer*8,public :: nump        ! total number of pfts on all procs
+  integer*8,public :: numCohort   ! total number of ED cohorts on all procs
 
   type bounds_type
      ! The following variables correspond to "Local" quantities
@@ -72,24 +72,24 @@ module decompMod
      integer :: begt, endt                       ! beginning and ending topographic unit index
      integer :: begl, endl                       ! beginning and ending landunit index
      integer :: begc, endc                       ! beginning and ending column index
-     integer :: begp, endp                       ! beginning and ending pft index
-     integer :: begCohort, endCohort             ! beginning and ending cohort indices
+     integer*8 :: begp, endp                       ! beginning and ending pft index
+     integer*8 :: begCohort, endCohort             ! beginning and ending cohort indices
 
      ! The following variables correspond to "Ghost/Halo" quantites
      integer :: begg_ghost, endg_ghost           ! beginning and ending gridcell index
      integer :: begt_ghost, endt_ghost           ! beginning and ending topounit index
      integer :: begl_ghost, endl_ghost           ! beginning and ending landunit index
      integer :: begc_ghost, endc_ghost           ! beginning and ending column index
-     integer :: begp_ghost, endp_ghost           ! beginning and ending pft index
-     integer :: begCohort_ghost, endCohort_ghost ! beginning and ending cohort indices
+     integer*8 :: begp_ghost, endp_ghost           ! beginning and ending pft index
+     integer*8 :: begCohort_ghost, endCohort_ghost ! beginning and ending cohort indices
 
      ! The following variables correspond to "ALL" (=Local + Ghost) quantites
      integer :: begg_all, endg_all               ! beginning and ending gridcell index
      integer :: begt_all, endt_all               ! beginning and ending topounit index
      integer :: begl_all, endl_all               ! beginning and ending landunit index
      integer :: begc_all, endc_all               ! beginning and ending column index
-     integer :: begp_all, endp_all               ! beginning and ending pft index
-     integer :: begCohort_all, endCohort_all     ! beginning and ending cohort indices
+     integer*8 :: begp_all, endp_all               ! beginning and ending pft index
+     integer*8 :: begCohort_all, endCohort_all     ! beginning and ending cohort indices
 
      integer :: level                            ! whether defined on the proc or clump level
      integer :: clump_index                      ! if defined on the clump level, this gives the clump index
@@ -112,8 +112,8 @@ module decompMod
      integer         :: begt, endt                       ! beginning and ending topographic unit index
      integer         :: begl, endl                       ! beginning and ending landunit index
      integer         :: begc, endc                       ! beginning and ending column index
-     integer         :: begp, endp                       ! beginning and ending pft index
-     integer         :: begCohort, endCohort             ! beginning and ending cohort indices
+     integer*8         :: begp, endp                       ! beginning and ending pft index
+     integer*8         :: begCohort, endCohort             ! beginning and ending cohort indices
 
      ! The following variables correspond to "Ghost/Halo" quantites on a proc
      integer         :: ncells_ghost                     ! number of gridcells in proc
@@ -126,8 +126,8 @@ module decompMod
      integer         :: begt_ghost, endt_ghost           ! beginning and ending topounit index
      integer         :: begl_ghost, endl_ghost           ! beginning and ending landunit index
      integer         :: begc_ghost, endc_ghost           ! beginning and ending column index
-     integer         :: begp_ghost, endp_ghost           ! beginning and ending pft index
-     integer         :: begCohort_ghost, endCohort_ghost ! beginning and ending cohort indices
+     integer*8         :: begp_ghost, endp_ghost           ! beginning and ending pft index
+     integer*8         :: begCohort_ghost, endCohort_ghost ! beginning and ending cohort indices
 
      ! The following variables correspond to "ALL" (=Local + Ghost) quantites on a proc
      integer         :: ncells_all                       ! number of gridcells in proc
@@ -140,8 +140,8 @@ module decompMod
      integer         :: begt_all, endt_all               ! beginning and ending topounit index
      integer         :: begl_all, endl_all               ! beginning and ending landunit index
      integer         :: begc_all, endc_all               ! beginning and ending column index
-     integer         :: begp_all, endp_all               ! beginning and ending pft index
-     integer         :: begCohort_all, endCohort_all     ! beginning and ending cohort indices
+     integer*8         :: begp_all, endp_all               ! beginning and ending pft index
+     integer*8         :: begCohort_all, endCohort_all     ! beginning and ending cohort indices
 
   end type processor_type
   public processor_type
@@ -160,8 +160,8 @@ module decompMod
      integer :: begt, endt       ! beginning and ending topographic unit index
      integer :: begl, endl       ! beginning and ending landunit index
      integer :: begc, endc       ! beginning and ending column index
-     integer :: begp, endp       ! beginning and ending pft index
-     integer :: begCohort, endCohort ! beginning and ending cohort indices
+     integer*8 :: begp, endp       ! beginning and ending pft index
+     integer*8 :: begCohort, endCohort ! beginning and ending cohort indices
   end type clump_type
   public clump_type
   type(clump_type),public, allocatable :: clumps(:)
@@ -201,7 +201,7 @@ contains
     ! !USES:
     !
     ! !ARGUMENTS:
-    integer :: beg_index  ! function result
+    integer*8 :: beg_index  ! function result
     type(bounds_type), intent(in) :: bounds
     integer, intent(in) :: subgrid_level
     !
@@ -244,7 +244,7 @@ contains
     ! !USES:
     !
     ! !ARGUMENTS:
-    integer :: end_index  ! function result
+    integer*8 :: end_index  ! function result
     type(bounds_type), intent(in) :: bounds
     integer, intent(in) :: subgrid_level
     !
@@ -349,13 +349,13 @@ contains
    !------------------------------------------------------------------------------
    subroutine get_clump_bounds_old (n, begg, endg, begt,endt, begl, endl, begc, endc, begp, endp, &
         begCohort, endCohort)
-     integer, intent(in)  :: n           ! proc clump index
+     integer*8, intent(in)  :: n           ! proc clump index
      integer, intent(out) :: begp, endp  ! clump beg and end pft indices
      integer, intent(out) :: begc, endc  ! clump beg and end column indices
      integer, intent(out) :: begl, endl  ! clump beg and end landunit indices
      integer, intent(out) :: begt, endt  ! clump beg and end topounit indices
      integer, intent(out) :: begg, endg  ! clump beg and end gridcell indices
-     integer, intent(out) :: begCohort, endCohort  ! cohort beg and end gridcell indices
+     integer*8, intent(out) :: begCohort, endCohort  ! cohort beg and end gridcell indices
      integer :: cid                                                ! clump id
      !------------------------------------------------------------------------------
 
@@ -368,7 +368,7 @@ contains
      endl = clumps(cid)%endl
      begt = clumps(cid)%begt
      endt = clumps(cid)%endt
-	 begg = clumps(cid)%begg
+     begg = clumps(cid)%begg
      endg = clumps(cid)%endg
 
      begCohort = clumps(cid)%begCohort
@@ -450,12 +450,12 @@ contains
    subroutine get_proc_bounds_old (begg, endg, begt, endt, begl, endl, begc, endc, begp, endp, &
         begCohort, endCohort)
 
-     integer, optional, intent(out) :: begp, endp  ! proc beg and end pft indices
+     integer*8, optional, intent(out) :: begp, endp  ! proc beg and end pft indices
      integer, optional, intent(out) :: begc, endc  ! proc beg and end column indices
      integer, optional, intent(out) :: begl, endl  ! proc beg and end landunit indices
      integer, optional, intent(out) :: begt, endt  ! proc beg and end topographic unit indices
      integer, optional, intent(out) :: begg, endg  ! proc beg and end gridcell indices
-     integer, optional, intent(out) :: begCohort, endCohort  ! cohort beg and end gridcell indices
+     integer*8, optional, intent(out) :: begCohort, endCohort  ! cohort beg and end gridcell indices
      !------------------------------------------------------------------------------
 
      if (present(begp)) begp = procinfo%begp
@@ -484,8 +484,8 @@ contains
      integer, intent(out) :: ntunits  ! total number of topographic units on the processor
      integer, intent(out) :: nlunits ! total number of landunits on the processor
      integer, intent(out) :: ncols   ! total number of columns on the processor
-     integer, intent(out) :: npfts   ! total number of pfts on the processor
-     integer, intent(out) :: nCohorts ! total number of cohorts on the processor
+     integer*8, intent(out) :: npfts   ! total number of pfts on the processor
+     integer*8, intent(out) :: nCohorts ! total number of cohorts on the processor
      !
      ! !LOCAL VARIABLES:
      integer :: cid       ! clump index
@@ -520,8 +520,8 @@ contains
      integer, optional, intent(out) :: nt        ! total number of topounits across all processors
      integer, optional, intent(out) :: nl        ! total number of landunits across all processors
      integer, optional, intent(out) :: nc        ! total number of columns across all processors
-     integer, optional, intent(out) :: np        ! total number of pfts across all processors
-     integer, optional, intent(out) :: nCohorts  ! total number ED cohorts
+     integer*8, optional, intent(out) :: np        ! total number of pfts across all processors
+     integer*8, optional, intent(out) :: nCohorts  ! total number ED cohorts
      !------------------------------------------------------------------------------
 
      if (present(np)) np             = nump

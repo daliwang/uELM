@@ -54,8 +54,8 @@ contains
     integer , optional, intent(out) :: ntunits    ! number of topographic units
     integer , optional, intent(out) :: nlunits    ! number of landunits
     integer , optional, intent(out) :: ncols      ! number of columns 
-    integer , optional, intent(out) :: npfts      ! number of pfts 
-    integer , optional, intent(out) :: ncohorts   ! number of cohorts 
+    integer*8 , optional, intent(out) :: npfts      ! number of pfts 
+    integer*8 , optional, intent(out) :: ncohorts   ! number of cohorts 
     integer , optional, intent(out) :: nveg       ! number of vegetated pfts in naturally vegetated landunit
     integer , optional, intent(out) :: ncrop      ! number of crop pfts in crop landunit
     integer , optional, intent(out) :: nurban_tbd ! number of urban pfts (columns) in urban TBD landunit
@@ -74,8 +74,8 @@ contains
     integer  :: itunits       ! number of topographic units in gridcell
     integer  :: ilunits          ! number of landunits in gridcell
     integer  :: icols            ! number of columns in gridcell
-    integer  :: ipfts            ! number of pfts in gridcell
-    integer  :: icohorts         ! number of cohorts in gridcell
+    integer*8  :: ipfts            ! number of pfts in gridcell
+    integer*8  :: icohorts         ! number of cohorts in gridcell
     integer  :: npfts_per_lunit  ! number of pfts in landunit
     integer  :: ntopounits_per_gcell  ! number of topounits in this gridcell
     !integer  :: tmp_tpu_ind_glb

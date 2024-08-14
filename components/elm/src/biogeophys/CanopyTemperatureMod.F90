@@ -88,7 +88,8 @@ contains
     type(energyflux_type)  , intent(inout) :: energyflux_vars
     !
     ! !LOCAL VARIABLES:
-    integer  :: g,t,l,c,p    ! indices
+    integer  :: g,t,l,c      ! indices
+    integer*8 :: p           ! indice for pft
     integer  :: nlevbed      ! number of layers to bedrock
     integer  :: j            ! soil/snow level index
     integer  :: fp           ! lake filter pft index

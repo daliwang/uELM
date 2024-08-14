@@ -129,7 +129,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: begp, endp
+    integer*8 :: begp, endp
     integer :: begc, endc
     !------------------------------------------------------------------------
 
@@ -223,7 +223,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: begp, endp
+    integer*8 :: begp, endp
     !---------------------------------------------------------------------
 
     begp = bounds%begp; endp= bounds%endp
@@ -340,7 +340,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: p,l                        ! indices
+    integer*8 :: p,l                        ! indices
     !-----------------------------------------------------------------------
 
     do p = bounds%begp,bounds%endp
@@ -412,7 +412,7 @@ contains
     type(bounds_type) , intent(in)    :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: p,l ! indices
+    integer*8 :: p,l ! indices
     !-----------------------------------------------------------------------
 
     do p = bounds%begp, bounds%endp
@@ -470,7 +470,7 @@ contains
     type(bounds_type) , intent(in)    :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: p,l ! indices
+    integer*8 :: p,l ! indices
     !-----------------------------------------------------------------------
 
     do p = bounds%begp, bounds%endp

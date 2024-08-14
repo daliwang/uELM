@@ -60,8 +60,8 @@ contains
 !
 ! !ARGUMENTS:
     implicit none
-    integer , pointer            :: alocal(:)       ! local  data (output)
-    integer , pointer            :: aglobal(:)      ! global data (input)
+    integer*8 , pointer            :: alocal(:)       ! local  data (output)
+    integer*8 , pointer            :: aglobal(:)      ! global data (input)
     character(len=*) ,intent(in) :: elmlevel    ! type of input grid
 !
 ! !REVISION HISTORY:

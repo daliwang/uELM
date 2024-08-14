@@ -901,13 +901,15 @@ contains
     class(file_desc_t), intent(in) :: ncid      ! netcdf file id
     character(len=*)  , intent(in) :: attrib    ! netcdf attrib
     integer           , intent(in) :: value     ! netcdf attrib value
-    integer           , intent(out):: dimid     ! netcdf dimension id
+    integer*8           , intent(out):: dimid     ! netcdf dimension id
     !
     ! !LOCAL VARIABLES:
     integer :: status
     !-----------------------------------------------------------------------
+    !!!!!  DW temporarily fix (convert integer*8 to integer*4)
+    !!!!!  DW to avoid changes to PIO
 
-    status = pio_def_dim(ncid,attrib,value,dimid)
+    status = pio_def_dim(ncid,attrib,value,INT(dimid,4))
 
   end subroutine ncd_defdim
 

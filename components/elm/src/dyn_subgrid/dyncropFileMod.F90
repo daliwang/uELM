@@ -135,7 +135,8 @@ contains
     type(crop_type), intent(in) :: crop_inst  ! crop instance for updating annual fertilizer
     
     ! !LOCAL VARIABLES:
-    integer               :: m,p,c,l,g,t,t2,ti,topi      ! indices  
+    integer               :: m,c,l,g,t,t2,ti,topi      ! indices  
+    integer*8             :: p                           ! indice for pft
     real(r8), allocatable :: wtcrop_cur(:,:)  ! current weight of the crop landunit 
     real(r8), allocatable :: wtcft_cur(:,:,:) ! current cft weights  
     real(r8), allocatable :: fertcft_cur(:,:,:) ! current cft fertilizer 

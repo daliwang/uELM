@@ -115,7 +115,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: begp, endp
+    integer*8 :: begp, endp
     integer :: begc, endc
 
     character(len=*), parameter :: subname = 'constructor'
@@ -160,7 +160,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: p
+    integer*8 :: p
     integer :: c
 
     character(len=*), parameter :: subname = 'set_old_weights'
@@ -187,7 +187,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: p
+    integer*8 :: p
 
     !character(len=*), parameter :: subname = 'set_new_weights'
     !-----------------------------------------------------------------------
@@ -229,7 +229,8 @@ contains
     !$acc routine seq
     ! !ARGUMENTS:
     type(patch_state_updater_type), intent(in) :: this
-    integer , value  , intent(in) :: p, c
+    integer , value  , intent(in) :: c
+    integer*8 , value  , intent(in) :: p
     real(r8), intent(inout) :: var     ! patch-level state variable
 
     ! Accumulated flux from shrinking areas, expressed as mass per unit area COLUMN, using
@@ -304,7 +305,8 @@ contains
     !$acc routine seq
     ! !ARGUMENTS:
     type(patch_state_updater_type), intent(in) :: this
-    integer   , value, intent(in) :: p,c
+    integer   , value, intent(in) :: c
+    integer*8   , value, intent(in) :: p
     character(len=1), intent(in) :: flux1_out_dest  ! flux1_out to column or grid (default)
     real(r8), intent(in) :: flux1_fraction_by_pft_type( 0: ) ! fraction of flux that goes into flux1_out, indexed by pft type
     real(r8), intent(inout) :: var  ! patch-level state variable
@@ -365,7 +367,7 @@ contains
     logical :: old_weight_was_zero(bounds%begp:bounds%endp)  ! function result
     !
     ! !LOCAL VARIABLES:
-    integer :: p
+    integer*8 :: p
 
     character(len=*), parameter :: subname = 'old_weight_was_zero'
     !-----------------------------------------------------------------------
@@ -391,7 +393,7 @@ contains
     logical :: patch_grew(bounds%begp:bounds%endp)  ! function result
     !
     ! !LOCAL VARIABLES:
-    integer :: p
+    integer*8 :: p
 
     character(len=*), parameter :: subname = 'patch_grew'
     !-----------------------------------------------------------------------
@@ -417,7 +419,7 @@ contains
     logical :: patch_initiating(bounds%begp:bounds%endp)  ! function result
     !
     ! !LOCAL VARIABLES:
-    integer :: p
+    integer*8 :: p
 
     character(len=*), parameter :: subname = 'patch_initiating'
     !-----------------------------------------------------------------------

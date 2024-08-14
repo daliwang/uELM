@@ -231,7 +231,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer  :: begp, endp
+    integer*8  :: begp, endp
     integer  :: begc, endc
     integer  :: begg, endg
     !---------------------------------------------------------------------
@@ -1341,7 +1341,7 @@ contains
     ! !LOCAL VARIABLES:
     integer  :: sat                                    ! 0 = unsatured, 1 = saturated
     logical  :: lake                                   ! lake or not lake
-    integer  :: j,fc,c,g,fp,p,t,pf,s                   ! indices
+    integer*8  :: j,fc,c,g,fp,p,t,pf,s                   ! indices
     real(r8) :: dtime_ch4                              ! ch4 model time step (sec)
     integer  :: nstep
     integer  :: jwt(bounds%begc:bounds%endc)           ! index of the soil layer right above the water table (-)
@@ -1951,7 +1951,7 @@ contains
     
     !
     ! !LOCAL VARIABLES:
-    integer  :: p,c,j,g,s        ! indices
+    integer*8  :: p,c,j,g,s        ! indices
     integer  :: nc
     integer  :: fc               ! column index
     integer  :: fp               ! PATCH index
@@ -2300,7 +2300,7 @@ contains
     real(r8):: vmax_eff                       ! effective vmax
                                               ! ch4 oxidation parameters
     real(r8) :: vmax_ch4_oxid                 ! oxidation rate constant (= 45.e-6_r8 * 1000._r8 / 3600._r8) [mol/m3-w/s];
-    real(r8) :: k_m 			      ! Michaelis-Menten oxidation rate constant for CH4 concentration
+    real(r8) :: k_m                           ! Michaelis-Menten oxidation rate constant for CH4 concentration
     real(r8) :: q10_ch4oxid                   ! Q10 oxidation constant
     real(r8) :: smp_crit                      ! Critical soil moisture potential
     real(r8) :: k_m_o2                        ! Michaelis-Menten oxidation rate constant for O2 concentration
@@ -2446,7 +2446,7 @@ contains
         !
     ! !LOCAL VARIABLES:
     integer  :: nc
-    integer  :: p,c,g,j,s            ! indices
+    integer*8  :: p,c,g,j,s            ! indices
     integer  :: fc,fp                ! soil filter column index
     integer  :: pf                   ! fates patch index
     integer  :: nlevsoil_f           ! number of root layers tracked by fates
@@ -2960,7 +2960,7 @@ contains
 
     !
     ! !LOCAL VARIABLES:
-    integer :: c,j,g,p,s,i,ll                                              ! indices
+    integer*8 :: c,j,g,p,s,i,ll                                              ! indices
     integer :: fc                                                          ! soil filter column index
     integer :: fp                                                          ! soil filter pft index
     integer  :: jtop(bounds%begc:bounds%endc)                              ! top level at each column
@@ -3801,7 +3801,7 @@ contains
 
     !
     ! !LOCAL VARIABLES:
-    integer :: c,p       ! indices
+    integer*8 :: c,p       ! indices
     integer :: fc        ! soil column filter indices
     integer :: fp        ! soil pft filter indices
     real(r8):: secsperyear

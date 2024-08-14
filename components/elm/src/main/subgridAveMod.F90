@@ -141,7 +141,7 @@ contains
     character(len=*), intent(in) :: p2c_scale_type ! scale type
     !
     ! !LOCAL VARIABLES:
-    integer  :: p,c,index                       ! indices
+    integer*8  :: p,c,index                       ! indices
     real(r8) :: scale_p2c(bounds%begp:bounds%endp) ! scale factor for column->landunit mapping
     logical  :: found                              ! temporary for error check
     real(r8) :: sumwt(bounds%begc:bounds%endc)     ! sum of weights
@@ -201,7 +201,7 @@ contains
     integer, intent(in) :: p2c_scale_type ! scale type
     !
     ! !LOCAL VARIABLES:
-    integer  :: p,c,index                       ! indices
+    integer*8  :: p,c,index                       ! indices
     real(r8) :: scale_p2c(bounds%begp:bounds%endp) ! scale factor for column->landunit mapping
     logical  :: found                              ! temporary for error check
     real(r8) :: sumwt(bounds%begc:bounds%endc)     ! sum of weights
@@ -259,7 +259,7 @@ contains
     character(len=*)  , intent(in)  :: p2c_scale_type     ! scale type
     !
     ! !LOCAL VARIABLES:
-    integer  :: j,p,c,index                         ! indices
+    integer*8  :: j,p,c,index                         ! indices
     real(r8) :: scale_p2c(bounds%begp:bounds%endp)     ! scale factor for column->landunit mapping
     logical  :: found                                  ! temporary for error check
     real(r8) :: sumwt(bounds%begc:bounds%endc)         ! sum of weights
@@ -323,7 +323,7 @@ contains
     integer           , intent(in) :: p2c_scale_type ! unity = 0, urbanf = 1, urbans = 2
     !
     ! !LOCAL VARIABLES:
-    integer  :: j,p,c,index                         ! indices
+    integer*8  :: j,p,c,index                         ! indices
     real(r8) :: scale_p2c(bounds%begp:bounds%endp)     ! scale factor for column->landunit mapping
     logical  :: found                                  ! temporary for error check
     real(r8) :: sumwt(bounds%begc:bounds%endc)         ! sum of weights
@@ -381,7 +381,7 @@ contains
     !type(column_physical_properties) , target :: col_pp
 
     ! !LOCAL VARIABLES:
-    integer :: fc,c,p  ! indices
+    integer*8 :: fc,c,p  ! indices
     !-----------------------------------------------------------------------
 
     ! Enforce expected array sizes
@@ -410,7 +410,7 @@ contains
     real(r8), pointer     :: colarr(:,:)
     !
     ! !LOCAL VARIABLES:
-    integer :: fc,c,p,j    ! indices
+    integer*8 :: fc,c,p,j    ! indices
     !-----------------------------------------------------------------------
 
     do j = 1,lev
@@ -440,7 +440,7 @@ contains
     character(len=*), intent(in) :: c2l_scale_type ! scale factor type for averaging
     !
     ! !LOCAL VARIABLES:
-    integer  :: p,c,l,index                     ! indices
+    integer*8  :: p,c,l,index                     ! indices
     logical  :: found                              ! temporary for error check
     real(r8) :: sumwt(bounds%begl:bounds%endl)     ! sum of weights
     real(r8) :: scale_p2c(bounds%begc:bounds%endc) ! scale factor for pft->column mapping
@@ -506,7 +506,7 @@ contains
     character(len=*), intent(in) :: c2l_scale_type ! scale factor type for averaging
     !
     ! !LOCAL VARIABLES:
-    integer  :: j,p,c,l,index       ! indices
+    integer*8  :: j,p,c,l,index       ! indices
     logical  :: found                  ! temporary for error check
     real(r8) :: sumwt(bounds%begl:bounds%endl)         ! sum of weights
     real(r8) :: scale_p2c(bounds%begc:bounds%endc)     ! scale factor for pft->column mapping
@@ -575,7 +575,7 @@ contains
     character(len=*), intent(in) :: l2g_scale_type ! scale factor type for averaging
     !
     !  !LOCAL VARIABLES:
-    integer  :: p,c,l,g,index                   ! indices
+    integer*8  :: p,c,l,g,index                   ! indices
     logical  :: found                              ! temporary for error check
     real(r8) :: scale_p2c(bounds%begp:bounds%endp) ! scale factor
     real(r8) :: scale_c2l(bounds%begc:bounds%endc) ! scale factor
@@ -644,7 +644,7 @@ contains
     integer , intent(in) :: l2g_scale_type ! unity =0, natveg = 3, veg =4, ice=5, nonurb=6, lake=7
     !
     !  !LOCAL VARIABLES:
-    integer  :: p,c,l,g,index                   ! indices
+    integer*8  :: p,c,l,g,index                   ! indices
     logical  :: found                              ! temporary for error check
     real(r8) :: scale_p2c(bounds%begp:bounds%endp) ! scale factor
     real(r8) :: scale_c2l(bounds%begc:bounds%endc) ! scale factor
@@ -753,7 +753,7 @@ contains
     character(len=*), intent(in) :: l2g_scale_type     ! scale factor type for averaging
     !
     ! !LOCAL VARIABLES:
-    integer  :: j,p,c,l,g,index                     ! indices
+    integer*8  :: j,p,c,l,g,index                     ! indices
     logical  :: found                                  ! temporary for error check
     real(r8) :: scale_p2c(bounds%begp:bounds%endp)     ! scale factor
     real(r8) :: scale_c2l(bounds%begc:bounds%endc)     ! scale factor
@@ -829,7 +829,7 @@ contains
     integer, intent(in) :: l2g_scale_type     ! scale factor type for averaging
     !
     ! !LOCAL VARIABLES:
-    integer  :: j,p,c,l,g,index                     ! indices
+    integer*8  :: j,p,c,l,g,index                     ! indices
     logical  :: found                                  ! temporary for error check
     real(r8) :: scale_p2c(bounds%begp:bounds%endp)     ! scale factor
     real(r8) :: scale_c2l(bounds%begc:bounds%endc)     ! scale factor
@@ -944,7 +944,7 @@ contains
     character(len=*), intent(in) :: c2l_scale_type ! scale factor type for averaging
     !
     ! !LOCAL VARIABLES:
-    integer  :: c,l,index                       ! indices
+    integer*8  :: c,l,index                       ! indices
     logical  :: found                              ! temporary for error check
     real(r8) :: scale_c2l(bounds%begc:bounds%endc) ! scale factor for column->landunit mapping
     real(r8) :: sumwt(bounds%begl:bounds%endl)     ! sum of weights
@@ -999,7 +999,7 @@ contains
     character(len=*), intent(in) :: c2l_scale_type     ! scale factor type for averaging
     !
     ! !LOCAL VARIABLES:
-    integer  :: j,l,c,index                         ! indices
+    integer*8  :: j,l,c,index                         ! indices
     logical  :: found                                  ! temporary for error check
     real(r8) :: scale_c2l(bounds%begc:bounds%endc)     ! scale factor for column->landunit mapping
     real(r8) :: sumwt(bounds%begl:bounds%endl)         ! sum of weights
@@ -1055,7 +1055,7 @@ contains
     character(len=*), intent(in) :: l2g_scale_type ! scale factor type for averaging
     !
     ! !LOCAL VARIABLES:
-    integer  :: c,l,g,index                     ! indices
+    integer*8  :: c,l,g,index                     ! indices
     logical  :: found                              ! temporary for error check
     real(r8) :: scale_c2l(bounds%begc:bounds%endc) ! scale factor
     real(r8) :: scale_l2g(bounds%begl:bounds%endl) ! scale factor
@@ -1110,7 +1110,7 @@ contains
     integer , intent(in) :: l2g_scale_type  !!natveg = 3, veg =4, ice=5, nonurb=6, lake=7
     !
     ! !LOCAL VARIABLES:
-    integer  :: c,l,g,index                     ! indices
+    integer*8  :: c,l,g,index                     ! indices
     logical  :: found                              ! temporary for error check
     real(r8) :: scale_c2l(bounds%begc:bounds%endc) ! scale factor
     real(r8) :: scale_l2g(bounds%begl:bounds%endl) ! scale factor
@@ -1168,7 +1168,7 @@ contains
         character(len=*), intent(in) :: l2g_scale_type     ! scale factor type for averaging
     !
     ! !LOCAL VARIABLES:
-    integer  :: j,c,g,l,index                       ! indices
+    integer*8  :: j,c,g,l,index                       ! indices
     logical  :: found                                  ! temporary for error check
     real(r8) :: scale_c2l(bounds%begc:bounds%endc)     ! scale factor
     real(r8) :: scale_l2g(bounds%begl:bounds%endl)     ! scale factor
@@ -1227,7 +1227,7 @@ contains
     integer , intent(in)  :: l2g_scale_type ! unity =0, natveg = 3, veg =4, ice=5, nonurb=6, lake=7
     !
     ! !LOCAL VARIABLES:
-    integer  :: j,c,g,l,index                       ! indices
+    integer*8  :: j,c,g,l,index                       ! indices
     logical  :: found                                  ! temporary for error check
     real(r8) :: scale_c2l(bounds%begc:bounds%endc)     ! scale factor
     real(r8) :: scale_l2g(bounds%begl:bounds%endl)     ! scale factor
@@ -1283,7 +1283,7 @@ contains
     character(len=*), intent(in) :: l2g_scale_type ! scale factor type for averaging
     !
     ! !LOCAL VARIABLES:
-    integer  :: l,g,index                       ! indices
+    integer*8  :: l,g,index                       ! indices
     logical  :: found                              ! temporary for error check
     real(r8) :: scale_l2g(bounds%begl:bounds%endl) ! scale factor
     real(r8) :: sumwt(bounds%begg:bounds%endg)     ! sum of weights
@@ -1334,7 +1334,7 @@ contains
     character(len=*), intent(in) :: l2g_scale_type     ! scale factor type for averaging
     !
     ! !LOCAL VARIABLES:
-    integer  :: j,g,l,index                         ! indices
+    integer*8  :: j,g,l,index                         ! indices
     integer  :: max_lu_per_gcell                       ! max landunits per gridcell; on the fly
     logical  :: found                                  ! temporary for error check
     real(r8) :: scale_l2g(bounds%begl:bounds%endl)     ! scale factor
@@ -1389,7 +1389,7 @@ contains
     integer, intent(in) :: l2g_scale_type ! scale factor type for averaging
     !
     ! !LOCAL VARIABLES:
-    integer  :: l,g,index                       ! indices
+    integer*8  :: l,g,index                       ! indices
     logical  :: found                              ! temporary for error check
     real(r8) :: scale_l2g(bounds%begl:bounds%endl) ! scale factor
     real(r8) :: sumwt(bounds%begg:bounds%endg)     ! sum of weights
@@ -1439,7 +1439,7 @@ contains
     integer, intent(in) :: l2g_scale_type     ! scale factor type for averaging
     !
     ! !LOCAL VARIABLES:
-    integer  :: j,g,l,index                         ! indices
+    integer*8  :: j,g,l,index                         ! indices
     integer  :: max_lu_per_gcell                       ! max landunits per gridcell; on the fly
     logical  :: found                                  ! temporary for error check
     real(r8) :: scale_l2g(bounds%begl:bounds%endl)     ! scale factor
@@ -1685,7 +1685,7 @@ contains
     character(len=*), intent(in) :: l2t_scale_type ! scale factor type for averaging
     !
     !  !LOCAL VARIABLES:
-    integer  :: p,c,l,t,index                   ! indices
+    integer*8  :: p,c,l,t,index                   ! indices
     logical  :: found                              ! temporary for error check
     real(r8) :: scale_p2c(bounds%begp:bounds%endp) ! scale factor
     real(r8) :: scale_c2l(bounds%begc:bounds%endc) ! scale factor
@@ -1762,7 +1762,7 @@ contains
     character(len=*), intent(in) :: l2t_scale_type     ! scale factor type for averaging
     !
     ! !LOCAL VARIABLES:
-    integer  :: j,p,c,l,t,index                     ! indices
+    integer*8  :: j,p,c,l,t,index                     ! indices
     logical  :: found                                  ! temporary for error check
     real(r8) :: scale_p2c(bounds%begp:bounds%endp)     ! scale factor
     real(r8) :: scale_c2l(bounds%begc:bounds%endc)     ! scale factor
@@ -1837,7 +1837,7 @@ contains
     character(len=*), intent(in) :: l2t_scale_type ! scale factor type for averaging
     !
     ! !LOCAL VARIABLES:
-    integer  :: c,l,t,index                     ! indices
+    integer*8  :: c,l,t,index                     ! indices
     logical  :: found                              ! temporary for error check
     real(r8) :: scale_c2l(bounds%begc:bounds%endc) ! scale factor
     real(r8) :: scale_l2t(bounds%begl:bounds%endl) ! scale factor
@@ -1900,7 +1900,7 @@ contains
     character(len=*), intent(in) :: l2t_scale_type     ! scale factor type for averaging
     !
     ! !LOCAL VARIABLES:
-    integer  :: j,c,t,l,index                       ! indices
+    integer*8  :: j,c,t,l,index                       ! indices
     logical  :: found                                  ! temporary for error check
     real(r8) :: scale_c2l(bounds%begc:bounds%endc)     ! scale factor
     real(r8) :: scale_l2t(bounds%begl:bounds%endl)     ! scale factor
@@ -1963,7 +1963,7 @@ contains
     character(len=*), intent(in) :: l2t_scale_type ! scale factor type for averaging
     !
     ! !LOCAL VARIABLES:
-    integer  :: l,t,index                       ! indices
+    integer*8  :: l,t,index                       ! indices
     logical  :: found                              ! temporary for error check
     real(r8) :: scale_l2t(bounds%begl:bounds%endl) ! scale factor
     real(r8) :: sumwt(bounds%begt:bounds%endt)     ! sum of weights
@@ -2019,7 +2019,7 @@ contains
     character(len=*), intent(in) :: l2t_scale_type     ! scale factor type for averaging
     !
     ! !LOCAL VARIABLES:
-    integer  :: j,t,l,index                         ! indices
+    integer*8  :: j,t,l,index                         ! indices
     integer  :: max_lu_per_gcell                       ! max landunits per gridcell; on the fly
     logical  :: found                                  ! temporary for error check
     real(r8) :: scale_l2t(bounds%begl:bounds%endl)     ! scale factor
@@ -2143,7 +2143,7 @@ contains
     character(len=*), intent(in) :: t2g_scale_type ! scale factor type for averaging
     !
     ! !LOCAL VARIABLES:
-    integer  :: t,g,index                       ! indices
+    integer*8  :: t,g,index                       ! indices
     logical  :: found                              ! temporary for error check
     real(r8) :: scale_t2g(bounds%begt:bounds%endt) ! scale factor
     real(r8) :: sumwt(bounds%begg:bounds%endg)     ! sum of weights
@@ -2196,7 +2196,7 @@ contains
     character(len=*), intent(in) :: t2g_scale_type     ! scale factor type for averaging
     !
     ! !LOCAL VARIABLES:
-    integer  :: j,g,t,index                         ! indices
+    integer*8  :: j,g,t,index                         ! indices
     logical  :: found                                  ! temporary for error check
     real(r8) :: scale_t2g(bounds%begt:bounds%endt)     ! scale factor
     real(r8) :: sumwt(bounds%begg:bounds%endg)         ! sum of weights
@@ -2249,7 +2249,7 @@ contains
     real(r8), intent(out) :: garr( bounds%begg: )  ! output gridcell array
     !
     ! !LOCAL VARIABLES:
-    integer  :: t,g,index                       ! indices
+    integer*8  :: t,g,index                       ! indices
     logical  :: found                              ! temporary for error check
     real(r8) :: scale_t2g(bounds%begt:bounds%endt) ! scale factor
     real(r8) :: sumwt(bounds%begg:bounds%endg)     ! sum of weights
@@ -2300,7 +2300,7 @@ contains
     real(r8), intent(out) :: garr( bounds%begg: , 1: ) ! output gridcell array
     !
     ! !LOCAL VARIABLES:
-    integer  :: j,g,t,index                         ! indices
+    integer*8  :: j,g,t,index                         ! indices
     logical  :: found                                  ! temporary for error check
     real(r8) :: scale_t2g(bounds%begt:bounds%endt)     ! scale factor
     real(r8) :: sumwt(bounds%begg:bounds%endg)         ! sum of weights
@@ -2348,7 +2348,7 @@ contains
     character(len=*) , intent(in) :: c2l_scale_type
     real(r8), intent(inout) :: scale_c2l(bounds%begc:bounds%endc)     ! scale factor
     !-------------- local ----------!
-    integer :: c,l
+    integer*8 :: c,l
     !-------------------------------!
     if (c2l_scale_type == 'unity') then
       do c = bounds%begc,bounds%endc
@@ -2405,7 +2405,7 @@ contains
       integer , intent(in) :: c2l_scale_type
       real(r8), intent(inout) :: scale_c2l(bounds%begc:bounds%endc)     ! scale factor
       !-------------- local ----------!
-      integer :: c,l
+      integer*8 :: c,l
       !-----
       if (c2l_scale_type == unity) then
         do c = bounds%begc,bounds%endc

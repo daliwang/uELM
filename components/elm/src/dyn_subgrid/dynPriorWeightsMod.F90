@@ -76,7 +76,7 @@ contains
     type(bounds_type)         , intent(in)    :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: p, c   ! patch & col indices
+    integer*8 :: p, c   ! patch & col indices
     ! ----------------------------------------------------------------------
 
     do p = bounds%begp, bounds%endp

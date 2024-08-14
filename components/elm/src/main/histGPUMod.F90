@@ -491,9 +491,9 @@ end subroutine hist_update_hbuf_field_1d_gpu
     integer, intent(in) :: num2d        ! size of second dimension
     !
     ! !LOCAL VARIABLES:
-    integer  :: k                       ! gridcell, landunit, column or pft index
+    integer*8  :: k                       ! gridcell, landunit, column or pft index
     integer  :: j                       ! level index
-    integer  :: beg1d,end1d             ! beginning and ending indices
+    integer*8  :: beg1d,end1d             ! beginning and ending indices
     logical  :: check_active            ! true => check 'active' flag of each point (this refers to a point being active, NOT a history field being active)
     logical  :: valid                   ! true => history operation is valid
     logical  :: map2gcell               ! true => map clm pointer field to gridcell
@@ -763,8 +763,8 @@ end subroutine hist_update_hbuf_field_1d_gpu
     ! Input and output fields can be defined at the pft or column level
     !
     ! !ARGUMENTS:
-    integer         , intent(in)  :: beg1d                    ! beginning spatial index
-    integer         , intent(in)  :: end1d                    ! ending spatial index
+    integer*8         , intent(in)  :: beg1d                    ! beginning spatial index
+    integer*8         , intent(in)  :: end1d                    ! ending spatial index
     real(r8)        , intent(out) :: field_out( beg1d: , 1: ) ! output field [point, lev]
     real(r8)        , intent(in)  :: field_in ( beg1d: , 1: ) ! input field [point, lev]
     integer         , intent(in)  :: no_snow_behavior         ! behavior to use when a snow layer is absent
@@ -772,7 +772,7 @@ end subroutine hist_update_hbuf_field_1d_gpu
     !
     ! !LOCAL VARIABLES:
     integer :: num_levels             ! total number of possible snow layers
-    integer :: point
+    integer*8 :: point
     integer :: level
     integer :: num_snow_layers        ! number of snow layers that exist at a point
     integer :: num_nonexistent_layers

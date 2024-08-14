@@ -139,7 +139,7 @@ module UrbanParamsType
     type(bounds_type)      , intent(in)    :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer             :: j,l,c,p,t,ti,topi,g       ! indices
+    integer*8             :: j,l,c,p,t,ti,topi,g       ! indices
     integer             :: nc,fl,ib        ! indices 
     integer             :: dindx           ! urban density type index
     integer             :: ier             ! error status
@@ -150,11 +150,11 @@ module UrbanParamsType
     real(r8)            :: plan_ai         ! plan area index - ratio building area to plan area (-)
     real(r8)            :: frontal_ai      ! frontal area index of buildings (-)
     real(r8)            :: build_lw_ratio  ! building short/long side ratio (-)
-    integer		:: begl, endl
-    integer		:: begt, endt
-    integer		:: begc, endc
-    integer		:: begp, endp
-    integer             :: begg, endg
+    integer*8             :: begl, endl
+    integer*8             :: begt, endt
+    integer*8             :: begc, endc
+    integer*8           :: begp, endp
+    integer*8             :: begg, endg
     !---------------------------------------------------------------------
 
     begp = bounds%begp; endp = bounds%endp

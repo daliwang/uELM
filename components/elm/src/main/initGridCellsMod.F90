@@ -977,14 +977,15 @@ contains
     !
     ! !LOCAL VARIABLES:
     type(bounds_type)    :: bounds_proc             ! temporary
-    integer              :: p,c,l,g                 ! indices
-    integer              :: pidx, cidx, lidx        ! patch/column/landunit index
+    integer              :: c,l,g                   ! indices
+    integer              :: cidx, lidx              ! patch/column/landunit index
+    integer*8            :: p, pidx                 ! indice and index for pft
     integer              :: ctype, ltype            ! column/landunit type
     integer              :: ier                     ! error
     integer , pointer    :: npft(:)                 ! number of pft in a grid cell
     integer , pointer    :: landunit_index(:,:)     ! index of the first landunit of a given landunit_itype within a grid cell
     integer              :: max_npft_local          ! maximum number of columns per grid cell for local mpi rank
-    integer              :: max_npft_global         ! maximum number of columns per grid cell across all mpi ranks
+    integer*8            :: max_npft_global         ! maximum number of columns per grid cell across all mpi ranks
     integer              :: nblocks                 ! number of values per grid cell
     integer              :: nvals_pft               ! number of values per subgrid category
     integer              :: nvals                   ! number of values per subgrid category + additional values
@@ -1186,7 +1187,8 @@ contains
     !
     ! !LOCAL VARIABLES:
     type(bounds_type) :: bounds_proc
-    integer           :: l,c,p
+    integer           :: l,c
+    integer*8         :: p
     integer           :: curg, ltype
 
     call get_proc_bounds(bounds_proc)

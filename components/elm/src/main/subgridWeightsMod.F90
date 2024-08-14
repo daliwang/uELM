@@ -230,7 +230,7 @@ contains
     type(bounds_type), intent(in) :: bounds  ! clump bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: p, c, l, t      ! indices for pft, col, landunit, and topounit
+    integer*8 :: p, c, l, t      ! indices for pft, col, landunit, and topounit
     !------------------------------------------------------------------------
 
     do l = bounds%begl, bounds%endl
@@ -272,7 +272,7 @@ contains
     type(bounds_type), intent(in) :: bounds  ! bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: t,l,c,p       ! loop counters
+    integer*8 :: t,l,c,p       ! loop counters
 
     character(len=*), parameter :: subname = 'set_active'
     !------------------------------------------------------------------------
@@ -592,7 +592,7 @@ contains
     logical, intent(in) :: active_only ! true => check sum of weights just of ACTIVE children, grandchildren, etc.
     !
     ! !LOCAL VARIABLES:
-    integer :: g,t,l,c,p, tu     ! loop counters
+    integer*8 :: g,t,l,c,p, tu     ! loop counters
     real(r8), allocatable :: sumwtcol(:), sumwtlunit(:), sumwtgcell(:), sumwttunit(:)
     logical :: error_found                ! true if we find an error
     logical :: topo_active_only           ! Check the weights of the active topounits
@@ -936,7 +936,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: p,l,g,t,ti,topi           ! indices
+    integer*8 :: p,l,g,t,ti,topi           ! indices
     integer :: ptype           ! pft itype
     integer :: ptype_1indexing ! pft itype, translated into 1-indexing for the given landunit type
     

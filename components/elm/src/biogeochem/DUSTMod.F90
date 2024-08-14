@@ -103,7 +103,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: begp,endp
+    integer*8 :: begp,endp
     integer :: begc,endc
     !------------------------------------------------------------------------
 
@@ -133,7 +133,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: begp,endp
+    integer*8 :: begp,endp
     !------------------------------------------------------------------------
 
     begp = bounds%begp; endp = bounds%endp
@@ -217,7 +217,7 @@ contains
 
     !
     ! !LOCAL VARIABLES
-    integer  :: fp,p,c,l,t,g,m,n      ! indices
+    integer*8  :: fp,p,c,l,t,g,m,n      ! indices
     real(r8) :: liqfrac             ! fraction of total water that is liquid
     real(r8) :: wnd_frc_rat         ! [frc] Wind friction threshold over wind friction
     real(r8) :: wnd_frc_slt_dlt     ! [m s-1] Friction velocity increase from saltatn
@@ -505,7 +505,7 @@ contains
     type(dust_type)        , intent(inout) :: dust_vars
     !
     ! !LOCAL VARIABLES
-    integer  :: p,c,t,g,m,n                           ! indices
+    integer*8  :: p,c,t,g,m,n                           ! indices
     real(r8) :: vsc_dyn_atm(bounds%begp:bounds%endp)  ! [kg m-1 s-1] Dynamic viscosity of air
     real(r8) :: vsc_knm_atm(bounds%begp:bounds%endp)  ! [m2 s-1] Kinematic viscosity of atmosphere
     real(r8) :: shm_nbr_xpn                           ! [frc] Sfc-dep exponent for aerosol-diffusion dependence on Schmidt number

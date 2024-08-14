@@ -240,7 +240,7 @@ contains
     type(bounds_type) , intent(in) :: bounds  
     !
     ! !LOCAL VARIABLES:
-    integer           :: begp,endp
+    integer*8           :: begp,endp
     integer           :: begc,endc
     integer           :: begg,endg
     !------------------------------------------------------------------------
@@ -410,7 +410,7 @@ contains
     integer           :: k,l,ii,jj 
     character(10)     :: active
     character(8)      :: vr_suffix
-    integer           :: begp,endp
+    integer*8           :: begp,endp
     integer           :: begc,endc
     integer           :: begg,endg 
     character(24)     :: fieldname
@@ -461,7 +461,7 @@ contains
     real(r8)          , intent(in) :: decomp_cpools_1m_col(bounds%begc:,:)
     !
     ! !LOCAL VARIABLES:
-    integer :: fc,fp,g,l,c,p,j,k                       ! indices
+    integer*8 :: fc,fp,g,l,c,p,j,k                       ! indices
     integer :: num_special_col                         ! number of good values in special_col filter
     integer :: num_special_patch                         ! number of good values in special_patch filter
     integer :: special_col   (bounds%endc-bounds%begc+1) ! special landunit filter - columns
@@ -856,7 +856,7 @@ contains
     type(bounds_type), intent(in)  :: bounds 
     !
     ! !LOCAL VARIABLES:
-    integer  :: p          ! indices
+    integer*8  :: p          ! indices
     !-----------------------------------------------------------------------
 
     do p = bounds%begp,bounds%endp

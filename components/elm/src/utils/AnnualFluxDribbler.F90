@@ -238,8 +238,8 @@ contains
     real(r8), intent(in) :: delta( get_beg(bounds, this%bounds_subgrid_level) : )
     !
     ! !LOCAL VARIABLES:
-    integer :: beg_index, end_index
-    integer :: i
+    integer*8 :: beg_index, end_index
+    integer*8 :: i
     integer :: yr, mon, day, tod
 
     character(len=*), parameter :: subname = 'set_curr_delta'

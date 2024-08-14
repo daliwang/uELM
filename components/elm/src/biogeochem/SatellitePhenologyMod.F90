@@ -210,7 +210,8 @@ contains
     type(canopystate_type) , intent(inout) :: canopystate_vars
     !
     ! !LOCAL VARIABLES:
-    integer :: ivt, p, g, ip, ig, gpft
+    integer :: ivt, g, ip, ig, gpft
+    integer*8 :: p     ! indice for pft
     integer :: year    ! year (0, ...) for nstep+1
     integer :: mon     ! month (1, ..., 12) for nstep+1
     integer :: day     ! day of month (1, ..., 31) for nstep+1
@@ -586,7 +587,8 @@ contains
     ! !LOCAL VARIABLES:
     character(len=256) :: locfn           ! local file name
     type(file_desc_t)  :: ncid            ! netcdf id
-    integer :: g,n,k,l,m,p,ni,nj,ns,t,ti,topi       ! indices
+    integer :: g,n,k,l,m,ni,nj,ns,t,ti,topi       ! indices
+    integer*8 :: p                        ! indice for pft
     integer :: dimid,varid                ! input netCDF id's
     integer :: ntim                       ! number of input data time samples
     integer :: nlon_i                     ! number of input data longitudes

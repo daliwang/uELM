@@ -57,7 +57,7 @@ CONTAINS
     !
     ! Arguments:
     implicit none
-    integer          , intent(in)           :: decomp_index
+    integer*8          , intent(in)           :: decomp_index
     character(len=*) , intent(in)           :: elmlevel
     character(len=*) , intent(in), optional :: msg    ! string to be printed
     !

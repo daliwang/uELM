@@ -158,7 +158,7 @@ contains
     type(bounds_type), intent(in) :: bounds  
     !
     ! !LOCAL VARIABLES:
-    integer :: begp, endp
+    integer*8 :: begp, endp
     integer :: begc, endc
     integer :: begl, endl
     integer :: begg, endg
@@ -263,7 +263,7 @@ contains
     type(bounds_type), intent(in) :: bounds  
     !
     ! !LOCAL VARIABLES:
-    integer           :: begp, endp
+    integer*8           :: begp, endp
     integer           :: begc, endc
     integer           :: begl, endl
     integer           :: begg, endg
@@ -412,7 +412,7 @@ contains
     type(bounds_type), intent(in) :: bounds  
     !
     ! !LOCAL VARIABLES:
-    integer  :: begp, endp
+    integer*8  :: begp, endp
     integer  :: nstep
     integer  :: ier
     real(r8), pointer :: rbufslp(:)  ! temporary
@@ -443,7 +443,7 @@ contains
     integer :: day                       ! day of month (1, ..., 31) for nstep
     integer :: secs                      ! seconds into current date for nstep
     logical :: end_cd                    ! temporary for is_end_curr_day() value
-    integer :: begp, endp
+    integer*8 :: begp, endp
     real(r8), pointer :: rbufslp(:)      ! temporary single level - pft level
     !---------------------------------------------------------------------
 

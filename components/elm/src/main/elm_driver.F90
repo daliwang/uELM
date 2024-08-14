@@ -213,7 +213,8 @@ contains
     ! !LOCAL VARIABLES:
     integer              :: nstep                   ! time step number
     real(r8)             :: dtime                   ! land model time step (sec)
-    integer              :: nc, c, p, l, g          ! indices
+    integer              :: nc, c, l, g          ! indices
+    integer*8            :: p                       ! indice for pft
     integer              :: nclumps                 ! number of clumps on this processor
     integer              :: yrp1                    ! year (0, ...) for nstep+1
     integer              :: monp1                   ! month (1, ..., 12) for nstep+1
@@ -1531,7 +1532,8 @@ contains
     type(energyflux_type) , intent(inout) :: energyflux_vars
     !
     ! !LOCAL VARIABLES:
-    integer :: l, c, p, f, j         ! indices
+    integer :: l, c, f, j         ! indices
+    integer*8 :: p                   ! indice for pft
     integer :: fp, fc                  ! filter indices
     !-----------------------------------------------------------------------
 

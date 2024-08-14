@@ -815,7 +815,7 @@ contains
     real(r8), optional, intent(inout) :: adjustment( bounds%begc: )
     !
     ! !LOCAL VARIABLES:
-    integer  :: c, g
+    integer*8  :: c, g
 
     ! whether vals_input /= var in the columns where it should be equal
     logical :: bad_vals_input(bounds%begc:bounds%endc)

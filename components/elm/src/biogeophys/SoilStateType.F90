@@ -125,7 +125,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: begp, endp
+    integer*8 :: begp, endp
     integer :: begc, endc
     integer :: begg, endg
     integer :: begc_all, endc_all
@@ -202,7 +202,7 @@ contains
     !
     ! !LOCAL VARIABLES:
     integer :: begc, endc
-    integer :: begp, endp
+    integer*8 :: begp, endp
     character(10)     :: active
     real(r8), pointer :: data2dptr(:,:), data1dptr(:) ! temp. pointers for slicing larger arrays
     !---------------------------------------------------------------------
@@ -329,7 +329,8 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
                                                         ! !LOCAL VARIABLES:
-    integer            :: p, lev, c, l, g, j,t,ti,topi            ! indices
+    integer            :: lev, c, l, g, j,t,ti,topi            ! indices
+    integer*8          :: p                             ! indice for pft
     real(r8)           :: om_frac                       ! organic matter fraction
     real(r8)           :: om_tkm         = 0.25_r8      ! thermal conductivity of organic soil (Farouki, 1986) [W/m/K]
     real(r8)           :: om_watsat_lake = 0.9_r8       ! porosity of organic soil

@@ -849,10 +849,10 @@ contains
     integer :: numt                 ! total number of topounits across all processors
     integer :: numl                 ! total number of landunits across all processors
     integer :: numc                 ! total number of columns across all processors
-    integer :: nump                 ! total number of pfts across all processors
+    integer*8 :: nump                 ! total number of pfts across all processors
     integer :: num2d                ! size of second dimension (e.g. .number of vertical levels)
-    integer :: beg1d_out,end1d_out  ! history output per-proc 1d beginning and ending indices
-    integer :: num1d_out            ! history output 1d size
+    integer*8 :: beg1d_out,end1d_out  ! history output per-proc 1d beginning and ending indices
+    integer*8 :: num1d_out            ! history output 1d size
     type(bounds_type) :: bounds     
     character(len=*),parameter :: subname = 'htape_addfld'
     !-----------------------------------------------------------------------
@@ -1755,17 +1755,18 @@ contains
     !
     ! !LOCAL VARIABLES:
     integer :: f                   ! field index
-    integer :: p,c,l,n             ! indices
+    integer :: c,l,n               ! indices
+    integer*8  :: p                ! indice for pft
     integer :: ier                 ! error code
     integer :: num2d               ! size of second dimension (e.g. number of vertical levels)
-    integer :: dimid               ! dimension id temporary
+    integer*8 :: dimid               ! dimension id temporary
     integer :: dim1id(1)           ! netCDF dimension id
     integer :: dim2id(2)           ! netCDF dimension id
     integer :: ndims               ! dimension counter
     integer :: omode               ! returned mode from netCDF call
     integer :: ncprec              ! output netCDF write precision
     integer :: ret                 ! netCDF error status
-    integer :: nump                ! total number of pfts across all processors
+    integer*8 :: nump                ! total number of pfts across all processors
     integer :: numc                ! total number of columns across all processors
     integer :: numl                ! total number of landunits across all processors
     integer :: numt                ! total number of topounits across all processors
@@ -3511,15 +3512,15 @@ contains
     !
     ! !LOCAL VARIABLES:
     integer :: max_nflds                     ! Max number of fields
-    integer :: num1d,beg1d,end1d             ! 1d size, beginning and ending indices
-    integer :: num1d_out,beg1d_out,end1d_out ! 1d size, beginning and ending indices
+    integer*8 :: num1d,beg1d,end1d             ! 1d size, beginning and ending indices
+    integer*8 :: num1d_out,beg1d_out,end1d_out ! 1d size, beginning and ending indices
     integer :: num2d                         ! 2d size (e.g. number of vertical levels)
     integer :: numa                 ! total number of atm cells across all processors
     integer :: numg                 ! total number of gridcells across all processors
     integer :: numt                 ! total number of topounits across all processors
     integer :: numl                 ! total number of landunits across all processors
     integer :: numc                 ! total number of columns across all processors
-    integer :: nump                 ! total number of pfts across all processors
+    integer*8 :: nump                 ! total number of pfts across all processors
     character(len=max_namlen) :: name            ! variable name
     character(len=max_namlen) :: name_acc        ! accumulator variable name
     character(len=max_namlen) :: long_name       ! long name of variable
@@ -4433,7 +4434,8 @@ contains
     character(len=*), optional, intent(in) :: default        ! if set to 'inactive, field will not appear on primary tape
     !
     ! !LOCAL VARIABLES:
-    integer :: p,c,l,t,g               ! indices
+    integer :: c,l,t,g               ! indices
+    integer :: p                     ! indice for pft
     integer :: hpindex                 ! history buffer pointer index
     character(len=hist_dim_name_length) :: l_type1d       ! 1d data type
     character(len=hist_dim_name_length) :: l_type1d_out   ! 1d output type
@@ -4677,7 +4679,8 @@ contains
     character(len=*), optional, intent(in) :: default          ! if set to 'inactive, field will not appear on primary tape
     !
     ! !LOCAL VARIABLES:
-    integer :: p,c,l,t,g                 ! indices
+    integer :: c,l,t,g                 ! indices
+    integer*8  :: p                    ! indice for pft
     integer :: num2d                   ! size of second dimension (e.g. number of vertical levels)
     integer :: hpindex                 ! history buffer index
     character(len=hist_dim_name_length) :: l_type1d         ! 1d data type
@@ -5118,7 +5121,7 @@ contains
 
   subroutine strip_null(str)
     character(len=*), intent(inout) :: str
-    integer :: i	
+    integer :: i
     do i=1,len(str)
        if(ichar(str(i:i))==0) str(i:i)=' '
     end do
@@ -5143,7 +5146,7 @@ contains
     logical, intent(out) :: if_stop             !true => last time step of run
     logical, intent(out) :: if_disphist(ntapes) !true => save and dispose history file
     logical, intent(in)  :: rstwr
-    logical, intent(in)  :: nlend	
+    logical, intent(in)  :: nlend
     !
     ! !LOCAL VARIABLES:
     integer :: t                   ! history tape index

@@ -92,7 +92,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: begp, endp
+    integer*8 :: begp, endp
     integer :: begc, endc
     integer :: begl, endl
     !---------------------------------------------------------------------
@@ -152,7 +152,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: begp, endp
+    integer*8 :: begp, endp
     integer :: begc, endc
     real(r8), pointer :: data2dptr(:,:) ! temp. pointers for slicing larger arrays
     !---------------------------------------------------------------------
@@ -295,7 +295,7 @@ contains
     !
     ! !LOCAL VARIABLES:
     logical :: readvar      ! determine if variable is on initial file
-    integer :: p
+    integer*8 :: p
     !---------------------------------------------------------------------
 
     call restartvar(ncid=ncid, flag=flag, varname='sabs_roof_dir', xtype=ncd_double,  dim1name='landunit',            &

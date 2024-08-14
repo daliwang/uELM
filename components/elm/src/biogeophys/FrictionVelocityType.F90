@@ -79,7 +79,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: begp, endp
+    integer*8 :: begp, endp
     integer :: begc, endc
     !------------------------------------------------------------------------
 
@@ -121,7 +121,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: begc, endc
+    integer*8 :: begc, endc
     integer :: begp, endp
     !---------------------------------------------------------------------
 
@@ -214,7 +214,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: p, c, l                         ! indices
+    integer*8 :: p, c, l                         ! indices
     !-----------------------------------------------------------------------
 
     ! Added 5/4/04, PET: initialize forc_hgt_u (gridcell-level),

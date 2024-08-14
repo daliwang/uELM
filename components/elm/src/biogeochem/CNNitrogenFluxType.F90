@@ -457,7 +457,7 @@ contains
     type(bounds_type) , intent(in) :: bounds  
     !
     ! !LOCAL VARIABLES:
-    integer           :: begp,endp
+    integer*8           :: begp,endp
     integer           :: begc,endc
     integer           :: begg,endg
     !------------------------------------------------------------------------
@@ -835,10 +835,10 @@ contains
     allocate(this%prev_frootn_to_litter_patch (begp:endp)) ;             this%prev_frootn_to_litter_patch (:) = nan
     allocate(this%pmnf_decomp_cascade(begc:endc,1:nlevdecomp,1:ndecomp_cascade_transitions)); this%pmnf_decomp_cascade(:,:,:) = nan
 
-    allocate(this%plant_n_uptake_flux         (begc:endc)) ;	         this%plant_n_uptake_flux   (:)   = nan
-    allocate(this%soil_n_immob_flux           (begc:endc)) ;	         this%soil_n_immob_flux	    (:)   = nan
-    allocate(this%soil_n_immob_flux_vr        (begc:endc,1:nlevdecomp)); this%soil_n_immob_flux_vr  (:,:) = nan
-    allocate(this%soil_n_grossmin_flux        (begc:endc)) ;	         this%soil_n_grossmin_flux  (:)   = nan
+    allocate(this%plant_n_uptake_flux         (begc:endc)) ;             this%plant_n_uptake_flux   (:)   = nan
+    allocate(this%soil_n_immob_flux           (begc:endc)) ;             this%soil_n_immob_flux     (:)   = nan
+    allocate(tihis%soil_n_immob_flux_vr       (begc:endc,1:nlevdecomp)); this%soil_n_immob_flux_vr  (:,:) = nan
+    allocate(this%soil_n_grossmin_flux        (begc:endc)) ;             this%soil_n_grossmin_flux  (:)   = nan
     allocate(this%actual_immob_no3_col        (begc:endc)) ;             this%actual_immob_no3_col  (:)   = nan
     allocate(this%actual_immob_nh4_col        (begc:endc)) ;             this%actual_immob_nh4_col  (:)   = nan
     allocate(this%smin_no3_to_plant_col       (begc:endc)) ;             this%smin_no3_to_plant_col (:)   = nan
@@ -874,7 +874,7 @@ contains
     !
     ! !LOCAL VARIABLES:
     integer        :: k,l
-    integer        :: begp, endp
+    integer*8        :: begp, endp
     integer        :: begc, endc
     integer        :: begg, endg
     character(10)  :: active

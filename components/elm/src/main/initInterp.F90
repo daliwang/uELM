@@ -81,17 +81,17 @@ contains
     type(bounds_type) , intent(in) :: bounds
     !
     ! local variables
-    integer            :: i,j,k,l,m,n     ! loop indices    
-    integer            :: begi, endi      ! beginning/ending indices 
-    integer            :: bego, endo      ! beginning/ending indices 
-    integer            :: begp_i, endp_i  ! input file pft bounds
-    integer            :: begp_o, endp_o  ! output file pft bounds
-    integer            :: begc_i, endc_i  ! input file column bounds
-    integer            :: begc_o, endc_o  ! output file column bounds
-    integer            :: begl_i, endl_i  ! input file landunit bounds
-    integer            :: begl_o, endl_o  ! output file landunit bounds
-    integer            :: begg_i, endg_i  ! input file gridcell bounds
-    integer            :: begg_o, endg_o  ! output file gridcell bounds
+    integer*8            :: i,j,k,l,m,n     ! loop indices    
+    integer*8            :: begi, endi      ! beginning/ending indices 
+    integer*8            :: bego, endo      ! beginning/ending indices 
+    integer*8            :: begp_i, endp_i  ! input file pft bounds
+    integer*8            :: begp_o, endp_o  ! output file pft bounds
+    integer*8            :: begc_i, endc_i  ! input file column bounds
+    integer*8            :: begc_o, endc_o  ! output file column bounds
+    integer*8            :: begl_i, endl_i  ! input file landunit bounds
+    integer*8            :: begl_o, endl_o  ! output file landunit bounds
+    integer*8            :: begg_i, endg_i  ! input file gridcell bounds
+    integer*8            :: begg_o, endg_o  ! output file gridcell bounds
     integer            :: nlevi,nlevo     ! input/output number of levels
     type(file_desc_t)  :: ncidi, ncido    ! input/output pio fileids 
     integer            :: dimleni,dimleno ! input/output dimension length       
@@ -529,8 +529,8 @@ contains
     !
     ! arguments
     character(len=*)  , intent(inout) :: dimname
-    integer           , intent(in)    :: begi, endi
-    integer           , intent(in)    :: bego, endo
+    integer*8           , intent(in)    :: begi, endi
+    integer*8           , intent(in)    :: bego, endo
     type(file_desc_t) , intent(inout) :: ncidi         
     type(file_desc_t) , intent(inout) :: ncido         
     logical           , intent(out)   :: activei(begi:endi)
@@ -568,7 +568,7 @@ contains
 
     ! --------------------------------------------------------------------
     ! arguments
-    integer            , intent(in)    :: beg, end
+    integer*8            , intent(in)    :: beg, end
     type(file_desc_t)  , intent(inout) :: ncid
     character(len=*)   , intent(inout) :: dimname
     logical            , intent(inout) :: active(beg:end)    
@@ -650,7 +650,7 @@ contains
 
     ! --------------------------------------------------------------------
     ! arguments
-    integer            , intent(in)    :: beg, end
+    integer*8            , intent(in)    :: beg, end
     type(file_desc_t)  , intent(inout) :: ncid
     character(len=*)   , intent(inout) :: dimname
     logical            , intent(out)   :: active(beg:end)    
@@ -731,8 +731,8 @@ contains
 
     ! --------------------------------------------------------------------
     ! arguments
-    integer            , intent(in)  :: begi, endi 
-    integer            , intent(in)  :: bego, endo 
+    integer*8            , intent(in)  :: begi, endi 
+    integer*8            , intent(in)  :: bego, endo 
     logical            , intent(in)  :: activei(begi:endi) 
     logical            , intent(in)  :: activeo(bego:endo) 
     type(subgrid_type) , intent(in)  :: subgridi
@@ -950,8 +950,8 @@ contains
     ! ------------------------ arguments ---------------------------------
     character(len=*)  , intent(inout) :: varname 
     character(len=*)  , intent(inout) :: dimname
-    integer           , intent(in)    :: begi, endi
-    integer           , intent(in)    :: bego, endo
+    integer*8           , intent(in)    :: begi, endi
+    integer*8           , intent(in)    :: bego, endo
     type(file_desc_t) , intent(inout) :: ncidi
     type(file_desc_t) , intent(inout) :: ncido
     logical           , intent(in)    :: activei(begi:endi)
@@ -1008,8 +1008,8 @@ contains
     ! ------------------------ arguments ---------------------------------
     character(len=*)  , intent(inout) :: varname 
     character(len=*)  , intent(inout) :: dimname
-    integer           , intent(in)    :: begi, endi
-    integer           , intent(in)    :: bego, endo
+    integer*8           , intent(in)    :: begi, endi
+    integer*8           , intent(in)    :: bego, endo
     type(file_desc_t) , intent(inout) :: ncidi
     type(file_desc_t) , intent(inout) :: ncido
     logical           , intent(in)    :: activei(begi:endi)
@@ -1018,7 +1018,7 @@ contains
     ! --------------------------------------------------------------------
 
     ! ------------------------ local variables --------------------------
-    integer           :: no,ni          !indices
+    integer*8           :: no,ni          !indices
     integer , pointer :: ibufsli(:)     !input array
     integer , pointer :: ibufslo(:)     !output array
     ! --------------------------------------------------------------------
@@ -1061,8 +1061,8 @@ contains
     character(len=*)  , intent(inout) :: varname     
     character(len=*)  , intent(inout) :: vec_dimname
     character(len=*)  , intent(inout) :: lev_dimname
-    integer           , intent(in)    :: begi, endi
-    integer           , intent(in)    :: bego, endo
+    integer*8           , intent(in)    :: begi, endi
+    integer*8           , intent(in)    :: bego, endo
     integer           , intent(in)    :: nlevi, nlevo
     logical           , intent(inout) :: switchdimi
     logical           , intent(inout) :: switchdimo
@@ -1073,8 +1073,8 @@ contains
     integer           , intent(in)    :: sgridindex(bego:endo)
     !
     ! local variables
-    integer             :: ni,no               ! indices
-    integer             :: ji, jj, index_lower ! indices
+    integer*8             :: ni,no               ! indices
+    integer*8             :: ji, jj, index_lower ! indices
     integer             :: status              ! netCDF return code
     integer             :: lev                 ! temporary
     integer             :: start(2), count(2)

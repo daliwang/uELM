@@ -2157,7 +2157,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! LOCAL VARAIBLES:
-    integer           :: p,g,n,i                     ! indices
+    integer*8           :: p,g,n,i                     ! indices
 
     !------------------------------------------------------------------------
 

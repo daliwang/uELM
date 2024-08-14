@@ -110,7 +110,7 @@ CONTAINS
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: begp, endp
+    integer*8 :: begp, endp
     !------------------------------------------------------------------------
 
     begp = bounds%begp; endp= bounds%endp
@@ -157,7 +157,7 @@ CONTAINS
     ! !LOCAL VARIABLES:
     integer  :: c
     real(r8) :: soilw, var_soilw, fact_h2, dv_soil_h2
-    integer  :: pi,g,t,l
+    integer*8  :: pi,g,t,l
     integer  :: ispec
     integer  :: length
     integer  :: wesveg       !wesely vegegation index

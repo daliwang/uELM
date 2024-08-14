@@ -384,7 +384,7 @@ contains
     type(bounds_type) , intent(in) :: bounds  
     !
     ! !LOCAL VARIABLES:
-    integer           :: begp,endp
+    integer*8           :: begp,endp
     integer           :: begc,endc
     integer           :: begg,endg
     !------------------------------------------------------------------------
@@ -412,7 +412,7 @@ contains
     !
     ! !LOCAL VARIABLES:
     integer        :: k,l
-    integer        :: begp, endp
+    integer*8        :: begp, endp
     integer        :: begc, endc
     integer        :: begg, endg
     character(10)  :: active
@@ -457,7 +457,7 @@ contains
     type(bounds_type), intent(in) :: bounds  
     !
     ! !LOCAL VARIABLES:
-    integer :: p,c,l,g
+    integer*8 :: p,c,l,g
     integer :: fp, fc                                    ! filter indices
     integer :: num_special_col                           ! number of good values in special_col filter
     integer :: num_special_patch                         ! number of good values in special_patch filter

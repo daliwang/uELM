@@ -183,7 +183,7 @@ contains
     type(bounds_type), intent(in) :: bounds  
     !
     ! !LOCAL VARIABLES:
-    integer           :: begp,endp
+    integer*8           :: begp,endp
     integer           :: begc,endc
     integer           :: begg,endg
     !------------------------------------------------------------------------
@@ -307,7 +307,7 @@ contains
     ! !LOCAL VARIABLES:
     integer           :: k,l,ii,jj 
     character(10)     :: active
-    integer           :: begp,endp
+    integer*8           :: begp,endp
     integer           :: begc,endc
     integer           :: begg,endg 
     character(24)     :: fieldname
@@ -409,7 +409,7 @@ contains
     type(carbonstate_type), optional, intent(in) :: c12_carbonstate_vars
     !
     ! !LOCAL VARIABLES:
-    integer :: p,c,l,g,j,k
+    integer*8 :: p,c,l,g,j,k
     integer :: fc                                        ! filter index
     integer :: num_special_col                           ! number of good values in special_col filter
     integer :: num_special_patch                         ! number of good values in special_patch filter
@@ -792,7 +792,7 @@ contains
     type(bounds_type), intent(in)  :: bounds 
     !
     ! !LOCAL VARIABLES:
-    integer  :: p          ! indices
+    integer*8  :: p          ! indices
     !-----------------------------------------------------------------------
 
     do p = bounds%begp,bounds%endp
@@ -825,7 +825,7 @@ contains
     !
     ! !LOCAL VARIABLES:
     real(r8) :: nfixlags, dtime ! temp variables for making lagged npp
-    integer  :: c,p,j,k,l       ! indices
+    integer*8  :: c,p,j,k,l       ! indices
     integer  :: fp,fc           ! lake filter indices
     real(r8) :: maxdepth        ! depth to integrate soil variables
     integer  :: nlev

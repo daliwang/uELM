@@ -102,7 +102,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: begp, endp
+    integer*8 :: begp, endp
     !---------------------------------------------------------------------
 
     begp = bounds%begp; endp = bounds%endp
@@ -152,7 +152,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: begp, endp
+    integer*8 :: begp, endp
     integer :: begc, endc
     real(r8), pointer :: data2dptr(:,:) ! temp. pointers for slicing larger arrays
     !---------------------------------------------------------------------
@@ -351,7 +351,7 @@ contains
      integer , parameter :: nband = numrad           ! number of solar radiation waveband classes
      real(r8), parameter :: mpe = 1.e-06_r8          ! prevents overflow for division by zero
      integer  :: fp                                  ! non-urban filter pft index
-     integer  :: p                                   ! patch index
+     integer*8  :: p                                   ! patch index
      integer  :: c                                   ! column index
      integer  :: l                                   ! landunit index
      integer  :: t                                   ! topounit index
@@ -875,7 +875,7 @@ contains
 
       ! local variables
       integer           :: fp                         ! non-urban filter patch index
-      integer           :: p                          ! patch index
+      integer*8           :: p                          ! patch index
       integer           :: t                          ! topounit index
       integer           :: g                          ! gridcell index
       integer           :: iv                         ! canopy layer index

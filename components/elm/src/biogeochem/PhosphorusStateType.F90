@@ -195,7 +195,7 @@ contains
     type(bounds_type) , intent(in) :: bounds  
     !
     ! !LOCAL VARIABLES:
-    integer           :: begp,endp
+    integer*8           :: begp,endp
     integer           :: begc,endc
     integer           :: begg,endg
     !------------------------------------------------------------------------
@@ -222,7 +222,7 @@ contains
     ! !LOCAL VARIABLES:
     integer           :: k,l,ii,jj 
     character(10)     :: active
-    integer           :: begp,endp
+    integer*8           :: begp,endp
     integer           :: begc,endc
     integer           :: begg,endg 
     character(24)     :: fieldname
@@ -389,7 +389,7 @@ contains
     type(bounds_type), intent(in)  :: bounds 
     !
     ! !LOCAL VARIABLES:
-    integer  :: p          ! indices
+    integer*8  :: p          ! indices
     !-----------------------------------------------------------------------
 
     do p = bounds%begp,bounds%endp

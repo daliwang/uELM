@@ -106,7 +106,7 @@ contains
     class(canopystate_type) :: this
     type(bounds_type), intent(in) :: bounds    !
     ! !LOCAL VARIABLES:
-    integer :: begp, endp
+    integer*8 :: begp, endp
     integer :: begc, endc
     integer :: begg, endg
 
@@ -168,7 +168,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: begc, endc
+    integer*8 :: begc, endc
     integer :: begp, endp
     real(r8), pointer :: data2dptr(:,:), data1dptr(:) ! temp. pointers for slicing larger arrays
     !---------------------------------------------------------------------
@@ -375,7 +375,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer  :: begp, endp
+    integer*8  :: begp, endp
     integer  :: nstep
     integer  :: ier
     real(r8), pointer :: rbufslp(:)  ! temporary
@@ -423,11 +423,11 @@ contains
     type(bounds_type)      , intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: g,p                       ! indices
+    integer*8 :: g,p                       ! indices
     integer :: dtime                     ! timestep size [seconds]
     integer :: nstep                     ! timestep number
     integer :: ier                       ! error status
-    integer :: begp, endp
+    integer*8 :: begp, endp
     real(r8), pointer :: rbufslp(:)      ! temporary single level - pft level
     !---------------------------------------------------------------------
     begp = bounds%begp; endp = bounds%endp
@@ -465,7 +465,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer  :: p,l,c,g
+    integer*8  :: p,l,c,g
     !-----------------------------------------------------------------------
 
     do p = bounds%begp, bounds%endp
@@ -527,7 +527,7 @@ contains
     ! !LOCAL VARIABLES:
     integer :: j,p,c,iv ! indices
     logical :: readvar      ! determine if variable is on initial file
-    integer :: begp, endp
+    integer*8 :: begp, endp
     !-----------------------------------------------------------------------
 
     begp = bounds%begp; endp = bounds%endp

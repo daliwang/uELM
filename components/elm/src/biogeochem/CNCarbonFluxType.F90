@@ -477,7 +477,7 @@ contains
      type(bounds_type), intent(in)    :: bounds 
      !
      ! !LOCAL VARIABLES:
-     integer           :: begp,endp
+     integer*8           :: begp,endp
      integer           :: begc,endc
      integer           :: begg,endg
      !------------------------------------------------------------------------
@@ -892,7 +892,7 @@ contains
     integer           :: k,l,ii,jj 
     character(8)      :: vr_suffix
     character(10)     :: active
-    integer           :: begp,endp
+    integer*8           :: begp,endp
     integer           :: begc,endc
     integer           :: begg,endg
     character(24)     :: fieldname
@@ -976,7 +976,7 @@ contains
     type(bounds_type), intent(in) :: bounds  
     !
     ! !LOCAL VARIABLES:
-    integer :: g, p, c, l, j
+    integer*8 :: g, p, c, l, j
     integer :: fc                                        ! filter index
     integer :: num_special_col                           ! number of good values in special_col filter
     integer :: num_special_patch                         ! number of good values in special_patch filter
@@ -2566,7 +2566,7 @@ end subroutine CSummary_interface
     integer                , intent(in)    :: filter_soilc(:) ! filter for soil columns
     integer                , intent(in)    :: num_soilp       ! number of soil patches in filter
     integer                , intent(in)    :: filter_soilp(:) ! filter for soil patches
-    integer  :: c,p,j,k,l       ! indices
+    integer*8  :: c,p,j,k,l       ! indices
     integer  :: fp,fc           ! lake filter indices
 
     associate(&

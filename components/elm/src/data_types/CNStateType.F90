@@ -216,7 +216,7 @@ contains
     type(bounds_type), intent(in) :: bounds  
     !
     ! !LOCAL VARIABLES:
-    integer :: begp, endp
+    integer*8 :: begp, endp
     integer :: begc, endc
     !------------------------------------------------------------------------
 
@@ -377,7 +377,7 @@ contains
     type(bounds_type), intent(in) :: bounds  
     !
     ! !LOCAL VARIABLES:
-    integer           :: begp, endp
+    integer*8           :: begp, endp
     integer           :: begc, endc
     character(8)      :: vr_suffix
     character(10)     :: active
@@ -713,7 +713,7 @@ contains
     type(bounds_type), intent(in) :: bounds   
     !
     ! !LOCAL VARIABLES:
-    integer               :: g,l,c,p,n,j,m, t, ti, topi            ! indices
+    integer*8               :: g,l,c,p,n,j,m, t, ti, topi            ! indices
     real(r8) ,pointer     :: gdp (:,:)                  ! global gdp data (needs to be a pointer for use in ncdio)
     real(r8) ,pointer     :: peatf (:,:)                ! global peatf data (needs to be a pointer for use in ncdio)
     integer  ,pointer     :: soilorder_rdin (:,:)       ! global soil order data (needs to be a pointer for use in ncdio)
@@ -1174,7 +1174,7 @@ contains
     !
     ! !LOCAL VARIABLES:
     integer, pointer :: temp1d(:) ! temporary
-    integer          :: p,j,c,i,g   ! indices
+    integer*8          :: p,j,c,i,g   ! indices
     logical          :: readvar   ! determine if variable is on initial file
     real(r8), pointer :: ptr2d(:,:) ! temp. pointers for slicing larger arrays
     real(r8), pointer :: ptr1d(:)   ! temp. pointers for slicing larger arrays
@@ -1541,7 +1541,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer  :: begp, endp
+    integer*8  :: begp, endp
     integer  :: nstep
     integer  :: ier
     real(r8), pointer :: rbufslp(:)  ! temporary
@@ -1584,7 +1584,7 @@ contains
     type(bounds_type)      , intent(in)    :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: m,g,l,c,p                 ! indices
+    integer*8 :: m,g,l,c,p                 ! indices
     integer :: ier                       ! error status
     integer :: dtime                     ! timestep size [seconds]
     integer :: nstep                     ! timestep number
@@ -1593,7 +1593,7 @@ contains
     integer :: day                       ! day of month (1, ..., 31) for nstep
     integer :: secs                      ! seconds into current date for nstep
     logical :: end_cd                    ! temporary for is_end_curr_day() value
-    integer :: begp, endp
+    integer*8 :: begp, endp
     real(r8), pointer :: rbufslp(:)      ! temporary single level - pft level
     !---------------------------------------------------------------------
 

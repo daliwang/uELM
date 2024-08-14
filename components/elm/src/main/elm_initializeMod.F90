@@ -476,7 +476,8 @@ contains
     implicit none
     !
     ! !LOCAL VARIABLES:
-    integer               :: c,i,g,j,k,l,p! indices
+    integer               :: c,i,g,j,k,l  ! indices
+    integer*8             :: p            ! indice for pft
     integer               :: yr           ! current year (0, ...)
     integer               :: mon          ! current month (1 -> 12)
     integer               :: day          ! current day (1 -> 31)
@@ -502,7 +503,7 @@ contains
     real(r8), allocatable :: h2osno_col(:)
     real(r8), allocatable :: snow_depth_col(:)
     real(r8)              :: max_decl      ! temporary, for calculation of max_dayl
-    integer               :: begp, endp
+    integer*8             :: begp, endp
     integer               :: begc, endc
     integer               :: begl, endl
     real(r8), pointer     :: data2dptr(:,:) ! temp. pointers for slicing larger arrays

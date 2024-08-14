@@ -230,8 +230,8 @@ contains
     !
     ! !ARGUMENTS:
     type(bounds_type)      , intent(in)    :: bounds
-    integer                , intent(in)    :: fn                             ! size of pft filter
-    integer                , intent(in)    :: filterp(fn)                    ! patch filter
+    integer*8                , intent(in)    :: fn                             ! size of pft filter
+    integer*8                , intent(in)    :: filterp(fn)                    ! patch filter
     real(r8)               , intent(in)    :: esat_tv( bounds%begp: )        ! saturation vapor pressure at t_veg (Pa) [pft]
     real(r8)               , intent(in)    :: eair( bounds%begp: )           ! vapor pressure of canopy air (Pa) [pft]
     real(r8)               , intent(in)    :: oair( bounds%begp: )           ! Atmospheric O2 partial pressure (Pa) [pft]
@@ -299,7 +299,7 @@ contains
     real(r8) :: theta_ip          ! empirical curvature parameter for ap photosynthesis co-limitation
 
     ! Other
-    integer  :: f,p,c,t,iv        ! indices
+    integer*8  :: f,p,c,t,iv        ! indices
     real(r8) :: cf                ! s m**2/umol -> s/m
     real(r8) :: rsmax0            ! maximum stomatal resistance [s/m]
     real(r8) :: gb                ! leaf boundary layer conductance (m/s)
@@ -1601,8 +1601,8 @@ contains
     !
     ! !ARGUMENTS:
     type(bounds_type)      , intent(in)    :: bounds
-    integer                , intent(in)    :: fn                             ! size of pft filter
-    integer                , intent(in)    :: filterp(fn)                    ! patch filter
+    integer*8                , intent(in)    :: fn                             ! size of pft filter
+    integer*8                , intent(in)    :: filterp(fn)                    ! patch filter
     real(r8)               , intent(in)    :: esat_tv( bounds%begp: )        ! saturation vapor pressure at t_veg (Pa) [pft]
     real(r8)               , intent(in)    :: eair( bounds%begp: )           ! vapor pressure of canopy air (Pa) [pft]
     real(r8)               , intent(in)    :: oair( bounds%begp: )           ! Atmospheric O2 partial pressure (Pa) [pft]
@@ -1682,7 +1682,7 @@ contains
     real(r8) :: theta_ip       ! empirical curvature parameter for ap photosynthesis co-limitation
 
     ! Other
-    integer  :: f,p,c,t,iv          ! indices
+    integer*8  :: f,p,c,t,iv          ! indices
     integer, parameter :: sun = 1 ! index for sunlit leaves
     integer, parameter :: sha = 2 ! index for shaded leaves
 
@@ -2684,7 +2684,7 @@ contains
       !$acc routine seq
     implicit none
     real(r8), intent(inout) :: x0sun,x0sha              ! initial guess and final value of the solution for cisun/cisha
-    integer , intent(in)    :: p                        ! pft index
+    integer*8 , intent(in)    :: p                        ! pft index
     integer , intent(in)    :: iv                       ! radiation canopy layer index
     integer , intent(in)    :: c                        ! column index
     integer , intent(in)    :: t                        ! topounit index
@@ -3265,7 +3265,7 @@ contains
     !use cublas_device
     !!
     ! !ARGUMENTS:
-    integer                , intent(in)  :: p               ! pft index
+    integer*8                , intent(in)  :: p               ! pft index
     integer                , intent(in)  :: c               ! column index
     integer                , intent(in)  :: t               ! topounit index
     real(r8)               , intent(inout)  :: x(nvegwcs)   ! working copy of vegwp(p,:)
@@ -3463,7 +3463,7 @@ contains
     use elm_varcon        , only : rgas
     !
     ! !ARGUMENTS:
-    integer                , intent(in)  :: p               ! pft index
+    integer*8                , intent(in)  :: p               ! pft index
     integer                , intent(in)  :: c               ! column index
     real(r8)               , intent(in)  :: x(nvegwcs)      ! working copy of veg water potential for patch p [mm H2O]
     real(r8)               , intent(out) :: invA(nvegwcs,nvegwcs)   ! matrix relating d(vegwp) and f: d(vegwp)=invA*f
@@ -3616,7 +3616,7 @@ contains
     use ColumnType        , only : col_pp
     !
     ! !ARGUMENTS:
-    integer                , intent(in)  :: p               ! pft index
+    integer*8                , intent(in)  :: p               ! pft index
     integer                , intent(in)  :: c               ! column index
     real(r8)               , intent(in)  :: x(nvegwcs)      ! working copy of veg water potential for patch p [mm H2O]
     real(r8)               , intent(out) :: f(nvegwcs)      ! water flux divergence [mm/s]
@@ -3697,7 +3697,7 @@ contains
     implicit none
     !
     ! !ARGUMENTS:
-    integer                , intent(in)  :: p                ! pft index
+    integer*8                , intent(in)  :: p                ! pft index
     integer                , intent(in)  :: c                ! column index
     integer                , intent(in)  :: t                ! topounit index
     real(r8)               , intent(out) :: x(nvegwcs)       ! working copy of veg water potential for patch p
@@ -3796,7 +3796,7 @@ contains
     implicit none
     !
     ! !ARGUMENTS:
-    integer  , intent(in)     :: p          ! pft index
+    integer*8  , intent(in)     :: p          ! pft index
     integer  , intent(in)     :: c          ! column index
     integer  , intent(in)     :: t          ! topunit index
     real(r8) , intent(in)     :: gb_mol     ! leaf boundary layer conductance (umol H2O/m**2/s)
@@ -3916,7 +3916,7 @@ contains
     !$acc routine seq
     ! !ARGUMENTS
     real(r8) , intent(in) :: x                ! water potential input
-    integer  , intent(in) :: p                ! index for pft
+    integer*8  , intent(in) :: p                ! index for pft
     integer  , intent(in) :: c                ! index for column
     integer  , intent(in) :: level            ! veg segment lvl (1:nvegwcs)
     integer  , intent(in) :: plc_method       ! 0 for vegetation, 1 for soil

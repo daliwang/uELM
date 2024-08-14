@@ -114,7 +114,7 @@ contains
     type(bounds_type), intent(in)    :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: begp, endp
+    integer*8 :: begp, endp
     
     character(len=*), parameter :: subname = 'InitAllocate'
     !-----------------------------------------------------------------------
@@ -163,7 +163,7 @@ contains
     type(bounds_type), intent(in) :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer :: begp, endp
+    integer*8 :: begp, endp
     
     character(len=*), parameter :: subname = 'InitHistory'
     !-----------------------------------------------------------------------
@@ -331,7 +331,7 @@ contains
     type(bounds_type), intent(in)    :: bounds
     !
     ! !LOCAL VARIABLES:
-    integer  :: begp, endp
+    integer*8  :: begp, endp
     integer  :: nstep
     integer  :: ier
     real(r8), pointer :: rbufslp(:)  ! temporary
@@ -379,7 +379,7 @@ contains
     ! !LOCAL VARIABLES:
     integer, pointer :: temp1d(:) ! temporary
     integer :: restyear
-    integer :: p
+    integer*8 :: p
     logical :: readvar   ! determine if variable is on initial file
     real(r8), pointer :: ptr2d(:,:) ! temp. pointers for slicing larger arrays
     real(r8), pointer :: ptr1d(:)   ! temp. pointers for slicing larger arrays
@@ -588,12 +588,12 @@ contains
     type(temperature_type) , intent(in)    :: temperature_vars
     !
     ! !LOCAL VARIABLES:
-    integer :: p,c   ! indices
+    integer*8 :: p,c   ! indices
     integer :: ivt   ! vegetation type
     integer :: dtime ! timestep size [seconds]
     integer :: nstep ! timestep number
     integer :: ier   ! error status
-    integer :: begp, endp
+    integer*8 :: begp, endp
     real(r8), pointer :: rbufslp(:)      ! temporary single level - pft level
     
     character(len=*), parameter :: subname = 'UpdateAccVars'

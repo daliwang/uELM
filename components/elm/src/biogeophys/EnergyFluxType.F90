@@ -163,7 +163,7 @@ contains
     type(bounds_type), intent(in) :: bounds  
     !
     ! !LOCAL VARIABLES:
-    integer :: begp, endp
+    integer*8 :: begp, endp
     integer :: begc, endc
     integer :: begl, endl
     integer :: begg, endg
@@ -285,7 +285,7 @@ contains
     type(bounds_type), intent(in) :: bounds  
     !
     ! !LOCAL VARIABLES:
-    integer           :: begp, endp
+    integer*8           :: begp, endp
     integer           :: begc, endc
     integer           :: begg, endg
     character(10)     :: active
@@ -333,7 +333,8 @@ contains
     real(r8)          , intent(in) :: t_grnd_col( bounds%begc: )
     !
     ! !LOCAL VARIABLES:
-    integer  :: j,l,c,p,levs,lev
+    integer  :: j,l,c,levs,lev
+    integer*8 :: p    
     !-----------------------------------------------------------------------
 
     SHR_ASSERT_ALL((ubound(t_grnd_col) == (/bounds%endc/)), errMsg(__FILE__, __LINE__))

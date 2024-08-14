@@ -55,7 +55,7 @@ implicit none
 
      class(PlantMicKinetics_type) :: this
      type(bounds_type), intent(in) :: bounds
-     integer :: begp, endp, begc, endc
+     integer*8 :: begp, endp, begc, endc
 
      begp = bounds%begp; endp=bounds%endp
      begc = bounds%begc; endc=bounds%endc

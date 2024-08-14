@@ -92,7 +92,7 @@ contains
     character(len=*) , intent(in)    :: flag   ! flag to determine if define, write or read data
     !
     ! !LOCAL VARIABLES:
-    integer :: g,l,c,p,i,t             ! indices
+    integer*8 :: g,l,c,p,i,t             ! indices
     logical :: readvar               ! temporary
     real(r8), pointer :: rgarr(:)    ! temporary
     real(r8), pointer :: rtarr(:)    ! temporary
@@ -180,7 +180,7 @@ contains
          long_name='2d latitude index of corresponding topounit',                  &
          interpinic_flag='skip', readvar=readvar, data=itarr)
 
-    itarr = GetGlobalIndexArray(top_pp%gridcell(bounds%begt:bounds%endt), bounds%begt, bounds%endt, elmlevel=nameg)
+    itarr = GetGlobalIndexArray(INT(top_pp%gridcell(bounds%begt:bounds%endt),8), INT(bounds%begt,8), INT(bounds%endt,8), elmlevel=nameg)
     call restartvar(ncid=ncid, flag=flag, varname='topo1d_gridcell_index', xtype=ncd_int, &
          dim1name='topounit',                                                             &
          long_name='gridcell index of corresponding topounit',                            &
@@ -226,13 +226,13 @@ contains
          long_name='2d latitude index of corresponding landunit',                  &
          interpinic_flag='skip', readvar=readvar, data=ilarr)
 
-    ilarr = GetGlobalIndexArray(lun_pp%gridcell(bounds%begl:bounds%endl), bounds%begl, bounds%endl, elmlevel=nameg)
+    ilarr = GetGlobalIndexArray(INT(lun_pp%gridcell(bounds%begl:bounds%endl),8), INT(bounds%begl,8), INT(bounds%endl,8), elmlevel=nameg)
     call restartvar(ncid=ncid, flag=flag, varname='land1d_gridcell_index', xtype=ncd_int, &
          dim1name='landunit',                                                             &
          long_name='gridcell index of corresponding landunit',                            &
          interpinic_flag='skip', readvar=readvar, data=ilarr)
     
-    ilarr = GetGlobalIndexArray(lun_pp%topounit(bounds%begl:bounds%endl), bounds%begl, bounds%endl, elmlevel=namet)
+    ilarr = GetGlobalIndexArray(INT(lun_pp%topounit(bounds%begl:bounds%endl),8), INT(bounds%begl,8), INT(bounds%endl,8), elmlevel=namet)
     call restartvar(ncid=ncid, flag=flag, varname='land1d_topounit_index', xtype=ncd_int, &
          dim1name='landunit',                                                             &
          long_name='topounit index of corresponding landunit',                            &
@@ -295,19 +295,19 @@ contains
          long_name='2d latitude index of corresponding column', units=' ',          &
          interpinic_flag='skip', readvar=readvar, data=icarr)
 
-    icarr = GetGlobalIndexArray(col_pp%gridcell(bounds%begc:bounds%endc), bounds%begc, bounds%endc, elmlevel=nameg)
+    icarr = GetGlobalIndexArray(INT(col_pp%gridcell(bounds%begc:bounds%endc),8), INT(bounds%begc,8), INT(bounds%endc,8), elmlevel=nameg)
     call restartvar(ncid=ncid, flag=flag, varname='cols1d_gridcell_index', xtype=ncd_int, &
          dim1name='column',                                                               &
          long_name='gridcell index of corresponding column',                              &
          interpinic_flag='skip', readvar=readvar, data=icarr)
     
-    icarr = GetGlobalIndexArray(col_pp%topounit(bounds%begc:bounds%endc), bounds%begc, bounds%endc, elmlevel=namet)
+    icarr = GetGlobalIndexArray(INT(col_pp%topounit(bounds%begc:bounds%endc),8), INT(bounds%begc,8), INT(bounds%endc,8), elmlevel=namet)
     call restartvar(ncid=ncid, flag=flag, varname='cols1d_topounit_index', xtype=ncd_int, &
          dim1name='column',                                                               &
          long_name='topounit index of corresponding column',                              &
          interpinic_flag='skip', readvar=readvar, data=icarr)
 
-    icarr = GetGlobalIndexArray(col_pp%landunit(bounds%begc:bounds%endc), bounds%begc, bounds%endc, elmlevel=namel)
+    icarr = GetGlobalIndexArray(INT(col_pp%landunit(bounds%begc:bounds%endc),8), INT(bounds%begc,8), INT(bounds%endc,8), elmlevel=namel)
     call restartvar(ncid=ncid, flag=flag, varname='cols1d_landunit_index', xtype=ncd_int, &
          dim1name='column',                                                               &
          long_name='landunit index of corresponding column',                              &
@@ -378,25 +378,25 @@ contains
          long_name='2d latitude index of corresponding pft', units='',         &
          interpinic_flag='skip', readvar=readvar, data=iparr)
 
-    iparr = GetGlobalIndexArray(veg_pp%gridcell(bounds%begp:bounds%endp), bounds%begp, bounds%endp, elmlevel=nameg)
+    iparr = GetGlobalIndexArray(INT(veg_pp%gridcell(bounds%begp:bounds%endp),8), bounds%begp, bounds%endp, elmlevel=nameg)
     call restartvar(ncid=ncid, flag=flag, varname='pfts1d_gridcell_index', xtype=ncd_int, &
          dim1name='pft',                                                                  &
          long_name='gridcell index of corresponding pft',                                 &
          interpinic_flag='skip', readvar=readvar, data=iparr)
     
-    iparr = GetGlobalIndexArray(veg_pp%topounit(bounds%begp:bounds%endp), bounds%begp, bounds%endp, elmlevel=namet)
+    iparr = GetGlobalIndexArray(INT(veg_pp%topounit(bounds%begp:bounds%endp),8), bounds%begp, bounds%endp, elmlevel=namet)
     call restartvar(ncid=ncid, flag=flag, varname='pfts1d_topounit_index', xtype=ncd_int, &
          dim1name='pft',                                                                  &
          long_name='topounit index of corresponding pft',                                 &
          interpinic_flag='skip', readvar=readvar, data=iparr)
 
-    iparr = GetGlobalIndexArray(veg_pp%landunit(bounds%begp:bounds%endp), bounds%begp, bounds%endp, elmlevel=namel)
+    iparr = GetGlobalIndexArray(INT(veg_pp%landunit(bounds%begp:bounds%endp),8), bounds%begp, bounds%endp, elmlevel=namel)
     call restartvar(ncid=ncid, flag=flag, varname='pfts1d_landunit_index', xtype=ncd_int, &
          dim1name='pft',                                                                  &
          long_name='landunit index of corresponding pft',                                 &
          interpinic_flag='skip', readvar=readvar, data=iparr)
 
-    iparr = GetGlobalIndexArray(veg_pp%column(bounds%begp:bounds%endp), bounds%begp, bounds%endp, elmlevel=namec)
+    iparr = GetGlobalIndexArray(INT(veg_pp%column(bounds%begp:bounds%endp),8), bounds%begp, bounds%endp, elmlevel=namec)
     call restartvar(ncid=ncid, flag=flag, varname='pfts1d_column_index', xtype=ncd_int,   &
          dim1name='pft',                                                                  &
          long_name='column index of corresponding pft',                                   &
@@ -666,7 +666,7 @@ contains
       type(bounds_type), intent(in)    :: bounds ! bounds
       !
       ! !LOCAL VARIABLES:
-      integer  :: p, l ! indices
+      integer*8  :: p, l ! indices
       real(r8) :: diff ! difference in weights
 
       real(r8), parameter :: tol = 5.e-3  ! tolerance for checking weights
