@@ -28,6 +28,10 @@ ${E3SM_SRCROOT}/cime/scripts/create_newcase --case "${CASEDIR}" --mach summitplu
 
 cd "${CASEDIR}"
 
+./xmlchange PIO_TYPENAME="pnetcdf"
+
+./xmlchange PIO_NETCDF_FORMAT="64bit_data"
+
 ./xmlchange DIN_LOC_ROOT="${E3SM_DIN}"
 
 ./xmlchange DIN_LOC_ROOT_CLMFORC="${CASE_DATA}"
