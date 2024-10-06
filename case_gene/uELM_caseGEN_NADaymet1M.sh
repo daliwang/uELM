@@ -18,7 +18,7 @@ CASE_DATA=${DATA_ROOT}/${EXPID}
 DOMAIN_FILE=${EXPID}_domain.lnd.Daymet_NA.1km.1d.c240601.nc
 SURFDATA_FILE=${EXPID}_surfdata.Daymet_NA.1km.1d.c240601.nc
 
-PECOUNT="44"
+PECOUNT="42"
 
 \rm -rf "${CASEDIR}"
 
@@ -40,13 +40,13 @@ cd "${CASEDIR}"
 
 ./xmlchange DATM_CLMNCEP_YR_END=2014
 
-./xmlchange ATM_NCPL=8
+./xmlchange ATM_NCPL=24
 
 ./xmlchange NTASKS_LND=420
 
 ./xmlchange MAX_TASKS_PER_NODE=42
 
-./xmlchange STOP_N=30
+./xmlchange STOP_N=5
 
 ./xmlchange STOP_OPTION=ndays
 
@@ -58,13 +58,13 @@ cd "${CASEDIR}"
 
 ./xmlchange LND_DOMAIN_FILE="${DOMAIN_FILE}"
 
-./xmlchange JOB_WALLCLOCK_TIME="1:59"
+./xmlchange JOB_WALLCLOCK_TIME="0:30"
 
-./xmlchange USER_REQUESTED_WALLTIME="1:59"
+./xmlchange USER_REQUESTED_WALLTIME="0:30"
 
 echo "fsurdat = '${CASE_DATA}/domain_surfdata/${SURFDATA_FILE}'
-      hist_nhtfrq=-24
-      hist_mfilt=31
+      hist_nhtfrq=-120
+      hist_mfilt=1
      " >> user_nl_elm
 
 ./case.setup --reset

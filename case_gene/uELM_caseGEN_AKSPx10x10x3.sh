@@ -42,13 +42,16 @@ cd "${CASEDIR}"
 
 ./xmlchange ATM_NCPL=24
 
-./xmlchange STOP_N=1
+./xmlchange STOP_N=5
 
 ./xmlchange STOP_OPTION=ndays
 
 ./xmlchange NTASKS_LND=12600
-./xmlchange NTASKS_ATM=42
-./xmlchange NTASKS_ATM=168
+
+./xmlchange NTASKS_ATM=3360
+./xmlchange NTASKS_ATM=3360
+./xmlchange NTASKS_CPL=3360
+
 
 ./xmlchange MAX_MPITASKS_PER_NODE=42
 
@@ -60,7 +63,7 @@ cd "${CASEDIR}"
 
 ./xmlchange LND_DOMAIN_FILE="${DOMAIN_FILE}"
 
-./xmlchange JOB_WALLCLOCK_TIME="3:00"
+./xmlchange JOB_WALLCLOCK_TIME="1:00"
 
 ./xmlchange PIO_TYPENAME="pnetcdf"
 # Use 64bit_data for large variables
