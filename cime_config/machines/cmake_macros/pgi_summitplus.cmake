@@ -1,6 +1,6 @@
 if (NOT DEBUG)
-  string(APPEND CFLAGS " -O0 -g -Mvect=nosimd")
-  string(APPEND FFLAGS " -O0 -g -DSUMMITDEV_PGI")
+  string(APPEND CFLAGS " -O2 -Mvect=nosimd")
+  string(APPEND FFLAGS " -O2 -DSUMMITDEV_PGI")
 endif()
 if (COMP_NAME STREQUAL gptl)
   string(APPEND CPPDEFS " -DHAVE_SLASHPROC")
