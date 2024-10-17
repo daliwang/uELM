@@ -46,12 +46,11 @@ cd "${CASEDIR}"
 
 ./xmlchange STOP_OPTION=ndays
 
-./xmlchange NTASKS_LND=184800
+./xmlchange NTASKS_LND=100800
 
 ./xmlchange NTASKS_ATM=3360
-./xmlchange NTASKS_ATM=3360
+
 ./xmlchange NTASKS_CPL=3360
-
 
 ./xmlchange MAX_MPITASKS_PER_NODE=42
 
