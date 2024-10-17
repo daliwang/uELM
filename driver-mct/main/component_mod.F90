@@ -823,16 +823,18 @@ contains
     !---------------------------------------------------------------
 
     num_inst = size(comp)
+    write(logunit, *) 'num_inst ', num_inst
     do eci = 1,num_inst
+       write(logunit,108) ' rstamp ',trim(comp(eci)%name), ' iamin_compid', comp(eci)%iamin_compid
        if (comp(eci)%iamin_compid) then
           if (drv_threading) call seq_comm_setnthreads(comp(1)%nthreads_compid)
           call t_set_prefixf(comp(1)%oneletterid//"_f:")
           call comp_final(EClock, comp(eci)%cdata_cc, comp(eci)%x2c_cc, comp(eci)%c2x_cc)
           call t_unset_prefixf()
           if (drv_threading) call seq_comm_setnthreads(nthreads_GLOID)
-       end if
+        end if
     end do
-
+108 format( 3A, L )
   end subroutine component_final
 
   !===============================================================================

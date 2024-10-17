@@ -18,7 +18,7 @@ CASE_DATA="${DATA_ROOT}/${EXPID}"
 DOMAIN_FILE="${EXPID}_domain.lnd.Daymet_NA.1km.1d.c240524.nc"
 SURFDATA_FILE="${EXPID}_surfdata.Daymet_NA.1km.1d.c240524.nc"
 
-PECOUNT="44"
+PECOUNT="42"
 
 \rm -rf "${CASEDIR}"
 
@@ -46,11 +46,11 @@ cd "${CASEDIR}"
 
 ./xmlchange STOP_OPTION=ndays
 
-./xmlchange NTASKS_LND=12600
-./xmlchange NTASKS_ATM=4200
-./xmlchange NTASKS_CPL=840
+./xmlchange NTASKS_LND=100800
+./xmlchange NTASKS_ATM=3360
+./xmlchange NTASKS_CPL=3360
 
-./xmlchange MAX_MPITASKS_PER_NODE=21
+./xmlchange MAX_MPITASKS_PER_NODE=168
 
 ./xmlchange ATM_DOMAIN_PATH="${CASE_DATA}/domain_surfdata/"
 
@@ -79,5 +79,7 @@ hist_empty_htapes = .true.
 
 #./case.build --clean
 
-#./case.build
+./case.build
+
+./case.submit
 

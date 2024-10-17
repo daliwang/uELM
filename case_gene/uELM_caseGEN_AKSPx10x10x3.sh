@@ -18,7 +18,7 @@ CASE_DATA="${DATA_ROOT}/${EXPID}"
 DOMAIN_FILE="${EXPID}_domain.lnd.Daymet_NA.1km.1d.c240524.nc"
 SURFDATA_FILE="${EXPID}_surfdata.Daymet_NA.1km.1d.c240524.nc"
 
-PECOUNT="44"
+PECOUNT="42"
 
 \rm -rf "${CASEDIR}"
 
@@ -46,7 +46,7 @@ cd "${CASEDIR}"
 
 ./xmlchange STOP_OPTION=ndays
 
-./xmlchange NTASKS_LND=12600
+./xmlchange NTASKS_LND=184800
 
 ./xmlchange NTASKS_ATM=3360
 ./xmlchange NTASKS_ATM=3360
@@ -73,9 +73,8 @@ cd "${CASEDIR}"
 ./xmlchange PIO_BUFFER_SIZE_LIMIT=67108864
 
 echo "fsurdat = '${CASE_DATA}/domain_surfdata/${SURFDATA_FILE}'
-      hist_nhtfrq=-24
-      hist_mfilt=31
-     " >> user_nl_elm
+hist_empty_htapes = .true.
+" >> user_nl_elm
 
 ./case.setup --reset
 
