@@ -1957,7 +1957,7 @@ this mask will have smb calculated over the entire global land surface
 <!-- Defaults for lateral grid connectivity     -->
 <!-- =========================================  -->
 <lateral_connectivity>.false.</lateral_connectivity>
-<domain_decomposition_method>round_robin</domain_decomposition_method>
+<domain_decomposition_method>user_defined_decomposition</domain_decomposition_method>
 
 <!-- =========================================  -->
 <!-- Defaults for clm_pflotran_inparm interface -->

@@ -415,7 +415,7 @@ module elm_varctl
   ! Lateral grid connectivity
   !-----------------------------------------------------------------------
   logical, public            :: lateral_connectivity  = .false.
-  character(len=256), public :: domain_decomp_type    = 'round_robin'
+  character(len=256), public :: domain_decomp_type    = 'user_defined_decomposition'
 
   !-----------------------------------------------------------------------
   ! flux limiter for phenology flux calculation

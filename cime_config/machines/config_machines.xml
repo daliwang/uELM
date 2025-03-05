@@ -2746,6 +2746,11 @@
     <OS>LINUX</OS>
     <COMPILERS>gnu</COMPILERS>
     <MPILIBS>openmpi,mpi-serial</MPILIBS>
+
+    <PROJECT>cli185</PROJECT>
+    <CHARGE_ACCOUNT>cli185</CHARGE_ACCOUNT>
+    <SAVE_TIMING_DIR>/gpfs/wolf2/cades/cli185/proj-shared/uELM_performance</SAVE_TIMING_DIR>
+    <SAVE_TIMING_DIR_PROJECTS>cli185</SAVE_TIMING_DIR_PROJECTS>
     <CIME_OUTPUT_ROOT>/gpfs/wolf2/cades/cli185/scratch/$USER</CIME_OUTPUT_ROOT>
     <DIN_LOC_ROOT>/gpfs/wolf/cli115/world-shared/e3sm/inputdata</DIN_LOC_ROOT>
     <DIN_LOC_ROOT_CLMFORC>/gpfs/wolf/cli115/world-shared/e3sm/inputdata/atm/datm7</DIN_LOC_ROOT_CLMFORC>
